@@ -6,16 +6,16 @@
 <meta name="theme-color" content="#d5efec">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="S.A.C.">
+<meta name="apple-mobile-web-app-title" content="S.A.C">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="application-name" content="S.A.C.">
+<meta name="application-name" content="S.A.C">
 <meta name="description" content="도금 작업용 모바일 표면적 계산기">
-<title>S.A.C. 표면적 계산기</title>
-<link rel="manifest" href="./manifest.webmanifest?v=105">
-<link rel="apple-touch-icon" sizes="180x180" href="./icons/sac-icon-180-v104.png">
-<link rel="apple-touch-icon-precomposed" sizes="180x180" href="./icons/sac-icon-180-v104.png">
-<link rel="icon" type="image/png" sizes="192x192" href="./icons/sac-icon-192-v104.png">
-<link rel="icon" type="image/png" sizes="512x512" href="./icons/sac-icon-512-v104.png">
+<title>S.A.C 표면적 계산기</title>
+<link rel="manifest" href="./manifest.webmanifest?v=106">
+<link rel="apple-touch-icon" sizes="180x180" href="./icons/sac-icon-180-v106.png">
+<link rel="apple-touch-icon-precomposed" sizes="180x180" href="./icons/sac-icon-180-v106.png">
+<link rel="icon" type="image/png" sizes="192x192" href="./icons/sac-icon-192-v106.png">
+<link rel="icon" type="image/png" sizes="512x512" href="./icons/sac-icon-512-v106.png">
 <style>
 :root{
   --header:#d5efec;
@@ -59,14 +59,16 @@ button{cursor:pointer}
 .top-title{display:flex;flex-direction:column;line-height:1.05;min-width:0}
 .top-title b{font:800 17px "Segoe UI",sans-serif;letter-spacing:.5px}
 .top-title span{font-size:8px;letter-spacing:1.3px;color:#52706e;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.top-state{margin-left:auto;display:flex;align-items:center;gap:5px;font-size:9px;font-weight:700;white-space:nowrap}
+.top-state{margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:3px;font-size:9px;font-weight:700;white-space:nowrap}
+.top-state-row{display:flex;align-items:center;gap:5px}
+.top-version{font-size:7px;letter-spacing:.55px;color:#52706e;font-weight:800}
 .dot{width:7px;height:7px;border-radius:50%;background:#29a979;box-shadow:0 0 0 3px rgba(41,169,121,.13)}
 .mobile-main{padding:calc(78px + env(safe-area-inset-top)) 12px calc(28px + env(safe-area-inset-bottom));max-width:720px;margin:auto}
 .section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin:5px 2px 12px}
 .section-head small{display:block;font-size:8px;letter-spacing:1.4px;font-weight:800;color:var(--accent)}
 .section-head h1{font-size:20px;line-height:1.15;margin:3px 0 0;font-weight:800}
 .unit-pill{flex:0 0 auto;border-radius:999px;padding:6px 10px;background:var(--accent-soft);color:var(--accent-dark);font-size:9px;font-weight:800;border:1px solid #cde6e2}
-.calc-card,.total-card,.info-card{
+.calc-card,.total-card{
   background:var(--card);border:1px solid var(--line);border-radius:16px;
   padding:12px;box-shadow:0 5px 18px rgba(25,60,60,.04);margin-bottom:10px
 }
@@ -107,10 +109,6 @@ button{cursor:pointer}
 .secondary:active{background:#edf5f4}
 .status-line{min-height:18px;margin:3px 2px 10px;font-size:9px;color:var(--muted);display:flex;align-items:center;gap:6px}
 .status-line .mini-dot{width:6px;height:6px;border-radius:50%;background:var(--accent)}
-.info-card{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;background:#ffffff}
-.info-cell{padding:9px;background:#f7faf9;border:1px solid #e3ecea;border-radius:12px;text-align:center}
-.info-cell span{display:block;font-size:8px;color:var(--muted)}
-.info-cell b{display:block;margin-top:4px;font-size:10px;color:#31494b}
 @media(max-width:560px){
   .fields.four{grid-template-columns:1fr 1fr}
 }
@@ -120,7 +118,7 @@ button{cursor:pointer}
 }
 @media(max-width:350px){
   .mobile-main{padding-left:8px;padding-right:8px}.fields.four,.fields.three,.fields.two{grid-template-columns:1fr}.fields.three .field:last-child{grid-column:auto}
-  .top-title b{font-size:15px}.top-title span{font-size:7px}.total-grid{grid-template-columns:1fr}.total-value{text-align:left}.info-card{grid-template-columns:1fr}
+  .top-title b{font-size:15px}.top-title span{font-size:7px}.total-grid{grid-template-columns:1fr}.total-value{text-align:left}
   .formula-tag.long{max-width:50%}
 }
 </style>
@@ -134,10 +132,10 @@ button{cursor:pointer}
       <polyline points="19,45 32,52 45,45" fill="none" stroke="#3b9a94" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
       <circle cx="32" cy="12" r="3.6" fill="#85f4e7"/><circle cx="54" cy="24" r="3.6" fill="#3babef"/>
     </svg>
-    <span class="top-logo-text">S.A.C.</span>
+    <span class="top-logo-text">S.A.C</span>
   </div>
-  <div class="top-title"><b>S.A.C.</b><span>SURFACE AREA CALCULATOR</span></div>
-  <div class="top-state"><span class="dot"></span><span>AUTO CALC</span></div>
+  <div class="top-title"><b>S.A.C</b><span>SURFACE AREA CALCULATOR</span></div>
+  <div class="top-state"><div class="top-state-row"><span class="dot"></span><span>AUTO CALC</span></div><span class="top-version">VERSION 1.0.6</span></div>
 </header>
 
 <main class="mobile-main">
@@ -149,7 +147,7 @@ button{cursor:pointer}
   <section class="calc-card" aria-labelledby="formula1Title">
     <div class="card-head">
       <div><small>계산식 01</small><h2 id="formula1Title">원통 측면적</h2></div>
-      <div class="formula-tag">지름 × 3.14 × 높이 × 수량</div>
+      <div class="formula-tag">지름 × 3.14 × 높이</div>
     </div>
     <div class="fields three">
       <label class="field"><span>지름 <small>mm</small></span><input id="diameter" type="number" inputmode="decimal" min="0" step="any" placeholder="0" autocomplete="off"></label>
@@ -165,7 +163,7 @@ button{cursor:pointer}
   <section class="calc-card" aria-labelledby="formula2Title">
     <div class="card-head">
       <div><small>계산식 02</small><h2 id="formula2Title">원 면적</h2></div>
-      <div class="formula-tag">반지름 × 반지름 × 3.14 × 수량</div>
+      <div class="formula-tag">반지름 × 반지름 × 3.14</div>
     </div>
     <div class="fields two">
       <label class="field"><span>반지름 <small>mm</small></span><input id="radius" type="number" inputmode="decimal" min="0" step="any" placeholder="0" autocomplete="off"></label>
@@ -180,7 +178,7 @@ button{cursor:pointer}
   <section class="calc-card" aria-labelledby="formula3Title">
     <div class="card-head">
       <div><small>계산식 03</small><h2 id="formula3Title">직육면체 표면적</h2></div>
-      <div class="formula-tag long">2 × (가로×세로 + 가로×높이 + 세로×높이) × 수량</div>
+      <div class="formula-tag long">2 × (가로×세로 + 가로×높이 + 세로×높이)</div>
     </div>
     <div class="fields four">
       <label class="field"><span>가로 <small>mm</small></span><input id="boxWidth" type="number" inputmode="decimal" min="0" step="any" placeholder="0" autocomplete="off"></label>
@@ -204,12 +202,6 @@ button{cursor:pointer}
   </section>
 
   <div class="actions"><button id="resetButton" type="button" class="secondary">입력값 초기화</button></div>
-
-  <section class="info-card" aria-label="계산 설정">
-    <div class="info-cell"><span>입력</span><b>mm</b></div>
-    <div class="info-cell"><span>출력</span><b>dm²</b></div>
-    <div class="info-cell"><span>원주율</span><b>3.14</b></div>
-  </section>
 </main>
 
 <script>

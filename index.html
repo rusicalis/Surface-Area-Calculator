@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="ko">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -8,12 +8,14 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="S.A.C.">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="application-name" content="Surface Area Calculator">
-<meta name="description" content="A.C.P.T-style mobile surface area calculator.">
-<title>Surface Area Calculator</title>
-<link rel="manifest" href="./manifest.webmanifest">
-<link rel="apple-touch-icon" sizes="180x180" href="./icons/icon-180.png">
-<link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png">
+<meta name="application-name" content="S.A.C.">
+<meta name="description" content="도금 작업용 모바일 표면적 계산기">
+<title>S.A.C. 표면적 계산기</title>
+<link rel="manifest" href="./manifest.webmanifest?v=105">
+<link rel="apple-touch-icon" sizes="180x180" href="./icons/sac-icon-180-v104.png">
+<link rel="apple-touch-icon-precomposed" sizes="180x180" href="./icons/sac-icon-180-v104.png">
+<link rel="icon" type="image/png" sizes="192x192" href="./icons/sac-icon-192-v104.png">
+<link rel="icon" type="image/png" sizes="512x512" href="./icons/sac-icon-512-v104.png">
 <style>
 :root{
   --header:#d5efec;
@@ -45,10 +47,15 @@ button{cursor:pointer}
 }
 .top-logo{
   width:38px;height:38px;border-radius:10px;flex:0 0 38px;
-  display:grid;place-items:center;background:#0b2930;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:#0b2930;overflow:hidden;
   box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)
 }
-.top-logo svg{width:31px;height:31px;display:block}
+.top-logo svg{width:27px;height:25px;display:block;flex:0 0 auto;margin-top:1px}
+.top-logo-text{
+  margin-top:-1px;color:#fff;font:900 6.8px/1 "Segoe UI",Arial,sans-serif;
+  letter-spacing:.18px;white-space:nowrap;text-shadow:0 1px 2px rgba(0,0,0,.32)
+}
 .top-title{display:flex;flex-direction:column;line-height:1.05;min-width:0}
 .top-title b{font:800 17px "Segoe UI",sans-serif;letter-spacing:.5px}
 .top-title span{font-size:8px;letter-spacing:1.3px;color:#52706e;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -67,7 +74,9 @@ button{cursor:pointer}
 .card-head small{display:block;font-size:8px;letter-spacing:1.25px;font-weight:800;color:var(--accent)}
 .card-head h2{font-size:15px;margin:3px 0 0;line-height:1.2}
 .formula-tag{flex:0 0 auto;border:1px solid var(--line);border-radius:999px;background:#f7faf9;color:#52686a;padding:6px 9px;font-size:9px;font-weight:750;white-space:nowrap}
+.formula-tag.long{white-space:normal;text-align:right;line-height:1.35;max-width:58%}
 .fields{display:grid;gap:8px}
+.fields.four{grid-template-columns:repeat(4,minmax(0,1fr))}
 .fields.three{grid-template-columns:repeat(3,minmax(0,1fr))}
 .fields.two{grid-template-columns:repeat(2,minmax(0,1fr))}
 .field{display:block;min-width:0}
@@ -102,12 +111,17 @@ button{cursor:pointer}
 .info-cell{padding:9px;background:#f7faf9;border:1px solid #e3ecea;border-radius:12px;text-align:center}
 .info-cell span{display:block;font-size:8px;color:var(--muted)}
 .info-cell b{display:block;margin-top:4px;font-size:10px;color:#31494b}
+@media(max-width:560px){
+  .fields.four{grid-template-columns:1fr 1fr}
+}
 @media(max-width:430px){
   .fields.three{grid-template-columns:1fr 1fr}.fields.three .field:last-child{grid-column:1/-1}
+  .formula-tag.long{max-width:54%;font-size:8px}
 }
 @media(max-width:350px){
-  .mobile-main{padding-left:8px;padding-right:8px}.fields.three,.fields.two{grid-template-columns:1fr}.fields.three .field:last-child{grid-column:auto}
+  .mobile-main{padding-left:8px;padding-right:8px}.fields.four,.fields.three,.fields.two{grid-template-columns:1fr}.fields.three .field:last-child{grid-column:auto}
   .top-title b{font-size:15px}.top-title span{font-size:7px}.total-grid{grid-template-columns:1fr}.total-value{text-align:left}.info-card{grid-template-columns:1fr}
+  .formula-tag.long{max-width:50%}
 }
 </style>
 </head>
@@ -120,6 +134,7 @@ button{cursor:pointer}
       <polyline points="19,45 32,52 45,45" fill="none" stroke="#3b9a94" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
       <circle cx="32" cy="12" r="3.6" fill="#85f4e7"/><circle cx="54" cy="24" r="3.6" fill="#3babef"/>
     </svg>
+    <span class="top-logo-text">S.A.C.</span>
   </div>
   <div class="top-title"><b>S.A.C.</b><span>SURFACE AREA CALCULATOR</span></div>
   <div class="top-state"><span class="dot"></span><span>AUTO CALC</span></div>
@@ -127,56 +142,73 @@ button{cursor:pointer}
 
 <main class="mobile-main">
   <div class="section-head">
-    <div><small>SURFACE AREA</small><h1>Surface Area Calculator</h1></div>
+    <div><small>표면적</small><h1>표면적 계산기</h1></div>
     <div class="unit-pill">mm → dm²</div>
   </div>
 
   <section class="calc-card" aria-labelledby="formula1Title">
     <div class="card-head">
-      <div><small>FORMULA 01</small><h2 id="formula1Title">Cylinder Side Area</h2></div>
-      <div class="formula-tag">D × 3.14 × H × QTY</div>
+      <div><small>계산식 01</small><h2 id="formula1Title">원통 측면적</h2></div>
+      <div class="formula-tag">지름 × 3.14 × 높이 × 수량</div>
     </div>
     <div class="fields three">
-      <label class="field"><span>Diameter <small>mm</small></span><input id="diameter" type="number" inputmode="decimal" min="0" step="any" placeholder="0" autocomplete="off"></label>
-      <label class="field"><span>Height <small>mm</small></span><input id="height" type="number" inputmode="decimal" min="0" step="any" placeholder="0" autocomplete="off"></label>
-      <label class="field"><span>Quantity <small>EA</small></span><input id="cylinderQty" type="number" inputmode="numeric" min="0" step="1" placeholder="0" autocomplete="off"></label>
+      <label class="field"><span>지름 <small>mm</small></span><input id="diameter" type="number" inputmode="decimal" min="0" step="any" placeholder="0" autocomplete="off"></label>
+      <label class="field"><span>높이 <small>mm</small></span><input id="height" type="number" inputmode="decimal" min="0" step="any" placeholder="0" autocomplete="off"></label>
+      <label class="field"><span>수량 <small>EA</small></span><input id="cylinderQty" type="number" inputmode="numeric" min="0" step="1" placeholder="0" autocomplete="off"></label>
     </div>
     <div class="result-row">
-      <div class="result-copy"><span>RESULT 01</span><b>Cylinder Side Area</b></div>
+      <div class="result-copy"><span>계산 결과 01</span><b>원통 측면적</b></div>
       <output id="cylinderResult" class="result-value" aria-live="polite">0.0000 <small>dm²</small></output>
     </div>
   </section>
 
   <section class="calc-card" aria-labelledby="formula2Title">
     <div class="card-head">
-      <div><small>FORMULA 02</small><h2 id="formula2Title">Circle Area</h2></div>
-      <div class="formula-tag">R × R × 3.14 × QTY</div>
+      <div><small>계산식 02</small><h2 id="formula2Title">원 면적</h2></div>
+      <div class="formula-tag">반지름 × 반지름 × 3.14 × 수량</div>
     </div>
     <div class="fields two">
-      <label class="field"><span>Radius <small>mm</small></span><input id="radius" type="number" inputmode="decimal" min="0" step="any" placeholder="0" autocomplete="off"></label>
-      <label class="field"><span>Quantity <small>EA</small></span><input id="circleQty" type="number" inputmode="numeric" min="0" step="1" placeholder="0" autocomplete="off"></label>
+      <label class="field"><span>반지름 <small>mm</small></span><input id="radius" type="number" inputmode="decimal" min="0" step="any" placeholder="0" autocomplete="off"></label>
+      <label class="field"><span>수량 <small>EA</small></span><input id="circleQty" type="number" inputmode="numeric" min="0" step="1" placeholder="0" autocomplete="off"></label>
     </div>
     <div class="result-row">
-      <div class="result-copy"><span>RESULT 02</span><b>Circle Area</b></div>
+      <div class="result-copy"><span>계산 결과 02</span><b>원 면적</b></div>
       <output id="circleResult" class="result-value" aria-live="polite">0.0000 <small>dm²</small></output>
     </div>
   </section>
 
-  <div id="statusLine" class="status-line" aria-live="polite"><span class="mini-dot"></span><span>Enter values. Results update automatically.</span></div>
+  <section class="calc-card" aria-labelledby="formula3Title">
+    <div class="card-head">
+      <div><small>계산식 03</small><h2 id="formula3Title">직육면체 표면적</h2></div>
+      <div class="formula-tag long">2 × (가로×세로 + 가로×높이 + 세로×높이) × 수량</div>
+    </div>
+    <div class="fields four">
+      <label class="field"><span>가로 <small>mm</small></span><input id="boxWidth" type="number" inputmode="decimal" min="0" step="any" placeholder="0" autocomplete="off"></label>
+      <label class="field"><span>세로 <small>mm</small></span><input id="boxDepth" type="number" inputmode="decimal" min="0" step="any" placeholder="0" autocomplete="off"></label>
+      <label class="field"><span>높이 <small>mm</small></span><input id="boxHeight" type="number" inputmode="decimal" min="0" step="any" placeholder="0" autocomplete="off"></label>
+      <label class="field"><span>수량 <small>EA</small></span><input id="boxQty" type="number" inputmode="numeric" min="0" step="1" placeholder="0" autocomplete="off"></label>
+    </div>
+    <div class="result-row">
+      <div class="result-copy"><span>계산 결과 03</span><b>직육면체 6면 표면적</b></div>
+      <output id="boxResult" class="result-value" aria-live="polite">0.0000 <small>dm²</small></output>
+    </div>
+  </section>
+
+  <div id="statusLine" class="status-line" aria-live="polite"><span class="mini-dot"></span><span>값을 입력하면 결과가 자동으로 계산됩니다.</span></div>
 
   <section class="total-card" aria-labelledby="totalTitle">
     <div class="total-grid">
-      <div class="total-label"><small>COMBINED RESULT</small><h2 id="totalTitle">Total Surface Area</h2><p>Cylinder Side Area + Circle Area</p></div>
+      <div class="total-label"><small>통합 결과</small><h2 id="totalTitle">총 표면적</h2><p>원통 측면적 + 원 면적 + 직육면체 6면 표면적</p></div>
       <output id="totalResult" class="total-value" aria-live="polite">0.0000<small>dm²</small></output>
     </div>
   </section>
 
-  <div class="actions"><button id="resetButton" type="button" class="secondary">Reset Values</button></div>
+  <div class="actions"><button id="resetButton" type="button" class="secondary">입력값 초기화</button></div>
 
-  <section class="info-card" aria-label="Calculation settings">
-    <div class="info-cell"><span>INPUT</span><b>mm</b></div>
-    <div class="info-cell"><span>OUTPUT</span><b>dm²</b></div>
-    <div class="info-cell"><span>PI</span><b>3.14</b></div>
+  <section class="info-card" aria-label="계산 설정">
+    <div class="info-cell"><span>입력</span><b>mm</b></div>
+    <div class="info-cell"><span>출력</span><b>dm²</b></div>
+    <div class="info-cell"><span>원주율</span><b>3.14</b></div>
   </section>
 </main>
 
@@ -187,27 +219,44 @@ function calculateSurfaceAreas(values) {
     const number = Number(value);
     return Number.isFinite(number) && number > 0 ? number : 0;
   };
+
   const diameter = normalize(values.diameter);
   const height = normalize(values.height);
   const cylinderQty = normalize(values.cylinderQty);
   const radius = normalize(values.radius);
   const circleQty = normalize(values.circleQty);
+  const boxWidth = normalize(values.boxWidth);
+  const boxDepth = normalize(values.boxDepth);
+  const boxHeight = normalize(values.boxHeight);
+  const boxQty = normalize(values.boxQty);
 
   const cylinderMm2 = diameter * 3.14 * height * cylinderQty;
   const circleMm2 = radius * radius * 3.14 * circleQty;
+  const boxMm2 = 2 * (
+    boxWidth * boxDepth +
+    boxWidth * boxHeight +
+    boxDepth * boxHeight
+  ) * boxQty;
+
   const cylinderDm2 = cylinderMm2 / 10000;
   const circleDm2 = circleMm2 / 10000;
-  const totalDm2 = cylinderDm2 + circleDm2;
+  const boxDm2 = boxMm2 / 10000;
+  const totalDm2 = cylinderDm2 + circleDm2 + boxDm2;
 
-  return { cylinderDm2, circleDm2, totalDm2 };
+  return { cylinderDm2, circleDm2, boxDm2, totalDm2 };
 }
 /* CALC_CORE_END */
 
 (function initializeCalculator(){
-  const ids = ['diameter','height','cylinderQty','radius','circleQty'];
+  const ids = [
+    'diameter','height','cylinderQty',
+    'radius','circleQty',
+    'boxWidth','boxDepth','boxHeight','boxQty'
+  ];
   const fields = Object.fromEntries(ids.map(id => [id, document.getElementById(id)]));
   const cylinderResult = document.getElementById('cylinderResult');
   const circleResult = document.getElementById('circleResult');
+  const boxResult = document.getElementById('boxResult');
   const totalResult = document.getElementById('totalResult');
   const statusLine = document.getElementById('statusLine');
   const resetButton = document.getElementById('resetButton');
@@ -218,30 +267,40 @@ function calculateSurfaceAreas(values) {
     height: fields.height.value,
     cylinderQty: fields.cylinderQty.value,
     radius: fields.radius.value,
-    circleQty: fields.circleQty.value
+    circleQty: fields.circleQty.value,
+    boxWidth: fields.boxWidth.value,
+    boxDepth: fields.boxDepth.value,
+    boxHeight: fields.boxHeight.value,
+    boxQty: fields.boxQty.value
   });
+
   const render = () => {
     const result = calculateSurfaceAreas(readValues());
     cylinderResult.innerHTML = `${safeFixed(result.cylinderDm2)} <small>dm²</small>`;
     circleResult.innerHTML = `${safeFixed(result.circleDm2)} <small>dm²</small>`;
+    boxResult.innerHTML = `${safeFixed(result.boxDm2)} <small>dm²</small>`;
     totalResult.innerHTML = `${safeFixed(result.totalDm2)}<small>dm²</small>`;
     const anyInput = ids.some(id => fields[id].value.trim() !== '');
-    statusLine.innerHTML = `<span class="mini-dot"></span><span>${anyInput ? 'Calculated automatically in real time.' : 'Enter values. Results update automatically.'}</span>`;
+    statusLine.innerHTML = `<span class="mini-dot"></span><span>${anyInput ? '입력값이 실시간으로 자동 계산되었습니다.' : '값을 입력하면 결과가 자동으로 계산됩니다.'}</span>`;
   };
 
   ids.forEach(id => {
     fields[id].addEventListener('input', render);
     fields[id].addEventListener('change', render);
   });
+
   resetButton.addEventListener('click', () => {
     ids.forEach(id => { fields[id].value = ''; });
     render();
     fields.diameter.focus();
   });
+
   render();
 
   if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
-    navigator.serviceWorker.register('./sw.js').catch(() => {});
+    navigator.serviceWorker.register('./sw.js?v=105', { updateViaCache: 'none' })
+      .then(registration => registration.update())
+      .catch(() => {});
   }
 })();
 </script>

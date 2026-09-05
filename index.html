@@ -11,11 +11,11 @@
 <meta name="application-name" content="S.A.C">
 <meta name="description" content="도금 작업용 모바일 표면적 계산기">
 <title>S.A.C 표면적 계산기</title>
-<link rel="manifest" href="./manifest.webmanifest?v=106">
-<link rel="apple-touch-icon" sizes="180x180" href="./icons/sac-icon-180-v106.png">
-<link rel="apple-touch-icon-precomposed" sizes="180x180" href="./icons/sac-icon-180-v106.png">
-<link rel="icon" type="image/png" sizes="192x192" href="./icons/sac-icon-192-v106.png">
-<link rel="icon" type="image/png" sizes="512x512" href="./icons/sac-icon-512-v106.png">
+<link rel="manifest" href="./manifest.webmanifest?v=107">
+<link rel="apple-touch-icon" sizes="180x180" href="./icons/sac-icon-180-v107.png">
+<link rel="apple-touch-icon-precomposed" sizes="180x180" href="./icons/sac-icon-180-v107.png">
+<link rel="icon" type="image/png" sizes="192x192" href="./icons/sac-icon-192-v107.png">
+<link rel="icon" type="image/png" sizes="512x512" href="./icons/sac-icon-512-v107.png">
 <style>
 :root{
   --header:#d5efec;
@@ -135,12 +135,12 @@ button{cursor:pointer}
     <span class="top-logo-text">S.A.C</span>
   </div>
   <div class="top-title"><b>S.A.C</b><span>SURFACE AREA CALCULATOR</span></div>
-  <div class="top-state"><div class="top-state-row"><span class="dot"></span><span>AUTO CALC</span></div><span class="top-version">VERSION 1.0.6</span></div>
+  <div class="top-state"><div class="top-state-row"><span class="dot"></span><span>AUTO CALC</span></div><span class="top-version">VERSION 1.0.7</span></div>
 </header>
 
 <main class="mobile-main">
   <div class="section-head">
-    <div><small>표면적</small><h1>표면적 계산기</h1></div>
+    <div><h1>표면적 계산기</h1></div>
     <div class="unit-pill">mm → dm²</div>
   </div>
 
@@ -178,7 +178,7 @@ button{cursor:pointer}
   <section class="calc-card" aria-labelledby="formula3Title">
     <div class="card-head">
       <div><small>계산식 03</small><h2 id="formula3Title">직육면체 표면적</h2></div>
-      <div class="formula-tag long">2 × (가로×세로 + 가로×높이 + 세로×높이)</div>
+      <div class="formula-tag long">(가로×세로 + 가로×높이 + 세로×높이) X 2</div>
     </div>
     <div class="fields four">
       <label class="field"><span>가로 <small>mm</small></span><input id="boxWidth" type="number" inputmode="decimal" min="0" step="any" placeholder="0" autocomplete="off"></label>
@@ -290,7 +290,7 @@ function calculateSurfaceAreas(values) {
   render();
 
   if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
-    navigator.serviceWorker.register('./sw.js?v=105', { updateViaCache: 'none' })
+    navigator.serviceWorker.register('./sw.js?v=107', { updateViaCache: 'none' })
       .then(registration => registration.update())
       .catch(() => {});
   }

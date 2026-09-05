@@ -3,33 +3,33 @@
   "short_name": "S.A.C",
   "lang": "ko",
   "description": "원통, 원, 직육면체의 표면적을 실시간으로 계산하는 모바일 계산기",
-  "id": "./?app=sac-v106",
-  "start_url": "./index.html?app=sac-v106",
+  "id": "./",
+  "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "background_color": "#f3f7f7",
   "theme_color": "#d5efec",
   "icons": [
     {
-      "src": "./icons/sac-icon-192-v106.png",
+      "src": "./icons/sac-icon-192-v107.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "./icons/sac-icon-512-v106.png",
+      "src": "./icons/sac-icon-512-v107.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "./icons/sac-icon-192-maskable-v106.png",
+      "src": "./icons/sac-icon-192-maskable-v107.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "./icons/sac-icon-512-maskable-v106.png",
+      "src": "./icons/sac-icon-512-maskable-v107.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"

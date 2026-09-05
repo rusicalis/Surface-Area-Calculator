@@ -1,13 +1,13 @@
-const CACHE_NAME = 'sac-surface-area-v1.0.6';
+const CACHE_NAME = 'sac-surface-area-v1.0.7';
 const CORE_ASSETS = [
   './',
   './index.html',
-  './manifest.webmanifest?v=106',
-  './icons/sac-icon-180-v106.png',
-  './icons/sac-icon-192-v106.png',
-  './icons/sac-icon-512-v106.png',
-  './icons/sac-icon-192-maskable-v106.png',
-  './icons/sac-icon-512-maskable-v106.png'
+  './manifest.webmanifest?v=107',
+  './icons/sac-icon-180-v107.png',
+  './icons/sac-icon-192-v107.png',
+  './icons/sac-icon-512-v107.png',
+  './icons/sac-icon-192-maskable-v107.png',
+  './icons/sac-icon-512-maskable-v107.png'
 ];
 
 self.addEventListener('install', event => {

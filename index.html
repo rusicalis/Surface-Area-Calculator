@@ -11,7 +11,7 @@
 <meta name="application-name" content="S.A.C">
 <meta name="description" content="도금 작업용 모바일 표면적 계산기">
 <title>S.A.C 표면적 계산기</title>
-<link rel="manifest" href="./manifest.webmanifest?v=107">
+<link rel="manifest" href="./manifest.webmanifest?v=111">
 <link rel="apple-touch-icon" sizes="180x180" href="./icons/sac-icon-180-v107.png">
 <link rel="apple-touch-icon-precomposed" sizes="180x180" href="./icons/sac-icon-180-v107.png">
 <link rel="icon" type="image/png" sizes="192x192" href="./icons/sac-icon-192-v107.png">
@@ -73,10 +73,24 @@ button{cursor:pointer}
   padding:12px;box-shadow:0 5px 18px rgba(25,60,60,.04);margin-bottom:10px
 }
 .card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:11px}
+.card-title-block{min-width:0;flex:1 1 auto}
 .card-head small{display:block;font-size:8px;letter-spacing:1.25px;font-weight:800;color:var(--accent)}
-.card-head h2{font-size:15px;margin:3px 0 0;line-height:1.2}
-.formula-tag{flex:0 0 auto;border:1px solid var(--line);border-radius:999px;background:#f7faf9;color:#52686a;padding:6px 9px;font-size:9px;font-weight:750;white-space:nowrap}
-.formula-tag.long{white-space:normal;text-align:right;line-height:1.35;max-width:58%}
+.title-line{display:flex;align-items:center;gap:8px;min-width:0;margin-top:3px;flex-wrap:wrap}
+.card-head h2{font-size:15px;margin:0;line-height:1.2;flex:0 0 auto}
+.formula-tag{flex:0 1 auto;border:1px solid var(--line);border-radius:999px;background:#f7faf9;color:#52686a;padding:5px 8px;font-size:9px;font-weight:750;white-space:nowrap}
+.formula-tag.long{white-space:normal;text-align:left;line-height:1.35;max-width:100%}
+.entry-controls{display:flex;align-items:center;gap:5px;flex:0 0 auto;margin-top:13px}
+.entry-btn{
+  width:28px;height:28px;border-radius:9px;border:1px solid #cfe2df;background:#f7fbfa;
+  color:var(--accent-dark);font:800 18px/1 "Segoe UI",sans-serif;display:grid;place-items:center;padding:0;
+  box-shadow:0 2px 8px rgba(25,60,60,.04);touch-action:manipulation
+}
+.entry-btn:active{background:#e9f5f3}
+.entry-btn:disabled{opacity:.35;cursor:default}
+.entry-list{display:grid;gap:8px}
+.entry-row{border:1px solid #e6efed;border-radius:13px;padding:9px;background:#fbfdfd}
+.entry-row:first-child{background:#fff}
+.entry-label{font-size:8px;line-height:1;font-weight:800;letter-spacing:1px;color:var(--accent);margin:0 2px 7px}
 .fields{display:grid;gap:8px}
 .fields.four{grid-template-columns:repeat(4,minmax(0,1fr))}
 .fields.three{grid-template-columns:repeat(3,minmax(0,1fr))}
@@ -114,12 +128,15 @@ button{cursor:pointer}
 }
 @media(max-width:430px){
   .fields.three{grid-template-columns:1fr 1fr}.fields.three .field:last-child{grid-column:1/-1}
-  .formula-tag.long{max-width:54%;font-size:8px}
+  .title-line{gap:6px}
+  .formula-tag{font-size:8px;padding:5px 7px}
+  .formula-tag.long{max-width:100%;font-size:8px}
 }
 @media(max-width:350px){
   .mobile-main{padding-left:8px;padding-right:8px}.fields.four,.fields.three,.fields.two{grid-template-columns:1fr}.fields.three .field:last-child{grid-column:auto}
   .top-title b{font-size:15px}.top-title span{font-size:7px}.total-grid{grid-template-columns:1fr}.total-value{text-align:left}
-  .formula-tag.long{max-width:50%}
+  .card-head{gap:6px}.title-line{gap:5px}.formula-tag.long{max-width:100%}
+  .entry-btn{width:26px;height:26px}
 }
 </style>
 </head>
@@ -135,7 +152,7 @@ button{cursor:pointer}
     <span class="top-logo-text">S.A.C</span>
   </div>
   <div class="top-title"><b>S.A.C</b><span>SURFACE AREA CALCULATOR</span></div>
-  <div class="top-state"><div class="top-state-row"><span class="dot"></span><span>AUTO CALC</span></div><span class="top-version">VERSION 1.0.7</span></div>
+  <div class="top-state"><div class="top-state-row"><span class="dot"></span><span>AUTO CALC</span></div><span class="top-version">VERSION 1.0.11</span></div>
 </header>
 
 <main class="mobile-main">
@@ -146,48 +163,72 @@ button{cursor:pointer}
 
   <section class="calc-card" aria-labelledby="formula1Title">
     <div class="card-head">
-      <div><small>계산식 01</small><h2 id="formula1Title">원통 측면적</h2></div>
-      <div class="formula-tag">지름 × 3.14 × 높이</div>
+      <div class="card-title-block"><small>계산식 01</small><div class="title-line"><h2 id="formula1Title">원통 측면적</h2><div class="formula-tag">지름 × 3.14 × 높이</div></div></div>
+      <div class="entry-controls" aria-label="원통 항목 추가 및 삭제">
+        <button type="button" class="entry-btn" data-remove="cylinder" aria-label="원통 항목 삭제">−</button>
+        <button type="button" class="entry-btn" data-add="cylinder" aria-label="원통 항목 추가">+</button>
+      </div>
     </div>
-    <div class="fields three">
-      <label class="field"><span>지름 <small>mm</small></span><input id="diameter" type="number" inputmode="decimal" min="0" step="any" placeholder="0" autocomplete="off"></label>
-      <label class="field"><span>높이 <small>mm</small></span><input id="height" type="number" inputmode="decimal" min="0" step="any" placeholder="0" autocomplete="off"></label>
-      <label class="field"><span>수량 <small>EA</small></span><input id="cylinderQty" type="number" inputmode="numeric" min="0" step="1" placeholder="0" autocomplete="off"></label>
+    <div class="entry-list" data-group="cylinder">
+      <div class="entry-row" data-entry="cylinder">
+        <div class="entry-label">항목 1</div>
+        <div class="fields three">
+          <label class="field"><span>지름 <small>mm</small></span><input id="diameter" data-field="diameter" type="number" inputmode="decimal" step="any" placeholder="0" autocomplete="off"></label>
+          <label class="field"><span>높이 <small>mm</small></span><input id="height" data-field="height" type="number" inputmode="decimal" step="any" placeholder="0" autocomplete="off"></label>
+          <label class="field"><span>수량 <small>EA</small></span><input id="cylinderQty" data-field="qty" type="number" inputmode="numeric" step="1" placeholder="1" autocomplete="off"></label>
+        </div>
+      </div>
     </div>
     <div class="result-row">
-      <div class="result-copy"><span>계산 결과 01</span><b>원통 측면적</b></div>
+      <div class="result-copy"><span>계산 결과 01</span><b>원통 측면적 합계</b></div>
       <output id="cylinderResult" class="result-value" aria-live="polite">0.0000 <small>dm²</small></output>
     </div>
   </section>
 
   <section class="calc-card" aria-labelledby="formula2Title">
     <div class="card-head">
-      <div><small>계산식 02</small><h2 id="formula2Title">원 면적</h2></div>
-      <div class="formula-tag">반지름 × 반지름 × 3.14</div>
+      <div class="card-title-block"><small>계산식 02</small><div class="title-line"><h2 id="formula2Title">원 면적</h2><div class="formula-tag">반지름 × 반지름 × 3.14</div></div></div>
+      <div class="entry-controls" aria-label="원 항목 추가 및 삭제">
+        <button type="button" class="entry-btn" data-remove="circle" aria-label="원 항목 삭제">−</button>
+        <button type="button" class="entry-btn" data-add="circle" aria-label="원 항목 추가">+</button>
+      </div>
     </div>
-    <div class="fields two">
-      <label class="field"><span>반지름 <small>mm</small></span><input id="radius" type="number" inputmode="decimal" min="0" step="any" placeholder="0" autocomplete="off"></label>
-      <label class="field"><span>수량 <small>EA</small></span><input id="circleQty" type="number" inputmode="numeric" min="0" step="1" placeholder="0" autocomplete="off"></label>
+    <div class="entry-list" data-group="circle">
+      <div class="entry-row" data-entry="circle">
+        <div class="entry-label">항목 1</div>
+        <div class="fields two">
+          <label class="field"><span>반지름 <small>mm</small></span><input id="radius" data-field="radius" type="number" inputmode="decimal" step="any" placeholder="0" autocomplete="off"></label>
+          <label class="field"><span>수량 <small>EA</small></span><input id="circleQty" data-field="qty" type="number" inputmode="numeric" step="1" placeholder="1" autocomplete="off"></label>
+        </div>
+      </div>
     </div>
     <div class="result-row">
-      <div class="result-copy"><span>계산 결과 02</span><b>원 면적</b></div>
+      <div class="result-copy"><span>계산 결과 02</span><b>원 면적 합계</b></div>
       <output id="circleResult" class="result-value" aria-live="polite">0.0000 <small>dm²</small></output>
     </div>
   </section>
 
   <section class="calc-card" aria-labelledby="formula3Title">
     <div class="card-head">
-      <div><small>계산식 03</small><h2 id="formula3Title">직육면체 표면적</h2></div>
-      <div class="formula-tag long">(가로×세로 + 가로×높이 + 세로×높이) X 2</div>
+      <div class="card-title-block"><small>계산식 03</small><div class="title-line"><h2 id="formula3Title">직육면체 표면적</h2><div class="formula-tag long">(가로×세로 + 가로×높이 + 세로×높이) X 2</div></div></div>
+      <div class="entry-controls" aria-label="직육면체 항목 추가 및 삭제">
+        <button type="button" class="entry-btn" data-remove="box" aria-label="직육면체 항목 삭제">−</button>
+        <button type="button" class="entry-btn" data-add="box" aria-label="직육면체 항목 추가">+</button>
+      </div>
     </div>
-    <div class="fields four">
-      <label class="field"><span>가로 <small>mm</small></span><input id="boxWidth" type="number" inputmode="decimal" min="0" step="any" placeholder="0" autocomplete="off"></label>
-      <label class="field"><span>세로 <small>mm</small></span><input id="boxDepth" type="number" inputmode="decimal" min="0" step="any" placeholder="0" autocomplete="off"></label>
-      <label class="field"><span>높이 <small>mm</small></span><input id="boxHeight" type="number" inputmode="decimal" min="0" step="any" placeholder="0" autocomplete="off"></label>
-      <label class="field"><span>수량 <small>EA</small></span><input id="boxQty" type="number" inputmode="numeric" min="0" step="1" placeholder="0" autocomplete="off"></label>
+    <div class="entry-list" data-group="box">
+      <div class="entry-row" data-entry="box">
+        <div class="entry-label">항목 1</div>
+        <div class="fields four">
+          <label class="field"><span>가로 <small>mm</small></span><input id="boxWidth" data-field="width" type="number" inputmode="decimal" step="any" placeholder="0" autocomplete="off"></label>
+          <label class="field"><span>세로 <small>mm</small></span><input id="boxDepth" data-field="depth" type="number" inputmode="decimal" step="any" placeholder="0" autocomplete="off"></label>
+          <label class="field"><span>높이 <small>mm</small></span><input id="boxHeight" data-field="height" type="number" inputmode="decimal" step="any" placeholder="0" autocomplete="off"></label>
+          <label class="field"><span>수량 <small>EA</small></span><input id="boxQty" data-field="qty" type="number" inputmode="numeric" step="1" placeholder="1" autocomplete="off"></label>
+        </div>
+      </div>
     </div>
     <div class="result-row">
-      <div class="result-copy"><span>계산 결과 03</span><b>직육면체 6면 표면적</b></div>
+      <div class="result-copy"><span>계산 결과 03</span><b>직육면체 6면 표면적 합계</b></div>
       <output id="boxResult" class="result-value" aria-live="polite">0.0000 <small>dm²</small></output>
     </div>
   </section>
@@ -206,29 +247,44 @@ button{cursor:pointer}
 
 <script>
 /* CALC_CORE_START */
-function calculateSurfaceAreas(values) {
-  const normalize = (value) => {
+function calculateSurfaceAreaGroups(groups) {
+  const toFinite = (value) => {
     const number = Number(value);
-    return Number.isFinite(number) && number > 0 ? number : 0;
+    return Number.isFinite(number) ? number : 0;
   };
+  const magnitude = (value) => Math.abs(toFinite(value));
+  const qtyMagnitude = (value) => {
+    if (value === '' || value === null || value === undefined) return 1;
+    return Math.abs(toFinite(value));
+  };
+  const itemSign = (values) => values.some(value => toFinite(value) < 0) ? -1 : 1;
 
-  const diameter = normalize(values.diameter);
-  const height = normalize(values.height);
-  const cylinderQty = normalize(values.cylinderQty);
-  const radius = normalize(values.radius);
-  const circleQty = normalize(values.circleQty);
-  const boxWidth = normalize(values.boxWidth);
-  const boxDepth = normalize(values.boxDepth);
-  const boxHeight = normalize(values.boxHeight);
-  const boxQty = normalize(values.boxQty);
+  const cylinders = Array.isArray(groups.cylinders) ? groups.cylinders : [];
+  const circles = Array.isArray(groups.circles) ? groups.circles : [];
+  const boxes = Array.isArray(groups.boxes) ? groups.boxes : [];
 
-  const cylinderMm2 = diameter * 3.14 * height * cylinderQty;
-  const circleMm2 = radius * radius * 3.14 * circleQty;
-  const boxMm2 = 2 * (
-    boxWidth * boxDepth +
-    boxWidth * boxHeight +
-    boxDepth * boxHeight
-  ) * boxQty;
+  const cylinderMm2 = cylinders.reduce((sum, item) => {
+    const sign = itemSign([item.diameter, item.height, item.qty]);
+    const area = magnitude(item.diameter) * 3.14 * magnitude(item.height) * qtyMagnitude(item.qty);
+    return sum + sign * area;
+  }, 0);
+
+  const circleMm2 = circles.reduce((sum, item) => {
+    const sign = itemSign([item.radius, item.qty]);
+    const radius = magnitude(item.radius);
+    const area = radius * radius * 3.14 * qtyMagnitude(item.qty);
+    return sum + sign * area;
+  }, 0);
+
+  const boxMm2 = boxes.reduce((sum, item) => {
+    const sign = itemSign([item.width, item.depth, item.height, item.qty]);
+    const width = magnitude(item.width);
+    const depth = magnitude(item.depth);
+    const height = magnitude(item.height);
+    const qty = qtyMagnitude(item.qty);
+    const area = 2 * (width * depth + width * height + depth * height) * qty;
+    return sum + sign * area;
+  }, 0);
 
   const cylinderDm2 = cylinderMm2 / 10000;
   const circleDm2 = circleMm2 / 10000;
@@ -237,15 +293,18 @@ function calculateSurfaceAreas(values) {
 
   return { cylinderDm2, circleDm2, boxDm2, totalDm2 };
 }
+
+function calculateSurfaceAreas(values) {
+  return calculateSurfaceAreaGroups({
+    cylinders: [{ diameter: values.diameter, height: values.height, qty: values.cylinderQty }],
+    circles: [{ radius: values.radius, qty: values.circleQty }],
+    boxes: [{ width: values.boxWidth, depth: values.boxDepth, height: values.boxHeight, qty: values.boxQty }]
+  });
+}
 /* CALC_CORE_END */
 
 (function initializeCalculator(){
-  const ids = [
-    'diameter','height','cylinderQty',
-    'radius','circleQty',
-    'boxWidth','boxDepth','boxHeight','boxQty'
-  ];
-  const fields = Object.fromEntries(ids.map(id => [id, document.getElementById(id)]));
+  const groupNames = ['cylinder', 'circle', 'box'];
   const cylinderResult = document.getElementById('cylinderResult');
   const circleResult = document.getElementById('circleResult');
   const boxResult = document.getElementById('boxResult');
@@ -254,43 +313,97 @@ function calculateSurfaceAreas(values) {
   const resetButton = document.getElementById('resetButton');
 
   const safeFixed = (value) => Number.isFinite(value) ? value.toFixed(4) : '0.0000';
-  const readValues = () => ({
-    diameter: fields.diameter.value,
-    height: fields.height.value,
-    cylinderQty: fields.cylinderQty.value,
-    radius: fields.radius.value,
-    circleQty: fields.circleQty.value,
-    boxWidth: fields.boxWidth.value,
-    boxDepth: fields.boxDepth.value,
-    boxHeight: fields.boxHeight.value,
-    boxQty: fields.boxQty.value
+  const getGroup = (name) => document.querySelector(`[data-group="${name}"]`);
+  const getRows = (name) => [...getGroup(name).querySelectorAll('.entry-row')];
+
+  const readRow = (row) => Object.fromEntries(
+    [...row.querySelectorAll('[data-field]')].map(input => [input.dataset.field, input.value])
+  );
+
+  const readGroups = () => ({
+    cylinders: getRows('cylinder').map(readRow),
+    circles: getRows('circle').map(readRow),
+    boxes: getRows('box').map(readRow)
   });
 
+  const updateControls = (name) => {
+    const rows = getRows(name);
+    rows.forEach((row, index) => {
+      const label = row.querySelector('.entry-label');
+      if (label) label.textContent = `항목 ${index + 1}`;
+    });
+    const removeButton = document.querySelector(`[data-remove="${name}"]`);
+    if (removeButton) removeButton.disabled = rows.length <= 1;
+  };
+
   const render = () => {
-    const result = calculateSurfaceAreas(readValues());
+    const result = calculateSurfaceAreaGroups(readGroups());
     cylinderResult.innerHTML = `${safeFixed(result.cylinderDm2)} <small>dm²</small>`;
     circleResult.innerHTML = `${safeFixed(result.circleDm2)} <small>dm²</small>`;
     boxResult.innerHTML = `${safeFixed(result.boxDm2)} <small>dm²</small>`;
     totalResult.innerHTML = `${safeFixed(result.totalDm2)}<small>dm²</small>`;
-    const anyInput = ids.some(id => fields[id].value.trim() !== '');
+    const anyInput = [...document.querySelectorAll('[data-field]')].some(input =>
+      input.dataset.field === 'qty' ? !['', '1'].includes(input.value.trim()) : input.value.trim() !== ''
+    );
     statusLine.innerHTML = `<span class="mini-dot"></span><span>${anyInput ? '입력값이 실시간으로 자동 계산되었습니다.' : '값을 입력하면 결과가 자동으로 계산됩니다.'}</span>`;
   };
 
-  ids.forEach(id => {
-    fields[id].addEventListener('input', render);
-    fields[id].addEventListener('change', render);
+  const attachRowEvents = (row) => {
+    row.querySelectorAll('[data-field]').forEach(input => {
+      input.addEventListener('input', render);
+      input.addEventListener('change', render);
+    });
+  };
+
+  const addRow = (name) => {
+    const group = getGroup(name);
+    const source = getRows(name)[0];
+    const clone = source.cloneNode(true);
+    clone.querySelectorAll('[data-field]').forEach(input => {
+      input.value = '';
+      input.removeAttribute('id');
+    });
+    group.appendChild(clone);
+    attachRowEvents(clone);
+    updateControls(name);
+    render();
+    const firstInput = clone.querySelector('[data-field]');
+    if (firstInput) firstInput.focus();
+  };
+
+  const removeRow = (name) => {
+    const rows = getRows(name);
+    if (rows.length <= 1) return;
+    rows[rows.length - 1].remove();
+    updateControls(name);
+    render();
+  };
+
+  groupNames.forEach(name => {
+    getRows(name).forEach(attachRowEvents);
+    document.querySelector(`[data-add="${name}"]`).addEventListener('click', () => addRow(name));
+    document.querySelector(`[data-remove="${name}"]`).addEventListener('click', () => removeRow(name));
+    updateControls(name);
   });
 
   resetButton.addEventListener('click', () => {
-    ids.forEach(id => { fields[id].value = ''; });
+    groupNames.forEach(name => {
+      const rows = getRows(name);
+      rows.slice(1).forEach(row => row.remove());
+      getRows(name)[0].querySelectorAll('[data-field]').forEach(input => {
+        input.value = '';
+      });
+      updateControls(name);
+    });
     render();
-    fields.diameter.focus();
+    const firstInput = getGroup('cylinder').querySelector('[data-field]');
+    if (firstInput) firstInput.focus();
   });
 
   render();
 
   if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
-    navigator.serviceWorker.register('./sw.js?v=107', { updateViaCache: 'none' })
+    navigator.serviceWorker.register('./sw.js?v=111', { updateViaCache: 'none' })
       .then(registration => registration.update())
       .catch(() => {});
   }

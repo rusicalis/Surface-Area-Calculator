@@ -1,8 +1,8 @@
-const CACHE_NAME = 'sac-surface-area-v1.0.7';
+const CACHE_NAME = 'sac-surface-area-v1.0.11';
 const CORE_ASSETS = [
   './',
   './index.html',
-  './manifest.webmanifest?v=107',
+  './manifest.webmanifest?v=111',
   './icons/sac-icon-180-v107.png',
   './icons/sac-icon-192-v107.png',
   './icons/sac-icon-512-v107.png',

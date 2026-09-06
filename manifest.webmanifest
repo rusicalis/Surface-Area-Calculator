@@ -2,7 +2,7 @@
   "name": "S.A.C 표면적 계산기",
   "short_name": "S.A.C",
   "lang": "ko",
-  "description": "원통, 원, 직육면체의 표면적을 실시간으로 계산하는 모바일 계산기",
+  "description": "원통, 원, 직육면체 표면적을 여러 항목을 추가·삭제하고 음수 입력 항목을 차감하여 실시간 합산하는 모바일 계산기",
   "id": "./",
   "start_url": "./index.html",
   "scope": "./",

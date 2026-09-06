@@ -11,7 +11,7 @@
 <meta name="application-name" content="S.A.C">
 <meta name="description" content="도금 작업용 모바일 표면적 계산기">
 <title>S.A.C 표면적 계산기</title>
-<link rel="manifest" href="./manifest.webmanifest?v=111">
+<link rel="manifest" href="./manifest.webmanifest?v=112">
 <link rel="apple-touch-icon" sizes="180x180" href="./icons/sac-icon-180-v107.png">
 <link rel="apple-touch-icon-precomposed" sizes="180x180" href="./icons/sac-icon-180-v107.png">
 <link rel="icon" type="image/png" sizes="192x192" href="./icons/sac-icon-192-v107.png">
@@ -62,6 +62,7 @@ button{cursor:pointer}
 .top-state{margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:3px;font-size:9px;font-weight:700;white-space:nowrap}
 .top-state-row{display:flex;align-items:center;gap:5px}
 .top-version{font-size:7px;letter-spacing:.55px;color:#52706e;font-weight:800}
+.top-signature{font-size:9px;line-height:1.05;color:#315d5b;font-family:"Segoe Script","Brush Script MT","Apple Chancery",cursive;font-style:italic;font-weight:600;letter-spacing:.2px}
 .dot{width:7px;height:7px;border-radius:50%;background:#29a979;box-shadow:0 0 0 3px rgba(41,169,121,.13)}
 .mobile-main{padding:calc(78px + env(safe-area-inset-top)) 12px calc(28px + env(safe-area-inset-bottom));max-width:720px;margin:auto}
 .section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin:5px 2px 12px}
@@ -152,7 +153,7 @@ button{cursor:pointer}
     <span class="top-logo-text">S.A.C</span>
   </div>
   <div class="top-title"><b>S.A.C</b><span>SURFACE AREA CALCULATOR</span></div>
-  <div class="top-state"><div class="top-state-row"><span class="dot"></span><span>AUTO CALC</span></div><span class="top-version">VERSION 1.0.11</span></div>
+  <div class="top-state"><div class="top-state-row"><span class="dot"></span><span>AUTO CALC</span></div><span class="top-version">VERSION 1.0.12</span><span class="top-signature">T.S.HWANG</span></div>
 </header>
 
 <main class="mobile-main">
@@ -403,7 +404,7 @@ function calculateSurfaceAreas(values) {
   render();
 
   if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
-    navigator.serviceWorker.register('./sw.js?v=111', { updateViaCache: 'none' })
+    navigator.serviceWorker.register('./sw.js?v=112', { updateViaCache: 'none' })
       .then(registration => registration.update())
       .catch(() => {});
   }

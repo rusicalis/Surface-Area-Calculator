@@ -11,7 +11,7 @@
 <meta name="application-name" content="S.A.C">
 <meta name="description" content="도금 작업용 모바일 표면적 및 보충량 계산기">
 <title>S.A.C 표면적·보충량 계산기</title>
-<link rel="manifest" href="./manifest.webmanifest?v=113">
+<link rel="manifest" href="./manifest.webmanifest?v=114">
 <link rel="apple-touch-icon" sizes="180x180" href="./icons/sac-icon-180-v107.png">
 <link rel="apple-touch-icon-precomposed" sizes="180x180" href="./icons/sac-icon-180-v107.png">
 <link rel="icon" type="image/png" sizes="192x192" href="./icons/sac-icon-192-v107.png">
@@ -219,7 +219,7 @@ button{cursor:pointer}
     <span class="top-logo-text">S.A.C</span>
   </div>
   <div class="top-title"><b>S.A.C</b><span>SURFACE AREA CALCULATOR</span></div>
-  <div class="top-state"><div class="top-state-row"><span class="dot"></span><span>AUTO CALC</span></div><span class="top-version">VERSION 1.0.13</span><span class="top-signature">T.S.HWANG</span></div>
+  <div class="top-state"><div class="top-state-row"><span class="dot"></span><span>AUTO CALC</span></div><span class="top-version">VERSION 1.0.14</span><span class="top-signature">T.S.HWANG</span></div>
 </header>
 
 <main class="mobile-main">
@@ -397,6 +397,19 @@ button{cursor:pointer}
           <div class="repl-inline-result"><span>환산 원액 유효농도</span><b id="convertedStockGpl">0.00 g/L</b></div>
         </div>
 
+        <div class="repl-card-head" style="margin-top:12px;margin-bottom:7px"><div><small>액상약품 입고/투입 단위</small></div></div>
+        <div class="choice-group" aria-label="액상약품 입고 또는 투입 단위">
+          <label class="choice"><input type="radio" name="liquidSupplyUnit" value="liter" checked><span>L 기준</span></label>
+          <label class="choice"><input type="radio" name="liquidSupplyUnit" value="kg"><span>kg 기준</span></label>
+        </div>
+        <div id="liquidKgSupplyFields" class="conditional hidden">
+          <div class="repl-grid">
+            <label class="repl-field"><span>액상약품 중량 <small>kg</small></span><input id="liquidInputKg" type="number" inputmode="decimal" min="0" step="any" placeholder="25" autocomplete="off"></label>
+          </div>
+          <div class="repl-inline-result"><span>비중 적용 환산 부피</span><b id="convertedLiquidVolume">0.00 L</b></div>
+          <p class="repl-help">kg ÷ 비중으로 L를 환산합니다. 입고 중량을 실제 투입 부피로 바꿀 때 사용합니다.</p>
+        </div>
+
         <div class="repl-card-head" style="margin-top:12px;margin-bottom:7px"><div><small>액상 투입 방식</small></div></div>
         <div class="choice-group" aria-label="액상 투입 후 용량 처리">
           <label class="choice"><input type="radio" name="liquidVolumeMode" value="constant" checked><span>정용량 유지</span></label>
@@ -415,6 +428,11 @@ button{cursor:pointer}
         <div class="repl-metric primary"><span>순수 보충량</span><b id="pureWaterResult">0.00 L</b></div>
         <div class="repl-metric"><span>배출 수위</span><b id="dischargeMmResult">—</b></div>
         <div class="repl-metric"><span>원액 유효농도</span><b id="stockGplResult">—</b></div>
+        <div class="repl-metric"><span>입고/투입 중량</span><b id="inputChemicalKgResult">—</b></div>
+        <div class="repl-metric"><span>kg 환산 부피</span><b id="inputChemicalLResult">—</b></div>
+        <div class="repl-metric"><span>kg 적용 배출량</span><b id="inputWasteResult">—</b></div>
+        <div class="repl-metric"><span>kg 적용 최종용량</span><b id="inputFinalVolumeResult">—</b></div>
+        <div class="repl-metric"><span>kg 적용 예상농도</span><b id="inputFinalGplResult">—</b></div>
         <div class="repl-metric primary"><span>약품 보충량</span><b id="chemicalLResult">0.00 L</b></div>
         <div class="repl-metric primary"><span>약품 보충량</span><b id="chemicalKgResult">0.000 kg</b></div>
       </div>
@@ -485,10 +503,18 @@ function calculateSurfaceAreas(values) {
 /* CALC_CORE_END */
 
 /* REPLENISHMENT_CORE_START */
+function convertLiquidKgToLiters(kg, specificGravity) {
+  const massKg = Number(kg);
+  const sg = Number(specificGravity);
+  if (!Number.isFinite(massKg) || massKg < 0 || !Number.isFinite(sg) || sg <= 0) return NaN;
+  return massKg / sg;
+}
+
 function calculateReplenishment(values) {
   const blankResult = () => ({
     tankVolumeL: 0, currentGpl: 0, targetGpl: 0, mode: 'invalid', status: '입력 확인',
     wasteL: 0, pureWaterL: 0, chemicalL: 0, chemicalKg: 0, activeChemicalKg: 0,
+    inputChemicalKg: 0, inputChemicalL: 0, inputWasteL: 0, inputFinalVolumeL: 0, inputFinalGpl: 0,
     dischargeMm: 0, finalVolumeL: 0, stockGpl: 0, error: ''
   });
   const toNumber = (value) => {
@@ -581,6 +607,15 @@ function calculateReplenishment(values) {
     return result;
   }
 
+  const liquidSupplyUnit = values && values.liquidSupplyUnit === 'kg' ? 'kg' : 'liter';
+  if (liquidSupplyUnit === 'kg') {
+    const inputKg = toNumber(values && values.liquidInputKg);
+    if (Number.isFinite(inputKg) && inputKg >= 0) {
+      result.inputChemicalKg = inputKg;
+      result.inputChemicalL = convertLiquidKgToLiters(inputKg, sg);
+    }
+  }
+
   let stockGpl = NaN;
   if (concentrationMode === 'percent') {
     const wtPct = toNumber(values && values.liquidWtPct);
@@ -604,6 +639,22 @@ function calculateReplenishment(values) {
   }
 
   const volumeMode = values && values.liquidVolumeMode === 'grow' ? 'grow' : 'constant';
+
+  if (liquidSupplyUnit === 'kg' && result.inputChemicalL > 0) {
+    const appliedL = result.inputChemicalL;
+    if (volumeMode === 'constant') {
+      if (appliedL <= tankVolumeL) {
+        result.inputWasteL = appliedL;
+        result.inputFinalVolumeL = tankVolumeL;
+        result.inputFinalGpl = (currentGpl * (tankVolumeL - appliedL) + stockGpl * appliedL) / tankVolumeL;
+      }
+    } else {
+      result.inputWasteL = 0;
+      result.inputFinalVolumeL = tankVolumeL + appliedL;
+      result.inputFinalGpl = (currentGpl * tankVolumeL + stockGpl * appliedL) / result.inputFinalVolumeL;
+    }
+  }
+
   let chemicalL = 0;
   if (volumeMode === 'constant') {
     chemicalL = tankVolumeL * (targetGpl - currentGpl) / (stockGpl - currentGpl);
@@ -653,6 +704,7 @@ function calculateReplenishment(values) {
   const tankModeInputs = [...document.querySelectorAll('input[name="tankMode"]')];
   const chemicalTypeInputs = [...document.querySelectorAll('input[name="chemicalType"]')];
   const liquidConcentrationModeInputs = [...document.querySelectorAll('input[name="liquidConcentrationMode"]')];
+  const liquidSupplyUnitInputs = [...document.querySelectorAll('input[name="liquidSupplyUnit"]')];
   const liquidVolumeModeInputs = [...document.querySelectorAll('input[name="liquidVolumeMode"]')];
   const replInputs = [...replenishmentPanel.querySelectorAll('input')];
 
@@ -674,6 +726,9 @@ function calculateReplenishment(values) {
     const concentrationMode = checkedValue('liquidConcentrationMode','gpl');
     $('liquidGplFields').classList.toggle('hidden', concentrationMode !== 'gpl');
     $('liquidPercentFields').classList.toggle('hidden', concentrationMode !== 'percent');
+
+    const supplyUnit = checkedValue('liquidSupplyUnit','liter');
+    $('liquidKgSupplyFields').classList.toggle('hidden', supplyUnit !== 'kg');
   };
 
   const readValues = () => {
@@ -694,6 +749,8 @@ function calculateReplenishment(values) {
       liquidStockGpl: $('liquidStockGpl').value,
       liquidWtPct: $('liquidWtPct').value,
       specificGravity,
+      liquidSupplyUnit: checkedValue('liquidSupplyUnit','liter'),
+      liquidInputKg: $('liquidInputKg').value,
       liquidVolumeMode: checkedValue('liquidVolumeMode','constant')
     };
   };
@@ -710,6 +767,9 @@ function calculateReplenishment(values) {
     const sgPct = Number($('specificGravityPercent').value), wt = Number($('liquidWtPct').value);
     const converted = Number.isFinite(sgPct) && sgPct > 0 && Number.isFinite(wt) && wt > 0 ? sgPct*1000*(wt/100) : 0;
     $('convertedStockGpl').textContent = `${fmt(converted)} g/L`;
+    const inputKg = Number($('liquidInputKg').value);
+    const convertedInputL = convertLiquidKgToLiters(inputKg, Number(values.specificGravity));
+    $('convertedLiquidVolume').textContent = Number.isFinite(convertedInputL) ? `${fmt(convertedInputL)} L` : '0.00 L';
 
     $('replTankVolumeResult').textContent = `${fmt(result.tankVolumeL)} L`;
     $('replFinalVolumeResult').textContent = `${fmt(result.finalVolumeL)} L`;
@@ -719,6 +779,12 @@ function calculateReplenishment(values) {
     $('chemicalKgResult').textContent = `${fmt(result.chemicalKg,3)} kg`;
     $('dischargeMmResult').textContent = result.dischargeMm > 0 ? `${fmt(result.dischargeMm,1)} mm` : '—';
     $('stockGplResult').textContent = result.stockGpl > 0 ? `${fmt(result.stockGpl)} g/L` : '—';
+    const hasKgInput = values.liquidSupplyUnit === 'kg' && $('liquidInputKg').value !== '' && Number.isFinite(result.inputChemicalL);
+    $('inputChemicalKgResult').textContent = hasKgInput ? `${fmt(result.inputChemicalKg,3)} kg` : '—';
+    $('inputChemicalLResult').textContent = hasKgInput ? `${fmt(result.inputChemicalL)} L` : '—';
+    $('inputWasteResult').textContent = hasKgInput ? `${fmt(result.inputWasteL)} L` : '—';
+    $('inputFinalVolumeResult').textContent = hasKgInput && result.inputFinalVolumeL > 0 ? `${fmt(result.inputFinalVolumeL)} L` : '—';
+    $('inputFinalGplResult').textContent = hasKgInput && result.inputFinalGpl > 0 ? `${fmt(result.inputFinalGpl)} g/L` : '—';
     $('replModeLabel').textContent = result.error ? '입력 확인' : result.status;
     $('replMessage').classList.toggle('error', !!result.error);
     if (result.error) {
@@ -728,15 +794,19 @@ function calculateReplenishment(values) {
     } else if (result.mode === 'solid') {
       $('replMessage').textContent = `목표 농도까지 필요한 유효성분은 ${fmt(result.activeChemicalKg,3)} kg입니다. 입력 순도를 반영한 실제 고형약품량을 표시했습니다.`;
     } else if (result.mode === 'liquid') {
-      $('replMessage').textContent = values.liquidVolumeMode === 'constant'
+      const baseMessage = values.liquidVolumeMode === 'constant'
         ? '정용량 유지 기준입니다. 표시된 폐수량을 먼저 배출한 뒤 같은 부피의 액상약품을 투입하십시오.'
         : '용량 증가 허용 기준입니다. 폐수 없이 표시된 액상약품을 추가하며 최종 예상 용량이 증가합니다.';
+      const kgMessage = values.liquidSupplyUnit === 'kg' && $('liquidInputKg').value !== '' && Number.isFinite(result.inputChemicalL)
+        ? ` 입력한 ${fmt(result.inputChemicalKg,3)} kg은 비중 기준 ${fmt(result.inputChemicalL)} L이며, 선택한 투입 방식 적용 후 예상 농도는 ${result.inputFinalGpl > 0 ? fmt(result.inputFinalGpl) + ' g/L' : '계산 불가'}입니다.`
+        : '';
+      $('replMessage').textContent = baseMessage + kgMessage;
     } else if (result.mode === 'none') {
       $('replMessage').textContent = '현재 농도와 목표 농도가 같습니다. 조정이 필요하지 않습니다.';
     }
   };
 
-  [...tankModeInputs,...chemicalTypeInputs,...liquidConcentrationModeInputs,...liquidVolumeModeInputs].forEach(input => input.addEventListener('change', render));
+  [...tankModeInputs,...chemicalTypeInputs,...liquidConcentrationModeInputs,...liquidSupplyUnitInputs,...liquidVolumeModeInputs].forEach(input => input.addEventListener('change', render));
   replInputs.forEach(input => {
     input.addEventListener('input', render);
     input.addEventListener('change', render);
@@ -747,6 +817,7 @@ function calculateReplenishment(values) {
     document.querySelector('input[name="tankMode"][value="direct"]').checked = true;
     document.querySelector('input[name="chemicalType"][value="solid"]').checked = true;
     document.querySelector('input[name="liquidConcentrationMode"][value="gpl"]').checked = true;
+    document.querySelector('input[name="liquidSupplyUnit"][value="liter"]').checked = true;
     document.querySelector('input[name="liquidVolumeMode"][value="constant"]').checked = true;
     render();
     $('tankVolumeL').focus();
@@ -857,7 +928,7 @@ function calculateReplenishment(values) {
   render();
 
   if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
-    navigator.serviceWorker.register('./sw.js?v=113', { updateViaCache: 'none' })
+    navigator.serviceWorker.register('./sw.js?v=114', { updateViaCache: 'none' })
       .then(registration => registration.update())
       .catch(() => {});
   }

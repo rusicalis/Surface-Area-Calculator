@@ -11,11 +11,12 @@
 <meta name="application-name" content="S.A.C">
 <meta name="description" content="도금 작업용 모바일 표면적 및 보충량 계산기">
 <title>S.A.C 표면적·보충량 계산기</title>
-<link rel="manifest" href="./manifest.webmanifest?v=114">
-<link rel="apple-touch-icon" sizes="180x180" href="./icons/sac-icon-180-v107.png">
-<link rel="apple-touch-icon-precomposed" sizes="180x180" href="./icons/sac-icon-180-v107.png">
-<link rel="icon" type="image/png" sizes="192x192" href="./icons/sac-icon-192-v107.png">
-<link rel="icon" type="image/png" sizes="512x512" href="./icons/sac-icon-512-v107.png">
+<link rel="manifest" href="./manifest.webmanifest?v=116">
+<link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon-v115.png">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png">
+<link rel="apple-touch-icon-precomposed" sizes="180x180" href="./icons/apple-touch-icon-v115.png">
+<link rel="icon" type="image/png" sizes="192x192" href="./icons/sac-icon-192-v115.png">
+<link rel="icon" type="image/png" sizes="512x512" href="./icons/sac-icon-512-v115.png">
 <style>
 :root{
   --header:#d5efec;
@@ -219,7 +220,7 @@ button{cursor:pointer}
     <span class="top-logo-text">S.A.C</span>
   </div>
   <div class="top-title"><b>S.A.C</b><span>SURFACE AREA CALCULATOR</span></div>
-  <div class="top-state"><div class="top-state-row"><span class="dot"></span><span>AUTO CALC</span></div><span class="top-version">VERSION 1.0.14</span><span class="top-signature">T.S.HWANG</span></div>
+  <div class="top-state"><div class="top-state-row"><span class="dot"></span><span>AUTO CALC</span></div><span class="top-version">VERSION 1.0.16</span><span class="top-signature">T.S.HWANG</span></div>
 </header>
 
 <main class="mobile-main">
@@ -360,6 +361,30 @@ button{cursor:pointer}
         <label class="repl-field"><span>목표 농도 <small>g/L</small></span><input id="targetGpl" type="number" inputmode="decimal" min="0" step="any" placeholder="0" autocomplete="off"></label>
       </div>
       <p class="repl-help">현재 농도가 높으면 폐수 후 순수 보충, 낮으면 약품 보충으로 자동 판정합니다.</p>
+
+      <div class="choice-group" style="margin-top:10px" aria-label="동반 약품 농도 유지 선택">
+        <label class="choice"><input id="companionEnabled" type="checkbox"><span>동반 약품 농도도 함께 유지</span></label>
+      </div>
+      <div id="companionFields" class="conditional hidden">
+        <div class="repl-card-head" style="margin-top:4px;margin-bottom:7px"><div><small>동반 약품 보정 · 예: HCl</small></div></div>
+        <div class="repl-grid">
+          <label class="repl-field"><span>현재 동반농도 <small>g/L</small></span><input id="companionCurrentGpl" type="number" inputmode="decimal" min="0" step="any" placeholder="0" autocomplete="off"></label>
+          <label class="repl-field"><span>목표 동반농도 <small>g/L</small></span><input id="companionTargetGpl" type="number" inputmode="decimal" min="0" step="any" placeholder="0" autocomplete="off"></label>
+        </div>
+        <div class="repl-grid">
+          <label class="repl-field"><span>보충 원액 농도 <small>wt%</small></span><input id="companionStockWtPct" type="number" inputmode="decimal" min="0" max="100" step="any" placeholder="35" autocomplete="off"></label>
+          <label class="repl-field"><span>비중 <small>SG</small></span><input id="companionSpecificGravity" type="number" inputmode="decimal" min="0" step="any" placeholder="1.18" autocomplete="off"></label>
+        </div>
+        <div class="choice-group" aria-label="동반 약품 포장 단위">
+          <label class="choice"><input type="radio" name="companionSupplyUnit" value="liter" checked><span>L 단위</span></label>
+          <label class="choice"><input type="radio" name="companionSupplyUnit" value="kg"><span>kg 단위</span></label>
+        </div>
+        <div class="repl-grid">
+          <label class="repl-field"><span>말통/포장 용량 <small id="companionPackageUnitLabel">L</small></span><input id="companionPackageSize" type="number" inputmode="decimal" min="0" step="any" placeholder="20" autocomplete="off"></label>
+          <div class="repl-field"><span>원액 유효농도 <small>g/L</small></span><div class="repl-inline-result"><span>농도·비중 환산</span><b id="companionStockGplPreview">0.00 g/L</b></div></div>
+        </div>
+        <p class="repl-help">주농도 희석으로 함께 빠져나간 동반 약품을 계산하고, 부족분은 원액으로 보충한 뒤 나머지만 순수로 채웁니다.</p>
+      </div>
     </section>
 
     <section class="repl-card" aria-labelledby="chemicalTitle">
@@ -435,6 +460,8 @@ button{cursor:pointer}
         <div class="repl-metric"><span>kg 적용 예상농도</span><b id="inputFinalGplResult">—</b></div>
         <div class="repl-metric primary"><span>약품 보충량</span><b id="chemicalLResult">0.00 L</b></div>
         <div class="repl-metric primary"><span>약품 보충량</span><b id="chemicalKgResult">0.000 kg</b></div>
+        <div class="repl-metric"><span>동반 약품 최종농도</span><b id="companionFinalGplResult">—</b></div>
+        <div class="repl-metric"><span>말통/포장 수</span><b id="companionPackageCountResult">—</b></div>
       </div>
       <div id="replMessage" class="repl-message">탱크 용량과 현재/목표 농도를 입력하면 자동으로 계산됩니다.</div>
     </section>
@@ -515,6 +542,8 @@ function calculateReplenishment(values) {
     tankVolumeL: 0, currentGpl: 0, targetGpl: 0, mode: 'invalid', status: '입력 확인',
     wasteL: 0, pureWaterL: 0, chemicalL: 0, chemicalKg: 0, activeChemicalKg: 0,
     inputChemicalKg: 0, inputChemicalL: 0, inputWasteL: 0, inputFinalVolumeL: 0, inputFinalGpl: 0,
+    companionEnabled: false, companionCurrentGpl: 0, companionTargetGpl: 0, companionFinalGpl: 0,
+    companionRemainingG: 0, companionRequiredActiveG: 0, packageCount: 0, packageUnit: '',
     dischargeMm: 0, finalVolumeL: 0, stockGpl: 0, error: ''
   });
   const toNumber = (value) => {
@@ -578,6 +607,69 @@ function calculateReplenishment(values) {
     result.pureWaterL = result.wasteL;
     result.finalVolumeL = tankVolumeL;
     setDischarge();
+
+    const companionEnabled = !!(values && values.companionEnabled);
+    result.companionEnabled = companionEnabled;
+    if (!companionEnabled) {
+      result.error = '';
+      return result;
+    }
+
+    const companionCurrentGpl = toNumber(values && values.companionCurrentGpl);
+    const companionTargetGpl = toNumber(values && values.companionTargetGpl);
+    const companionWtPct = toNumber(values && values.companionStockWtPct);
+    const companionSg = positive(values && values.companionSpecificGravity);
+    if (!Number.isFinite(companionCurrentGpl) || companionCurrentGpl < 0 || !Number.isFinite(companionTargetGpl) || companionTargetGpl < 0) {
+      result.error = '동반 약품의 현재 농도와 목표 농도를 g/L 단위로 입력하십시오.';
+      return result;
+    }
+    if (!Number.isFinite(companionWtPct) || companionWtPct <= 0 || companionWtPct > 100) {
+      result.error = '동반 약품 원액 농도(wt%)를 0 초과 100 이하로 입력하십시오.';
+      return result;
+    }
+    if (!Number.isFinite(companionSg)) {
+      result.error = '동반 약품 원액의 비중을 입력하십시오.';
+      return result;
+    }
+
+    result.companionCurrentGpl = companionCurrentGpl;
+    result.companionTargetGpl = companionTargetGpl;
+    const companionStockGpl = companionSg * 1000 * (companionWtPct / 100);
+    result.stockGpl = companionStockGpl;
+    const remainingVolumeL = tankVolumeL - result.wasteL;
+    result.companionRemainingG = companionCurrentGpl * remainingVolumeL;
+    const targetCompanionG = companionTargetGpl * tankVolumeL;
+    const requiredActiveG = targetCompanionG - result.companionRemainingG;
+    result.companionRequiredActiveG = Math.max(0, requiredActiveG);
+
+    if (requiredActiveG < -1e-9) {
+      result.companionFinalGpl = result.companionRemainingG / tankVolumeL;
+      result.error = '주농도 희석량만으로 동반 약품 농도가 목표보다 높습니다. 추가 희석 또는 조건 조정이 필요합니다.';
+      return result;
+    }
+
+    const companionChemicalL = requiredActiveG > 0 ? requiredActiveG / companionStockGpl : 0;
+    const companionChemicalKg = companionChemicalL * companionSg;
+    result.chemicalL = companionChemicalL;
+    result.chemicalKg = companionChemicalKg;
+    result.companionFinalGpl = (result.companionRemainingG + companionStockGpl * companionChemicalL) / tankVolumeL;
+
+    const supplyUnit = values && values.companionSupplyUnit === 'kg' ? 'kg' : 'liter';
+    result.packageUnit = supplyUnit;
+    const packageSize = positive(values && values.companionPackageSize);
+    if (Number.isFinite(packageSize)) {
+      result.packageCount = supplyUnit === 'kg' ? companionChemicalKg / packageSize : companionChemicalL / packageSize;
+    }
+
+    if (companionChemicalL - result.wasteL > 1e-9) {
+      result.pureWaterL = 0;
+      result.status = '희석 + 동반 약품 보정';
+      result.error = '필요한 동반 약품 부피가 폐수량을 초과하여 정용량 유지가 불가능합니다.';
+      return result;
+    }
+
+    result.pureWaterL = Math.max(0, result.wasteL - companionChemicalL);
+    result.status = '희석 + 동반 약품 보정';
     result.error = '';
     return result;
   }
@@ -706,6 +798,7 @@ function calculateReplenishment(values) {
   const liquidConcentrationModeInputs = [...document.querySelectorAll('input[name="liquidConcentrationMode"]')];
   const liquidSupplyUnitInputs = [...document.querySelectorAll('input[name="liquidSupplyUnit"]')];
   const liquidVolumeModeInputs = [...document.querySelectorAll('input[name="liquidVolumeMode"]')];
+  const companionSupplyUnitInputs = [...document.querySelectorAll('input[name="companionSupplyUnit"]')];
   const replInputs = [...replenishmentPanel.querySelectorAll('input')];
 
   const checkedValue = (name, fallback) => {
@@ -729,6 +822,11 @@ function calculateReplenishment(values) {
 
     const supplyUnit = checkedValue('liquidSupplyUnit','liter');
     $('liquidKgSupplyFields').classList.toggle('hidden', supplyUnit !== 'kg');
+
+    const companionOn = $('companionEnabled').checked;
+    $('companionFields').classList.toggle('hidden', !companionOn);
+    const companionUnit = checkedValue('companionSupplyUnit','liter');
+    $('companionPackageUnitLabel').textContent = companionUnit === 'kg' ? 'kg' : 'L';
   };
 
   const readValues = () => {
@@ -751,7 +849,14 @@ function calculateReplenishment(values) {
       specificGravity,
       liquidSupplyUnit: checkedValue('liquidSupplyUnit','liter'),
       liquidInputKg: $('liquidInputKg').value,
-      liquidVolumeMode: checkedValue('liquidVolumeMode','constant')
+      liquidVolumeMode: checkedValue('liquidVolumeMode','constant'),
+      companionEnabled: $('companionEnabled').checked,
+      companionCurrentGpl: $('companionCurrentGpl').value,
+      companionTargetGpl: $('companionTargetGpl').value,
+      companionStockWtPct: $('companionStockWtPct').value,
+      companionSpecificGravity: $('companionSpecificGravity').value,
+      companionSupplyUnit: checkedValue('companionSupplyUnit','liter'),
+      companionPackageSize: $('companionPackageSize').value
     };
   };
 
@@ -770,6 +875,11 @@ function calculateReplenishment(values) {
     const inputKg = Number($('liquidInputKg').value);
     const convertedInputL = convertLiquidKgToLiters(inputKg, Number(values.specificGravity));
     $('convertedLiquidVolume').textContent = Number.isFinite(convertedInputL) ? `${fmt(convertedInputL)} L` : '0.00 L';
+    const companionSgPreview = Number($('companionSpecificGravity').value);
+    const companionWtPreview = Number($('companionStockWtPct').value);
+    const companionStockPreview = Number.isFinite(companionSgPreview) && companionSgPreview > 0 && Number.isFinite(companionWtPreview) && companionWtPreview > 0
+      ? companionSgPreview * 1000 * (companionWtPreview / 100) : 0;
+    $('companionStockGplPreview').textContent = `${fmt(companionStockPreview)} g/L`;
 
     $('replTankVolumeResult').textContent = `${fmt(result.tankVolumeL)} L`;
     $('replFinalVolumeResult').textContent = `${fmt(result.finalVolumeL)} L`;
@@ -777,6 +887,9 @@ function calculateReplenishment(values) {
     $('pureWaterResult').textContent = `${fmt(result.pureWaterL)} L`;
     $('chemicalLResult').textContent = `${fmt(result.chemicalL)} L`;
     $('chemicalKgResult').textContent = `${fmt(result.chemicalKg,3)} kg`;
+    $('companionFinalGplResult').textContent = result.companionEnabled && result.companionFinalGpl >= 0 ? `${fmt(result.companionFinalGpl)} g/L` : '—';
+    $('companionPackageCountResult').textContent = result.companionEnabled && result.packageCount > 0
+      ? `${fmt(result.packageCount,2)} ${result.packageUnit === 'kg' ? '포장' : '말'}` : '—';
     $('dischargeMmResult').textContent = result.dischargeMm > 0 ? `${fmt(result.dischargeMm,1)} mm` : '—';
     $('stockGplResult').textContent = result.stockGpl > 0 ? `${fmt(result.stockGpl)} g/L` : '—';
     const hasKgInput = values.liquidSupplyUnit === 'kg' && $('liquidInputKg').value !== '' && Number.isFinite(result.inputChemicalL);
@@ -790,7 +903,9 @@ function calculateReplenishment(values) {
     if (result.error) {
       $('replMessage').textContent = result.error;
     } else if (result.mode === 'dilution') {
-      $('replMessage').textContent = '현재 농도가 목표보다 높습니다. 계산된 양만큼 폐수 후 동일량의 순수를 보충하십시오.';
+      $('replMessage').textContent = result.companionEnabled
+        ? `주농도 기준 ${fmt(result.wasteL)} L를 배출한 뒤 동반 약품 ${fmt(result.chemicalL)} L (${fmt(result.chemicalKg,3)} kg)을 보충하고, 나머지 ${fmt(result.pureWaterL)} L를 순수로 보충하십시오.`
+        : '현재 농도가 목표보다 높습니다. 계산된 양만큼 폐수 후 동일량의 순수를 보충하십시오.';
     } else if (result.mode === 'solid') {
       $('replMessage').textContent = `목표 농도까지 필요한 유효성분은 ${fmt(result.activeChemicalKg,3)} kg입니다. 입력 순도를 반영한 실제 고형약품량을 표시했습니다.`;
     } else if (result.mode === 'liquid') {
@@ -806,7 +921,7 @@ function calculateReplenishment(values) {
     }
   };
 
-  [...tankModeInputs,...chemicalTypeInputs,...liquidConcentrationModeInputs,...liquidSupplyUnitInputs,...liquidVolumeModeInputs].forEach(input => input.addEventListener('change', render));
+  [...tankModeInputs,...chemicalTypeInputs,...liquidConcentrationModeInputs,...liquidSupplyUnitInputs,...liquidVolumeModeInputs,...companionSupplyUnitInputs].forEach(input => input.addEventListener('change', render));
   replInputs.forEach(input => {
     input.addEventListener('input', render);
     input.addEventListener('change', render);
@@ -819,6 +934,8 @@ function calculateReplenishment(values) {
     document.querySelector('input[name="liquidConcentrationMode"][value="gpl"]').checked = true;
     document.querySelector('input[name="liquidSupplyUnit"][value="liter"]').checked = true;
     document.querySelector('input[name="liquidVolumeMode"][value="constant"]').checked = true;
+    $('companionEnabled').checked = false;
+    document.querySelector('input[name="companionSupplyUnit"][value="liter"]').checked = true;
     render();
     $('tankVolumeL').focus();
   });
@@ -928,7 +1045,7 @@ function calculateReplenishment(values) {
   render();
 
   if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
-    navigator.serviceWorker.register('./sw.js?v=114', { updateViaCache: 'none' })
+    navigator.serviceWorker.register('./sw.js?v=116', { updateViaCache: 'none' })
       .then(registration => registration.update())
       .catch(() => {});
   }

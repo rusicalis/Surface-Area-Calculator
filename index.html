@@ -6,17 +6,17 @@
 <meta name="theme-color" content="#d5efec">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="S.A.C">
+<meta name="apple-mobile-web-app-title" content="S.A.R.C">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="application-name" content="S.A.C">
+<meta name="application-name" content="S.A.R.C">
 <meta name="description" content="도금 작업용 모바일 표면적 및 보충량 계산기">
-<title>S.A.C 표면적·보충량 계산기</title>
-<link rel="manifest" href="./manifest.webmanifest?v=116">
-<link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon-v115.png">
+<title>S.A.R.C 표면적·보충량 계산기</title>
+<link rel="manifest" href="./manifest.webmanifest?v=117">
+<link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon-v117.png">
 <link rel="apple-touch-icon" href="./apple-touch-icon.png">
-<link rel="apple-touch-icon-precomposed" sizes="180x180" href="./icons/apple-touch-icon-v115.png">
-<link rel="icon" type="image/png" sizes="192x192" href="./icons/sac-icon-192-v115.png">
-<link rel="icon" type="image/png" sizes="512x512" href="./icons/sac-icon-512-v115.png">
+<link rel="apple-touch-icon-precomposed" sizes="180x180" href="./icons/apple-touch-icon-v117.png">
+<link rel="icon" type="image/png" sizes="192x192" href="./icons/sarc-icon-192-v117.png">
+<link rel="icon" type="image/png" sizes="512x512" href="./icons/sarc-icon-512-v117.png">
 <style>
 :root{
   --header:#d5efec;
@@ -217,10 +217,10 @@ button{cursor:pointer}
       <polyline points="19,45 32,52 45,45" fill="none" stroke="#3b9a94" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
       <circle cx="32" cy="12" r="3.6" fill="#85f4e7"/><circle cx="54" cy="24" r="3.6" fill="#3babef"/>
     </svg>
-    <span class="top-logo-text">S.A.C</span>
+    <span class="top-logo-text">S.A.R.C</span>
   </div>
-  <div class="top-title"><b>S.A.C</b><span>SURFACE AREA CALCULATOR</span></div>
-  <div class="top-state"><div class="top-state-row"><span class="dot"></span><span>AUTO CALC</span></div><span class="top-version">VERSION 1.0.16</span><span class="top-signature">T.S.HWANG</span></div>
+  <div class="top-title"><b>S.A.R.C</b><span>SURFACE AREA &amp; REPLENISHMENT CALCULATOR</span></div>
+  <div class="top-state"><div class="top-state-row"><span class="dot"></span><span>AUTO CALC</span></div><span class="top-version">VERSION 1.0.17</span><span class="top-signature">T.S.HWANG</span></div>
 </header>
 
 <main class="mobile-main">
@@ -1045,7 +1045,7 @@ function calculateReplenishment(values) {
   render();
 
   if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
-    navigator.serviceWorker.register('./sw.js?v=116', { updateViaCache: 'none' })
+    navigator.serviceWorker.register('./sw.js?v=117', { updateViaCache: 'none' })
       .then(registration => registration.update())
       .catch(() => {});
   }

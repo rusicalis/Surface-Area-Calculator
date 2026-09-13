@@ -11,12 +11,12 @@
 <meta name="application-name" content="S.A.R.C">
 <meta name="description" content="도금 작업용 모바일 표면적 및 보충량 계산기">
 <title>S.A.R.C 표면적·보충량 계산기</title>
-<link rel="manifest" href="./manifest.webmanifest?v=117">
-<link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon-v117.png">
+<link rel="manifest" href="./manifest.webmanifest?v=118">
+<link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon-v118.png">
 <link rel="apple-touch-icon" href="./apple-touch-icon.png">
-<link rel="apple-touch-icon-precomposed" sizes="180x180" href="./icons/apple-touch-icon-v117.png">
-<link rel="icon" type="image/png" sizes="192x192" href="./icons/sarc-icon-192-v117.png">
-<link rel="icon" type="image/png" sizes="512x512" href="./icons/sarc-icon-512-v117.png">
+<link rel="apple-touch-icon-precomposed" sizes="180x180" href="./icons/apple-touch-icon-v118.png">
+<link rel="icon" type="image/png" sizes="192x192" href="./icons/sarc-icon-192-v118.png">
+<link rel="icon" type="image/png" sizes="512x512" href="./icons/sarc-icon-512-v118.png">
 <style>
 :root{
   --header:#d5efec;
@@ -52,11 +52,7 @@ button{cursor:pointer}
   background:#0b2930;overflow:hidden;
   box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)
 }
-.top-logo svg{width:27px;height:25px;display:block;flex:0 0 auto;margin-top:1px}
-.top-logo-text{
-  margin-top:-1px;color:#fff;font:900 6.8px/1 "Segoe UI",Arial,sans-serif;
-  letter-spacing:.18px;white-space:nowrap;text-shadow:0 1px 2px rgba(0,0,0,.32)
-}
+.top-logo-img{width:100%;height:100%;display:block;object-fit:cover;border-radius:10px}
 .top-title{display:flex;flex-direction:column;line-height:1.05;min-width:0}
 .top-title b{font:800 17px "Segoe UI",sans-serif;letter-spacing:.5px}
 .top-title span{font-size:8px;letter-spacing:1.3px;color:#52706e;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -211,16 +207,10 @@ button{cursor:pointer}
 <body>
 <header class="topbar">
   <div class="top-logo" aria-hidden="true">
-    <svg viewBox="0 0 64 64">
-      <polyline points="10,24 32,12 54,24 32,36 10,24" fill="none" stroke="#68eadc" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
-      <polyline points="15,35 32,44 49,35" fill="none" stroke="#319fe8" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
-      <polyline points="19,45 32,52 45,45" fill="none" stroke="#3b9a94" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
-      <circle cx="32" cy="12" r="3.6" fill="#85f4e7"/><circle cx="54" cy="24" r="3.6" fill="#3babef"/>
-    </svg>
-    <span class="top-logo-text">S.A.R.C</span>
+    <img src="./icons/sarc-icon-192-v118.png" alt="S.A.R.C 아이콘" class="top-logo-img">
   </div>
   <div class="top-title"><b>S.A.R.C</b><span>SURFACE AREA &amp; REPLENISHMENT CALCULATOR</span></div>
-  <div class="top-state"><div class="top-state-row"><span class="dot"></span><span>AUTO CALC</span></div><span class="top-version">VERSION 1.0.17</span><span class="top-signature">T.S.HWANG</span></div>
+  <div class="top-state"><div class="top-state-row"><span class="dot"></span><span>AUTO CALC</span></div><span class="top-version">VERSION 1.0.18</span><span class="top-signature">T.S.HWANG</span></div>
 </header>
 
 <main class="mobile-main">
@@ -1045,7 +1035,7 @@ function calculateReplenishment(values) {
   render();
 
   if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
-    navigator.serviceWorker.register('./sw.js?v=117', { updateViaCache: 'none' })
+    navigator.serviceWorker.register('./sw.js?v=118', { updateViaCache: 'none' })
       .then(registration => registration.update())
       .catch(() => {});
   }

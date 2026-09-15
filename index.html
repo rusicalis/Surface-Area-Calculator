@@ -11,7 +11,7 @@
 <meta name="application-name" content="S.A.R.C">
 <meta name="description" content="도금 작업용 모바일 표면적 및 보충량 계산기">
 <title>S.A.R.C 표면적·보충량 계산기</title>
-<link rel="manifest" href="./manifest.webmanifest?v=127">
+<link rel="manifest" href="./manifest.webmanifest?v=130">
 <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon-v118.png">
 <link rel="apple-touch-icon" href="./apple-touch-icon.png">
 <link rel="apple-touch-icon-precomposed" sizes="180x180" href="./icons/apple-touch-icon-v118.png">
@@ -215,6 +215,78 @@ button{cursor:pointer}
   .choice span{padding:0 8px;font-size:9px}
 }
 
+
+/* V1.0.28 current density + preset settings */
+.app-tabs{grid-template-columns:repeat(3,minmax(0,1fr))}
+.surface-section-head{align-items:flex-start}
+.surface-heading-area{min-width:0;flex:1 1 auto}
+.surface-heading-line{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.surface-heading-line h1{flex:0 0 auto}
+.current-density-inline{display:flex;align-items:center;gap:5px;border:1px solid #cfe2df;border-radius:9px;background:#fff;padding:3px 6px;color:#536568;font-size:8px;font-weight:800;white-space:nowrap}
+.current-density-inline input{width:72px;height:27px;border:0;border-left:1px solid #e3ecea;border-right:1px solid #e3ecea;padding:0 7px;outline:none;color:var(--accent-dark);font-size:13px;font-weight:850;background:#fff;appearance:textfield;-moz-appearance:textfield}
+.current-density-inline input::-webkit-outer-spin-button,.current-density-inline input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.current-density-inline input:focus{box-shadow:inset 0 -2px 0 var(--accent)}
+.current-density-inline small{font-size:7px;color:#789092}
+.current-density-preset-choices{display:flex;gap:5px;flex-wrap:wrap;margin-top:5px;min-height:0}
+.current-density-choice,.surface-preset-choice{display:inline-flex;align-items:center;gap:4px;border:1px solid #d7e6e3;border-radius:999px;background:#f8fbfa;padding:3px 7px;font-size:7.5px;font-weight:800;color:#5c7375;cursor:pointer}
+.current-density-choice input,.surface-preset-choice input{width:11px;height:11px;margin:0;accent-color:var(--accent);flex:0 0 auto}
+.current-density-choice.selected,.surface-preset-choice.selected{border-color:#9fd4ce;background:var(--accent-soft);color:var(--accent-dark)}
+.current-density-empty,.surface-preset-empty{font-size:7.5px;color:#91a1a2;padding:2px 0}
+.entry-topline{display:flex;align-items:center;gap:7px;margin-bottom:7px;flex-wrap:wrap}
+.entry-topline .entry-label{margin:0 2px;flex:0 0 auto}
+.surface-preset-choices{display:flex;align-items:center;gap:5px;flex-wrap:wrap;min-width:0;flex:1 1 auto}
+.surface-preset-choice span{white-space:nowrap}
+.entry-row-tools{display:flex;align-items:center;gap:5px;min-width:0;margin-left:auto}
+
+.entry-metrics{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;padding-top:8px;border-top:1px solid #edf2f1}
+.entry-metric{min-width:0;display:flex;align-items:flex-end;justify-content:space-between;gap:8px;border-radius:10px;background:#f8fbfa;padding:7px 9px}
+.entry-metric span{font-size:7.5px;font-weight:850;letter-spacing:.35px;color:#688082;white-space:nowrap}
+.entry-metric b{font:850 13px/1.05 "Segoe UI",sans-serif;color:var(--accent-dark);white-space:nowrap}
+.entry-metric b small{font-size:7px;color:#74898b;font-weight:750;margin-left:2px}
+.entry-metric:last-child{text-align:right}
+@media(max-width:350px){.entry-metrics{grid-template-columns:1fr}.entry-metric:last-child{text-align:left}}
+.row-delete-btn{width:26px;height:26px;border-radius:8px;border:1px solid #e5d7d7;background:#fff9f9;color:#b95e5e;font:850 16px/1 "Segoe UI",sans-serif;display:grid;place-items:center;padding:0}
+.integrated-result-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:10px}
+.integrated-metric{min-width:0;border:1px solid #e2ecea;border-radius:12px;background:#fff;padding:9px}
+.integrated-metric span{display:block;font-size:8px;font-weight:800;color:#728486;margin-bottom:5px}
+.integrated-metric output{display:block;font:800 18px/1.05 "Segoe UI",sans-serif;color:#23494a;white-space:nowrap}
+.integrated-metric output small{font-size:8px;color:#7b8d8e;font-weight:700;margin-left:2px}
+.integrated-metric.primary{border-color:#b9ddd8;background:#f3fbf9}
+.integrated-metric.primary output{color:var(--accent-dark);font-size:21px}
+.settings-card{margin-bottom:10px}
+.settings-status{min-height:18px;margin:0 2px 8px;font-size:8px;color:#6f8587}
+.settings-help{margin:-2px 0 10px;font-size:8px;line-height:1.55;color:#7d8f90}
+.settings-grid{display:grid;gap:8px;margin-bottom:8px}
+.settings-grid.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.settings-grid.four{grid-template-columns:repeat(4,minmax(0,1fr))}
+.repl-field select{width:100%;height:44px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--text);padding:0 10px;outline:none;font-size:12px;font-weight:750}
+.settings-save-btn{width:100%;min-height:40px;border:1px solid #9fd4ce;border-radius:11px;background:var(--accent-soft);color:var(--accent-dark);font-size:10px;font-weight:850;padding:9px 12px}
+.settings-list{display:grid;gap:6px;margin-top:9px}
+.settings-list-empty{border:1px dashed #d7e3e1;border-radius:10px;padding:10px;text-align:center;font-size:8px;color:#8a9a9b;background:#fbfdfd}
+.settings-list-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;border:1px solid #e2ecea;border-radius:11px;background:#fff;padding:8px 9px}
+.settings-list-row.selected{border-color:#9fd4ce;background:#f3fbf9}
+.settings-list-main{min-width:0}
+.settings-list-main b{display:block;font-size:10px;color:#29494a;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.settings-list-main span{display:block;font-size:8px;color:#7b8d8e;margin-top:2px}
+.settings-list-actions{display:flex;gap:4px}
+.settings-mini-btn{min-height:27px;border:1px solid #d4e4e1;border-radius:8px;background:#f8fbfa;color:#4c686a;font-size:8px;font-weight:800;padding:0 8px}
+.settings-mini-btn.select{border-color:#a9d8d2;color:var(--accent-dark);background:#eff9f7}
+.settings-mini-btn.delete{border-color:#ecd5d5;color:#b55e5e;background:#fff8f8}
+[data-setting-shapes].hidden{display:none}
+@media(max-width:560px){
+  .integrated-result-grid{grid-template-columns:1fr 1fr}.integrated-metric.primary{grid-column:1/-1}
+  .settings-grid.four{grid-template-columns:1fr 1fr}
+}
+@media(max-width:430px){
+  .surface-section-head{gap:7px}.surface-heading-line{gap:7px}.current-density-inline{padding:2px 5px}.current-density-inline input{width:62px;height:25px;font-size:12px}
+  .surface-preset-choice{font-size:7px;padding:3px 6px}
+  .settings-grid.two{grid-template-columns:1fr}
+}
+@media(max-width:350px){
+  .integrated-result-grid,.settings-grid.four{grid-template-columns:1fr}.integrated-metric.primary{grid-column:auto}
+  .entry-topline{align-items:flex-start}.surface-preset-choices{flex-basis:100%}.entry-row-tools{margin-left:auto}.surface-preset-choice{font-size:6.8px}
+}
+
 </style>
 </head>
 <body>
@@ -225,17 +297,24 @@ button{cursor:pointer}
     </div>
     <div class="top-title"><b>S.A.R.C</b><span>SURFACE AREA &amp; REPLENISHMENT CALCULATOR</span></div>
   </div>
-  <div class="top-state"><div class="top-state-row"><span class="dot"></span><span>AUTO CALC</span></div><span class="top-version">VERSION 1.0.27</span><span class="top-signature">T.S.HWANG</span></div>
+  <div class="top-state"><div class="top-state-row"><span class="dot"></span><span>AUTO CALC</span></div><span class="top-version">VERSION 1.0.30</span><span class="top-signature">T.S.HWANG</span></div>
 </header>
 
 <main class="mobile-main">
   <div class="app-tabs" role="tablist" aria-label="계산기 선택">
     <button id="surfaceTab" class="app-tab active" type="button" role="tab" aria-selected="true" data-tab-target="surface">표면적 계산</button>
     <button id="replenishmentTab" class="app-tab" type="button" role="tab" aria-selected="false" data-tab-target="replenishment">보충량 계산</button>
+    <button id="settingsTab" class="app-tab" type="button" role="tab" aria-selected="false" data-tab-target="settings">설정</button>
   </div>
   <section id="surfacePanel" class="app-panel active" role="tabpanel" aria-labelledby="surfaceTab">
-  <div class="section-head">
-    <div><h1>표면적 계산기</h1></div>
+  <div class="section-head surface-section-head">
+    <div class="surface-heading-area">
+      <div class="surface-heading-line">
+        <h1>표면적 계산기</h1>
+        <label class="current-density-inline"><span>전류 밀도</span><input id="currentDensityInput" type="number" inputmode="decimal" min="0" step="any" placeholder="0"><small>A/dm²</small></label>
+      </div>
+      <div id="currentDensityPresetChoices" class="current-density-preset-choices" aria-label="저장된 전류 밀도 선택"></div>
+    </div>
     <div class="unit-pill">mm → dm²</div>
   </div>
 
@@ -249,7 +328,7 @@ button{cursor:pointer}
     </div>
     <div class="entry-list" data-group="cylinder">
       <div class="entry-row" data-entry="cylinder">
-        <div class="entry-label">항목 1</div>
+        <div class="entry-topline"><div class="entry-label">항목 1</div><div class="surface-preset-choices" data-preset-shape="cylinder" aria-label="원통 기본 표면적 선택"></div><div class="entry-row-tools"></div></div>
         <div class="fields three">
           <label class="field"><span>지름 <small>mm</small></span><input id="diameter" data-field="diameter" type="number" inputmode="decimal" step="any" placeholder="0" autocomplete="off"></label>
           <label class="field"><span>높이 <small>mm</small></span><input id="height" data-field="height" type="number" inputmode="decimal" step="any" placeholder="0" autocomplete="off"></label>
@@ -273,7 +352,7 @@ button{cursor:pointer}
     </div>
     <div class="entry-list" data-group="circle">
       <div class="entry-row" data-entry="circle">
-        <div class="entry-label">항목 1</div>
+        <div class="entry-topline"><div class="entry-label">항목 1</div><div class="surface-preset-choices" data-preset-shape="circle" aria-label="원 기본 표면적 선택"></div><div class="entry-row-tools"></div></div>
         <div class="fields two">
           <label class="field"><span>반지름 <small>mm</small></span><input id="radius" data-field="radius" type="number" inputmode="decimal" step="any" placeholder="0" autocomplete="off"></label>
           <label class="field"><span>수량 <small>EA</small></span><input id="circleQty" data-field="qty" type="number" inputmode="numeric" step="1" placeholder="1" autocomplete="off"></label>
@@ -296,7 +375,7 @@ button{cursor:pointer}
     </div>
     <div class="entry-list" data-group="box">
       <div class="entry-row" data-entry="box">
-        <div class="entry-label">항목 1</div>
+        <div class="entry-topline"><div class="entry-label">항목 1</div><div class="surface-preset-choices" data-preset-shape="box" aria-label="직육면체 기본 표면적 선택"></div><div class="entry-row-tools"></div></div>
         <div class="fields four">
           <label class="field"><span>가로 <small>mm</small></span><input id="boxWidth" data-field="width" type="number" inputmode="decimal" step="any" placeholder="0" autocomplete="off"></label>
           <label class="field"><span>세로 <small>mm</small></span><input id="boxDepth" data-field="depth" type="number" inputmode="decimal" step="any" placeholder="0" autocomplete="off"></label>
@@ -314,9 +393,11 @@ button{cursor:pointer}
   <div id="statusLine" class="status-line" aria-live="polite"><span class="mini-dot"></span><span>값을 입력하면 결과가 자동으로 계산됩니다.</span></div>
 
   <section class="total-card" aria-labelledby="totalTitle">
-    <div class="total-grid">
-      <div class="total-label"><small>통합 결과</small><h2 id="totalTitle">총 표면적</h2><p>원통 측면적 + 원 면적 + 직육면체 6면 표면적</p></div>
-      <output id="totalResult" class="total-value" aria-live="polite">0.0000<small>dm²</small></output>
+    <div class="total-label"><small>통합 결과</small><h2 id="totalTitle">표면적 · 전류</h2><p>전체 표면적 × 적용 전류 밀도 = 계산 총 전류</p></div>
+    <div class="integrated-result-grid">
+      <div class="integrated-metric"><span>총 표면적</span><output id="totalResult" aria-live="polite">0.0000 <small>dm²</small></output></div>
+      <div class="integrated-metric"><span>적용 전류 밀도</span><output id="appliedCurrentDensityResult" aria-live="polite">0.000 <small>A/dm²</small></output></div>
+      <div class="integrated-metric primary"><span>계산 총 전류</span><output id="totalCurrentResult" aria-live="polite">0.00 <small>A</small></output></div>
     </div>
   </section>
 
@@ -474,6 +555,45 @@ button{cursor:pointer}
     <div class="repl-actions"><button id="replenishmentResetButton" type="button" class="secondary">보충량 입력값 초기화</button></div>
   </section>
 
+  <section id="settingsPanel" class="app-panel" role="tabpanel" aria-labelledby="settingsTab">
+    <div class="section-head">
+      <div><h1>설정</h1></div>
+      <div class="unit-pill">자동 저장</div>
+    </div>
+    <div id="settingsStatus" class="settings-status" aria-live="polite">저장한 값은 이 기기에 유지됩니다.</div>
+
+    <section class="repl-card settings-card" aria-labelledby="currentDensitySettingsTitle">
+      <div class="repl-card-head"><div><small>SETTING 01</small><h2 id="currentDensitySettingsTitle">전류 밀도 기본값</h2></div></div>
+      <p class="settings-help">작업에 자주 사용하는 전류 밀도를 이름과 함께 저장합니다. 표면적 계산 화면에서 체크하여 한 개를 선택하거나 직접 값을 입력할 수 있습니다.</p>
+      <input id="currentDensityEditingId" type="hidden">
+      <div class="settings-grid two">
+        <label class="repl-field"><span>항목명 <small>예: 은도금 일반</small></span><input id="currentDensityPresetName" type="text" maxlength="30" placeholder="전류 밀도 이름" autocomplete="off"></label>
+        <label class="repl-field"><span>전류 밀도 <small>A/dm²</small></span><input id="currentDensityPresetValue" type="number" inputmode="decimal" min="0" step="any" placeholder="0.50" autocomplete="off"></label>
+      </div>
+      <button id="saveCurrentDensityPreset" type="button" class="settings-save-btn">전류 밀도 저장</button>
+      <div id="currentDensityPresetList" class="settings-list" aria-live="polite"></div>
+    </section>
+
+    <section class="repl-card settings-card" aria-labelledby="surfacePresetSettingsTitle">
+      <div class="repl-card-head"><div><small>SETTING 02</small><h2 id="surfacePresetSettingsTitle">기본 표면적</h2></div></div>
+      <p class="settings-help">항목명과 형상별 치수를 저장합니다. 수량은 저장하지 않으며, 계산 화면에서 프리셋 선택 시 치수만 자동 입력됩니다.</p>
+      <input id="surfacePresetEditingId" type="hidden">
+      <div class="settings-grid two">
+        <label class="repl-field"><span>항목명 <small>체크 선택 표시명</small></span><input id="surfacePresetName" type="text" maxlength="40" placeholder="예: BUS BAR A" autocomplete="off"></label>
+        <label class="repl-field"><span>형상 <small>TYPE</small></span><select id="surfacePresetShape"><option value="cylinder">원통 측면적</option><option value="circle">원 면적</option><option value="box">직육면체 표면적</option></select></label>
+      </div>
+      <div class="settings-grid four surface-preset-dimensions">
+        <label class="repl-field" data-setting-shapes="cylinder"><span>지름 <small>mm</small></span><input id="surfacePresetDiameter" type="number" inputmode="decimal" min="0" step="any" placeholder="0"></label>
+        <label class="repl-field" data-setting-shapes="circle"><span>반지름 <small>mm</small></span><input id="surfacePresetRadius" type="number" inputmode="decimal" min="0" step="any" placeholder="0"></label>
+        <label class="repl-field" data-setting-shapes="box"><span>가로 <small>mm</small></span><input id="surfacePresetWidth" type="number" inputmode="decimal" min="0" step="any" placeholder="0"></label>
+        <label class="repl-field" data-setting-shapes="box"><span>세로 <small>mm</small></span><input id="surfacePresetDepth" type="number" inputmode="decimal" min="0" step="any" placeholder="0"></label>
+        <label class="repl-field" data-setting-shapes="cylinder,box"><span>높이 <small>mm</small></span><input id="surfacePresetHeight" type="number" inputmode="decimal" min="0" step="any" placeholder="0"></label>
+      </div>
+      <button id="saveSurfacePreset" type="button" class="settings-save-btn">기본 표면적 저장</button>
+      <div id="surfacePresetList" class="settings-list" aria-live="polite"></div>
+    </section>
+  </section>
+
 </main>
 
 <script>
@@ -532,7 +652,96 @@ function calculateSurfaceAreas(values) {
     boxes: [{ width: values.boxWidth, depth: values.boxDepth, height: values.boxHeight, qty: values.boxQty }]
   });
 }
+
+function calculateTotalCurrent(totalSurfaceDm2, currentDensity) {
+  const surface = Number(totalSurfaceDm2);
+  const density = Number(currentDensity);
+  const safeSurface = Number.isFinite(surface) ? surface : 0;
+  const safeDensity = Number.isFinite(density) && density > 0 ? density : 0;
+  return { currentDensity: safeDensity, totalCurrentA: safeSurface * safeDensity };
+}
+
+function normalizeSarcSettings(raw) {
+  const source = raw && typeof raw === 'object' ? raw : {};
+  const toPositive = (value) => {
+    const n = Number(value);
+    return Number.isFinite(n) && n > 0 ? n : 0;
+  };
+  const currentDensityPresets = Array.isArray(source.currentDensityPresets)
+    ? source.currentDensityPresets.map(item => ({
+        id: String(item?.id || '').trim(),
+        name: String(item?.name || '').trim(),
+        value: toPositive(item?.value)
+      })).filter(item => item.id && item.name && item.value > 0)
+    : [];
+  const surfacePresets = Array.isArray(source.surfacePresets)
+    ? source.surfacePresets.map(item => {
+        const shape = ['cylinder','circle','box'].includes(item?.shape) ? item.shape : '';
+        const base = { id: String(item?.id || '').trim(), name: String(item?.name || '').trim(), shape };
+        if (shape === 'cylinder') return { ...base, diameter: toPositive(item?.diameter), height: toPositive(item?.height) };
+        if (shape === 'circle') return { ...base, radius: toPositive(item?.radius) };
+        if (shape === 'box') return { ...base, width: toPositive(item?.width), depth: toPositive(item?.depth), height: toPositive(item?.height) };
+        return base;
+      }).filter(item => {
+        if (!item.id || !item.name || !item.shape) return false;
+        if (item.shape === 'cylinder') return item.diameter > 0 && item.height > 0;
+        if (item.shape === 'circle') return item.radius > 0;
+        return item.width > 0 && item.depth > 0 && item.height > 0;
+      })
+    : [];
+  return {
+    currentDensityPresets,
+    surfacePresets,
+    selectedCurrentDensityPresetId: String(source.selectedCurrentDensityPresetId || ''),
+    manualCurrentDensity: toPositive(source.manualCurrentDensity)
+  };
+}
 /* CALC_CORE_END */
+
+
+function applySurfacePresetToRow(row, preset) {
+  if (!row || !preset || !preset.shape) return;
+  const maps = {
+    cylinder: { diameter: 'diameter', height: 'height' },
+    circle: { radius: 'radius' },
+    box: { width: 'width', depth: 'depth', height: 'height' }
+  };
+  const map = maps[preset.shape] || {};
+  Object.entries(map).forEach(([presetKey, fieldKey]) => {
+    const input = row.querySelector(`[data-field="${fieldKey}"]`);
+    if (input) input.value = preset[presetKey] ?? '';
+  });
+}
+
+const SARC_SETTINGS_KEY = 'sarc.settings.v1';
+const SarcSettingsStore = (() => {
+  const copy = (value) => JSON.parse(JSON.stringify(value));
+  const load = () => {
+    try {
+      const raw = localStorage.getItem(SARC_SETTINGS_KEY);
+      return normalizeSarcSettings(raw ? JSON.parse(raw) : null);
+    } catch (_) {
+      return normalizeSarcSettings(null);
+    }
+  };
+  let state = load();
+  const get = () => copy(state);
+  const emit = () => {
+    try { document.dispatchEvent(new CustomEvent('sarc-settings-changed', { detail: get() })); } catch (_) {}
+  };
+  const set = (next) => {
+    state = normalizeSarcSettings(next);
+    try { localStorage.setItem(SARC_SETTINGS_KEY, JSON.stringify(state)); } catch (_) {}
+    emit();
+    return get();
+  };
+  const update = (mutator) => {
+    const draft = get();
+    const result = mutator(draft) || draft;
+    return set(result);
+  };
+  return { get, set, update, key: SARC_SETTINGS_KEY };
+})();
 
 /* REPLENISHMENT_CORE_START */
 function convertLiquidKgToLiters(kg, specificGravity) {
@@ -781,11 +990,201 @@ function calculateReplenishment(values) {
 
 
 
+
+(function initializeSettings(){
+  const $ = id => document.getElementById(id);
+  const shapeLabels = { cylinder: '원통 측면적', circle: '원 면적', box: '직육면체 표면적' };
+  const makeId = prefix => `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2,8)}`;
+  const status = message => { const el = $('settingsStatus'); if (el) el.textContent = message; };
+  const positive = value => { const n = Number(value); return Number.isFinite(n) && n > 0 ? n : 0; };
+
+  const updateShapeFields = () => {
+    const shape = $('surfacePresetShape').value;
+    document.querySelectorAll('[data-setting-shapes]').forEach(field => {
+      const shapes = String(field.dataset.settingShapes || '').split(',');
+      field.classList.toggle('hidden', !shapes.includes(shape));
+    });
+  };
+
+  const clearDensityEditor = () => {
+    $('currentDensityEditingId').value = '';
+    $('currentDensityPresetName').value = '';
+    $('currentDensityPresetValue').value = '';
+    $('saveCurrentDensityPreset').textContent = '전류 밀도 저장';
+  };
+
+  const clearSurfaceEditor = () => {
+    $('surfacePresetEditingId').value = '';
+    $('surfacePresetName').value = '';
+    $('surfacePresetShape').value = 'cylinder';
+    ['surfacePresetDiameter','surfacePresetRadius','surfacePresetWidth','surfacePresetDepth','surfacePresetHeight'].forEach(id => { $(id).value = ''; });
+    $('saveSurfacePreset').textContent = '기본 표면적 저장';
+    updateShapeFields();
+  };
+
+  const makeMiniButton = (text, className, handler) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = `settings-mini-btn ${className || ''}`.trim();
+    button.textContent = text;
+    button.addEventListener('click', handler);
+    return button;
+  };
+
+  const renderDensityList = () => {
+    const list = $('currentDensityPresetList');
+    const state = SarcSettingsStore.get();
+    list.innerHTML = '';
+    if (!state.currentDensityPresets.length) {
+      const empty = document.createElement('div');
+      empty.className = 'settings-list-empty';
+      empty.textContent = '저장된 전류 밀도가 없습니다.';
+      list.appendChild(empty);
+      return;
+    }
+    state.currentDensityPresets.forEach(preset => {
+      const row = document.createElement('div');
+      row.className = `settings-list-row${state.selectedCurrentDensityPresetId === preset.id ? ' selected' : ''}`;
+      const main = document.createElement('div');
+      main.className = 'settings-list-main';
+      const name = document.createElement('b'); name.textContent = preset.name;
+      const value = document.createElement('span'); value.textContent = `${preset.value} A/dm²`;
+      main.append(name, value);
+      const actions = document.createElement('div'); actions.className = 'settings-list-actions';
+      actions.append(
+        makeMiniButton('선택', 'select', () => {
+          SarcSettingsStore.update(draft => { draft.selectedCurrentDensityPresetId = preset.id; draft.manualCurrentDensity = preset.value; return draft; });
+          status(`${preset.name} 전류 밀도를 기본값으로 선택했습니다.`);
+        }),
+        makeMiniButton('수정', '', () => {
+          $('currentDensityEditingId').value = preset.id;
+          $('currentDensityPresetName').value = preset.name;
+          $('currentDensityPresetValue').value = preset.value;
+          $('saveCurrentDensityPreset').textContent = '전류 밀도 수정 저장';
+          $('currentDensityPresetName').focus();
+        }),
+        makeMiniButton('삭제', 'delete', () => {
+          SarcSettingsStore.update(draft => {
+            draft.currentDensityPresets = draft.currentDensityPresets.filter(item => item.id !== preset.id);
+            if (draft.selectedCurrentDensityPresetId === preset.id) draft.selectedCurrentDensityPresetId = '';
+            return draft;
+          });
+          if ($('currentDensityEditingId').value === preset.id) clearDensityEditor();
+          status(`${preset.name} 전류 밀도를 삭제했습니다.`);
+        })
+      );
+      row.append(main, actions);
+      list.appendChild(row);
+    });
+  };
+
+  const surfaceSummary = preset => {
+    if (preset.shape === 'cylinder') return `지름 ${preset.diameter} × 높이 ${preset.height} mm`;
+    if (preset.shape === 'circle') return `반지름 ${preset.radius} mm`;
+    return `가로 ${preset.width} × 세로 ${preset.depth} × 높이 ${preset.height} mm`;
+  };
+
+  const renderSurfaceList = () => {
+    const list = $('surfacePresetList');
+    const state = SarcSettingsStore.get();
+    list.innerHTML = '';
+    if (!state.surfacePresets.length) {
+      const empty = document.createElement('div');
+      empty.className = 'settings-list-empty';
+      empty.textContent = '저장된 기본 표면적이 없습니다.';
+      list.appendChild(empty);
+      return;
+    }
+    state.surfacePresets.forEach(preset => {
+      const row = document.createElement('div'); row.className = 'settings-list-row';
+      const main = document.createElement('div'); main.className = 'settings-list-main';
+      const name = document.createElement('b'); name.textContent = `${preset.name} · ${shapeLabels[preset.shape]}`;
+      const summary = document.createElement('span'); summary.textContent = surfaceSummary(preset);
+      main.append(name, summary);
+      const actions = document.createElement('div'); actions.className = 'settings-list-actions';
+      actions.append(
+        makeMiniButton('수정', '', () => {
+          $('surfacePresetEditingId').value = preset.id;
+          $('surfacePresetName').value = preset.name;
+          $('surfacePresetShape').value = preset.shape;
+          $('surfacePresetDiameter').value = preset.diameter || '';
+          $('surfacePresetRadius').value = preset.radius || '';
+          $('surfacePresetWidth').value = preset.width || '';
+          $('surfacePresetDepth').value = preset.depth || '';
+          $('surfacePresetHeight').value = preset.height || '';
+          $('saveSurfacePreset').textContent = '기본 표면적 수정 저장';
+          updateShapeFields();
+          $('surfacePresetName').focus();
+        }),
+        makeMiniButton('삭제', 'delete', () => {
+          SarcSettingsStore.update(draft => { draft.surfacePresets = draft.surfacePresets.filter(item => item.id !== preset.id); return draft; });
+          if ($('surfacePresetEditingId').value === preset.id) clearSurfaceEditor();
+          status(`${preset.name} 기본 표면적을 삭제했습니다.`);
+        })
+      );
+      row.append(main, actions);
+      list.appendChild(row);
+    });
+  };
+
+  $('saveCurrentDensityPreset').addEventListener('click', () => {
+    const name = $('currentDensityPresetName').value.trim();
+    const value = positive($('currentDensityPresetValue').value);
+    if (!name || value <= 0) { status('전류 밀도 항목명과 0보다 큰 값을 입력하십시오.'); return; }
+    const editingId = $('currentDensityEditingId').value;
+    SarcSettingsStore.update(draft => {
+      if (editingId) {
+        draft.currentDensityPresets = draft.currentDensityPresets.map(item => item.id === editingId ? { id: item.id, name, value } : item);
+        if (draft.selectedCurrentDensityPresetId === editingId) draft.manualCurrentDensity = value;
+      } else {
+        draft.currentDensityPresets.push({ id: makeId('cd'), name, value });
+      }
+      return draft;
+    });
+    clearDensityEditor();
+    status(`${name} 전류 밀도를 저장했습니다.`);
+  });
+
+  $('saveSurfacePreset').addEventListener('click', () => {
+    const name = $('surfacePresetName').value.trim();
+    const shape = $('surfacePresetShape').value;
+    const values = {
+      diameter: positive($('surfacePresetDiameter').value),
+      radius: positive($('surfacePresetRadius').value),
+      width: positive($('surfacePresetWidth').value),
+      depth: positive($('surfacePresetDepth').value),
+      height: positive($('surfacePresetHeight').value)
+    };
+    const valid = name && ((shape === 'cylinder' && values.diameter > 0 && values.height > 0) || (shape === 'circle' && values.radius > 0) || (shape === 'box' && values.width > 0 && values.depth > 0 && values.height > 0));
+    if (!valid) { status('항목명과 선택한 형상에 필요한 치수를 모두 입력하십시오.'); return; }
+    const preset = shape === 'cylinder'
+      ? { name, shape, diameter: values.diameter, height: values.height }
+      : shape === 'circle'
+        ? { name, shape, radius: values.radius }
+        : { name, shape, width: values.width, depth: values.depth, height: values.height };
+    const editingId = $('surfacePresetEditingId').value;
+    SarcSettingsStore.update(draft => {
+      if (editingId) draft.surfacePresets = draft.surfacePresets.map(item => item.id === editingId ? { id: item.id, ...preset } : item);
+      else draft.surfacePresets.push({ id: makeId('sp'), ...preset });
+      return draft;
+    });
+    clearSurfaceEditor();
+    status(`${name} 기본 표면적을 저장했습니다.`);
+  });
+
+  $('surfacePresetShape').addEventListener('change', updateShapeFields);
+  document.addEventListener('sarc-settings-changed', () => { renderDensityList(); renderSurfaceList(); });
+  updateShapeFields();
+  renderDensityList();
+  renderSurfaceList();
+})();
+
 (function initializeTabsAndReplenishment(){
   const tabs = [...document.querySelectorAll('[data-tab-target]')];
   const surfacePanel = document.getElementById('surfacePanel');
   const replenishmentPanel = document.getElementById('replenishmentPanel');
-  const panels = { surface: surfacePanel, replenishment: replenishmentPanel };
+  const settingsPanel = document.getElementById('settingsPanel');
+  const panels = { surface: surfacePanel, replenishment: replenishmentPanel, settings: settingsPanel };
 
   const switchTab = (name) => {
     tabs.forEach(tab => {
@@ -956,10 +1355,17 @@ function calculateReplenishment(values) {
   const circleResult = document.getElementById('circleResult');
   const boxResult = document.getElementById('boxResult');
   const totalResult = document.getElementById('totalResult');
+  const appliedCurrentDensityResult = document.getElementById('appliedCurrentDensityResult');
+  const totalCurrentResult = document.getElementById('totalCurrentResult');
+  const currentDensityInput = document.getElementById('currentDensityInput');
+  const currentDensityPresetChoices = document.getElementById('currentDensityPresetChoices');
   const statusLine = document.getElementById('statusLine');
   const resetButton = document.getElementById('resetButton');
+  let suppressSettingsSync = false;
 
   const safeFixed = (value) => Number.isFinite(value) ? value.toFixed(4) : '0.0000';
+  const safeDensity = (value) => Number.isFinite(value) ? value.toFixed(3) : '0.000';
+  const safeCurrent = (value) => Number.isFinite(value) ? value.toFixed(2) : '0.00';
   const getGroup = (name) => document.querySelector(`[data-group="${name}"]`);
   const getRows = (name) => [...getGroup(name).querySelectorAll('.entry-row')];
 
@@ -973,22 +1379,190 @@ function calculateReplenishment(values) {
     boxes: getRows('box').map(readRow)
   });
 
+  const ensureEntryMetrics = row => {
+    let metrics = row.querySelector('.entry-metrics');
+    if (metrics) return metrics;
+    metrics = document.createElement('div');
+    metrics.className = 'entry-metrics';
+    metrics.innerHTML = `
+      <div class="entry-metric"><span>항목 표면적</span><b data-entry-surface>0.0000 <small>dm²</small></b></div>
+      <div class="entry-metric"><span>전류 밀도</span><b data-entry-density>0.000 <small>A/dm²</small></b></div>`;
+    row.appendChild(metrics);
+    return metrics;
+  };
+
+  const singleRowAreaDm2 = (name, row) => {
+    const item = readRow(row);
+    const result = calculateSurfaceAreaGroups({
+      cylinders: name === 'cylinder' ? [item] : [],
+      circles: name === 'circle' ? [item] : [],
+      boxes: name === 'box' ? [item] : []
+    });
+    return result.totalDm2;
+  };
+
+  const renderEntryMetrics = currentDensity => {
+    const density = Number.isFinite(Number(currentDensity)) && Number(currentDensity) > 0 ? Number(currentDensity) : 0;
+    groupNames.forEach(name => {
+      getRows(name).forEach(row => {
+        const metrics = ensureEntryMetrics(row);
+        const areaTarget = metrics.querySelector('[data-entry-surface]');
+        const densityTarget = metrics.querySelector('[data-entry-density]');
+        const area = singleRowAreaDm2(name, row);
+        areaTarget.innerHTML = `${safeFixed(area)} <small>dm²</small>`;
+        densityTarget.innerHTML = `${safeDensity(density)} <small>A/dm²</small>`;
+      });
+    });
+  };
+
+  const presetForId = id => SarcSettingsStore.get().surfacePresets.find(item => item.id === id);
+
+  const surfacePresetChoiceText = preset => {
+    const clean = value => {
+      const n = Number(value);
+      return Number.isFinite(n) ? String(Number(n.toFixed(4))) : '';
+    };
+    if (preset.shape === 'cylinder') return `${preset.name} (${clean(preset.diameter)} x ${clean(preset.height)})`;
+    if (preset.shape === 'circle') return `${preset.name} (${clean(preset.radius)})`;
+    if (preset.shape === 'box') return `${preset.name} (${clean(preset.width)} x ${clean(preset.depth)} x ${clean(preset.height)})`;
+    return preset.name;
+  };
+
+  const renderSurfacePresetChoices = row => {
+    const group = row.querySelector('.surface-preset-choices');
+    if (!group) return;
+    const shape = group.dataset.presetShape;
+    const presets = SarcSettingsStore.get().surfacePresets.filter(item => item.shape === shape);
+    const previous = group.dataset.selectedPresetId || '';
+    if (!presets.some(item => item.id === previous)) group.dataset.selectedPresetId = '';
+    group.innerHTML = '';
+    if (!presets.length) {
+      const empty = document.createElement('span');
+      empty.className = 'surface-preset-empty';
+      empty.textContent = '등록 항목 없음';
+      group.appendChild(empty);
+      return;
+    }
+    presets.forEach(preset => {
+      const selected = group.dataset.selectedPresetId === preset.id;
+      const label = document.createElement('label');
+      label.className = `surface-preset-choice${selected ? ' selected' : ''}`;
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.checked = selected;
+      checkbox.setAttribute('data-surface-preset', preset.id);
+      const text = document.createElement('span');
+      text.textContent = surfacePresetChoiceText(preset);
+      checkbox.addEventListener('change', () => {
+        if (checkbox.checked) {
+          group.dataset.selectedPresetId = preset.id;
+          applySurfacePresetToRow(row, preset);
+        } else if (group.dataset.selectedPresetId === preset.id) {
+          group.dataset.selectedPresetId = '';
+        }
+        renderSurfacePresetChoices(row);
+        render();
+      });
+      label.append(checkbox, text);
+      group.appendChild(label);
+    });
+  };
+
+  const refreshSurfacePresetChoices = () => {
+    groupNames.forEach(name => getRows(name).forEach(renderSurfacePresetChoices));
+  };
+
+  const removeSpecificRow = (name, row) => {
+    const rows = getRows(name);
+    if (rows.length <= 1) return;
+    row.remove();
+    updateControls(name);
+    render();
+  };
+
   const updateControls = (name) => {
     const rows = getRows(name);
     rows.forEach((row, index) => {
       const label = row.querySelector('.entry-label');
       if (label) label.textContent = `항목 ${index + 1}`;
+      const tools = row.querySelector('.entry-row-tools');
+      let rowDelete = row.querySelector('.row-delete-btn');
+      if (index === 0) {
+        if (rowDelete) rowDelete.remove();
+      } else if (tools && !rowDelete) {
+        rowDelete = document.createElement('button');
+        rowDelete.type = 'button';
+        rowDelete.className = 'row-delete-btn';
+        rowDelete.textContent = '−';
+        rowDelete.setAttribute('aria-label', `항목 ${index + 1} 삭제`);
+        rowDelete.addEventListener('click', () => removeSpecificRow(name, row));
+        tools.appendChild(rowDelete);
+      }
     });
     const removeButton = document.querySelector(`[data-remove="${name}"]`);
     if (removeButton) removeButton.disabled = rows.length <= 1;
   };
 
+  const renderCurrentDensityChoices = () => {
+    const state = SarcSettingsStore.get();
+    currentDensityPresetChoices.innerHTML = '';
+    if (!state.currentDensityPresets.length) {
+      const empty = document.createElement('span');
+      empty.className = 'current-density-empty';
+      empty.textContent = '설정 탭에서 전류 밀도를 저장할 수 있습니다.';
+      currentDensityPresetChoices.appendChild(empty);
+      return;
+    }
+    state.currentDensityPresets.forEach(preset => {
+      const label = document.createElement('label');
+      label.className = `current-density-choice${state.selectedCurrentDensityPresetId === preset.id ? ' selected' : ''}`;
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.checked = state.selectedCurrentDensityPresetId === preset.id;
+      checkbox.dataset.currentDensityPreset = preset.id;
+      const text = document.createElement('span');
+      text.textContent = `${preset.name} ${preset.value}`;
+      checkbox.addEventListener('change', () => {
+        suppressSettingsSync = true;
+        SarcSettingsStore.update(draft => {
+          if (checkbox.checked) {
+            draft.selectedCurrentDensityPresetId = preset.id;
+            draft.manualCurrentDensity = preset.value;
+          } else if (draft.selectedCurrentDensityPresetId === preset.id) {
+            draft.selectedCurrentDensityPresetId = '';
+          }
+          return draft;
+        });
+        suppressSettingsSync = false;
+        if (checkbox.checked) currentDensityInput.value = preset.value;
+        renderCurrentDensityChoices();
+        render();
+      });
+      label.append(checkbox, text);
+      currentDensityPresetChoices.appendChild(label);
+    });
+  };
+
+  const syncCurrentDensityFromSettings = () => {
+    const state = SarcSettingsStore.get();
+    const selected = state.currentDensityPresets.find(item => item.id === state.selectedCurrentDensityPresetId);
+    const value = selected ? selected.value : state.manualCurrentDensity;
+    currentDensityInput.value = value > 0 ? value : '';
+    renderCurrentDensityChoices();
+    refreshSurfacePresetChoices();
+    render();
+  };
+
   const render = () => {
     const result = calculateSurfaceAreaGroups(readGroups());
+    const current = calculateTotalCurrent(result.totalDm2, currentDensityInput.value);
+    renderEntryMetrics(current.currentDensity);
     cylinderResult.innerHTML = `${safeFixed(result.cylinderDm2)} <small>dm²</small>`;
     circleResult.innerHTML = `${safeFixed(result.circleDm2)} <small>dm²</small>`;
     boxResult.innerHTML = `${safeFixed(result.boxDm2)} <small>dm²</small>`;
-    totalResult.innerHTML = `${safeFixed(result.totalDm2)}<small>dm²</small>`;
+    totalResult.innerHTML = `${safeFixed(result.totalDm2)} <small>dm²</small>`;
+    appliedCurrentDensityResult.innerHTML = `${safeDensity(current.currentDensity)} <small>A/dm²</small>`;
+    totalCurrentResult.innerHTML = `${safeCurrent(current.totalCurrentA)} <small>A</small>`;
     const anyInput = [...document.querySelectorAll('[data-field]')].some(input =>
       input.dataset.field === 'qty' ? !['', '1'].includes(input.value.trim()) : input.value.trim() !== ''
     );
@@ -996,10 +1570,12 @@ function calculateReplenishment(values) {
   };
 
   const attachRowEvents = (row) => {
+    ensureEntryMetrics(row);
     row.querySelectorAll('[data-field]').forEach(input => {
       input.addEventListener('input', render);
       input.addEventListener('change', render);
     });
+    renderSurfacePresetChoices(row);
   };
 
   const addRow = (name) => {
@@ -1010,6 +1586,13 @@ function calculateReplenishment(values) {
       input.value = '';
       input.removeAttribute('id');
     });
+    const presetChoices = clone.querySelector('.surface-preset-choices');
+    if (presetChoices) {
+      presetChoices.dataset.selectedPresetId = '';
+      presetChoices.innerHTML = '';
+    }
+    const existingDelete = clone.querySelector('.row-delete-btn');
+    if (existingDelete) existingDelete.remove();
     group.appendChild(clone);
     attachRowEvents(clone);
     updateControls(name);
@@ -1033,13 +1616,32 @@ function calculateReplenishment(values) {
     updateControls(name);
   });
 
+  currentDensityInput.addEventListener('input', () => {
+    const value = Number(currentDensityInput.value);
+    suppressSettingsSync = true;
+    SarcSettingsStore.update(draft => {
+      draft.selectedCurrentDensityPresetId = '';
+      draft.manualCurrentDensity = Number.isFinite(value) && value > 0 ? value : 0;
+      return draft;
+    });
+    suppressSettingsSync = false;
+    renderCurrentDensityChoices();
+    render();
+  });
+
+  document.addEventListener('sarc-settings-changed', () => {
+    if (!suppressSettingsSync) syncCurrentDensityFromSettings();
+  });
+
   resetButton.addEventListener('click', () => {
     groupNames.forEach(name => {
       const rows = getRows(name);
       rows.slice(1).forEach(row => row.remove());
-      getRows(name)[0].querySelectorAll('[data-field]').forEach(input => {
-        input.value = '';
-      });
+      const firstRow = getRows(name)[0];
+      firstRow.querySelectorAll('[data-field]').forEach(input => { input.value = ''; });
+      const presetChoices = firstRow.querySelector('.surface-preset-choices');
+      if (presetChoices) presetChoices.dataset.selectedPresetId = '';
+      renderSurfacePresetChoices(firstRow);
       updateControls(name);
     });
     render();
@@ -1047,10 +1649,10 @@ function calculateReplenishment(values) {
     if (firstInput) firstInput.focus();
   });
 
-  render();
+  syncCurrentDensityFromSettings();
 
   if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
-    navigator.serviceWorker.register('./sw.js?v=127', { updateViaCache: 'none' })
+    navigator.serviceWorker.register('./sw.js?v=130', { updateViaCache: 'none' })
       .then(registration => registration.update())
       .catch(() => {});
   }

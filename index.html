@@ -3,1660 +3,551 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#cfe7e3">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="S.A.R.C">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="application-name" content="S.A.R.C">
-<meta name="description" content="도금 작업용 모바일 표면적 및 보충량 계산기">
-<title>S.A.R.C 표면적·보충량 계산기</title>
-<link rel="manifest" href="./manifest.webmanifest?v=130">
-<link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon-v118.png">
-<link rel="apple-touch-icon" href="./apple-touch-icon.png">
-<link rel="apple-touch-icon-precomposed" sizes="180x180" href="./icons/apple-touch-icon-v118.png">
-<link rel="icon" type="image/png" sizes="192x192" href="./icons/sarc-icon-192-v118.png">
-<link rel="icon" type="image/png" sizes="512x512" href="./icons/sarc-icon-512-v118.png">
+<meta name="theme-color" content="#dfeaea">
+<title>S.A.R.C 표면적 & 보충량 계산기</title>
 <style>
 :root{
-  --header:#d5efec;
-  --header2:#b9dfdb;
-  --accent:#0f8f86;
-  --accent-dark:#08736d;
-  --accent-soft:#e8f6f4;
-  --bg:#f3f7f7;
+  --bg:#e8efee;
+  --surface:#f7faf9;
   --card:#ffffff;
-  --text:#17282b;
-  --muted:#6b7b7e;
-  --line:#d9e5e3;
-  --shadow:0 10px 30px rgba(30,66,66,.09);
-  font-family:"Noto Sans KR","Malgun Gothic",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --line:#d7e2df;
+  --line-strong:#c3d3cf;
+  --text:#16363b;
+  --muted:#6d8587;
+  --accent:#0a8f8a;
+  --accent-deep:#056c67;
+  --accent-soft:#eff8f6;
+  --danger:#d94d6a;
+  --shadow:0 6px 18px rgba(22,54,59,.05);
+  --radius:18px;
+  --radius-sm:12px;
+  font-family:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
 }
 *{box-sizing:border-box}
-html{background:#cfe7e3;margin:0;min-height:100%;color:var(--text)}
-body{margin:0;min-height:100%;background:#eef5f4;color:var(--text)}
-body{padding:0;-webkit-tap-highlight-color:transparent}
-button,input{font:inherit}
+html,body{margin:0;background:var(--bg);color:var(--text)}
+body{-webkit-tap-highlight-color:transparent}
+button,input,select{font:inherit}
 button{cursor:pointer}
+.hidden{display:none !important}
+.app{max-width:920px;margin:0 auto;padding:0 14px 28px}
 .topbar{
-  position:sticky;z-index:30;left:0;right:0;top:0;
-  padding:calc(4px + env(safe-area-inset-top)) 10px 5px;
-  min-height:68px;
-  background:linear-gradient(118deg,var(--header),var(--header2));
-  border-bottom:1px solid rgba(44,97,91,.12);
-  display:flex;align-items:center;gap:12px;color:#16474a;
-  box-shadow:0 2px 10px rgba(49,86,82,.04)
+  position:sticky;top:0;z-index:40;
+  background:rgba(223,234,234,.95);backdrop-filter:blur(12px);
+  border-bottom:1px solid rgba(10,143,138,.08);
 }
-.brand-block{display:flex;align-items:center;gap:10px;min-width:0;flex:1 1 auto}
-.top-logo{
-  width:44px;height:44px;border-radius:12px;flex:0 0 44px;
-  display:flex;align-items:center;justify-content:center;
-  background:#0b2930;overflow:hidden;
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)
+.topbar-inner{max-width:920px;margin:0 auto;padding:12px 14px 10px;display:flex;align-items:center;gap:14px}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.logo{width:56px;height:56px;border-radius:16px;background:linear-gradient(180deg,#0a3440,#062832);display:grid;place-items:center;color:#fff;font-weight:900;letter-spacing:.8px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.06)}
+.logo-mark{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:9px}
+.logo-mark .a-shape{width:28px;height:28px;border:2px solid #45d9d2;border-radius:50%;position:relative}
+.logo-mark .a-shape:before{content:"";position:absolute;left:50%;top:4px;transform:translateX(-50%);width:14px;height:16px;border-left:3px solid #45d9d2;border-right:3px solid #45d9d2;border-top:3px solid #45d9d2;border-radius:10px 10px 0 0}
+.logo-mark .a-shape:after{content:"";position:absolute;left:50%;bottom:5px;transform:translateX(-50%);width:16px;height:3px;background:#45d9d2;border-radius:99px}
+.brand-copy{min-width:0}
+.brand-copy h1{margin:0;font-size:34px;line-height:1;font-weight:900;letter-spacing:.02em}
+.brand-copy p{margin:6px 0 0;font-size:14px;letter-spacing:.16em;color:#587174;font-weight:700}
+.header-state{margin-left:auto;text-align:right;white-space:nowrap}
+.header-state .live{display:flex;align-items:center;justify-content:flex-end;gap:8px;font-weight:900;font-size:14px}
+.header-state .dot{width:14px;height:14px;border-radius:50%;background:#2cc77e;box-shadow:0 0 0 6px rgba(44,199,126,.12)}
+.header-state .version{margin-top:6px;font-size:12px;font-weight:800;color:#5b7577}
+.tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding:0 14px 14px;max-width:920px;margin:0 auto}
+.tab-btn{border:1px solid var(--line-strong);background:#edf4f3;color:#4c6769;border-radius:18px;padding:13px 10px;font-weight:900;font-size:17px;box-shadow:none}
+.tab-btn.active{background:#fff;color:var(--accent-deep);box-shadow:var(--shadow)}
+.page{padding-top:14px}
+.section-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px}
+.title-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.title-row h2{margin:0;font-size:24px;line-height:1.1;font-weight:900}
+.inline-jd{display:flex;align-items:center;overflow:hidden;border:1px solid var(--line-strong);border-radius:12px;background:#fff;min-height:46px}
+.inline-jd label{display:flex;align-items:center;font-size:12px;font-weight:900;color:#556f71;padding:0 10px;height:46px;border-right:1px solid var(--line)}
+.inline-jd input{width:70px;border:0;outline:0;text-align:center;font-size:28px;font-weight:900;color:#2d5458;background:transparent}
+.inline-jd span{padding:0 12px;font-size:12px;font-weight:800;color:#73888a;border-left:1px solid var(--line);height:46px;display:flex;align-items:center}
+.unit-chip{align-self:flex-start;border:1px solid #bfd8d4;background:#edf8f6;color:var(--accent-deep);padding:10px 14px;border-radius:999px;font-size:13px;font-weight:900}
+.helper{margin:-4px 0 12px;font-size:12px;color:#809597;font-weight:700}
+.shape-selector{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px}
+.check-pill{display:flex;align-items:center;gap:8px;border:1px solid var(--line-strong);background:#fff;border-radius:999px;padding:10px 14px;font-weight:900;color:#456063;box-shadow:var(--shadow)}
+.check-pill input{width:18px;height:18px;margin:0;accent-color:var(--accent)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:14px 16px;margin-bottom:16px;box-shadow:var(--shadow)}
+.card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px}
+.card-head small{display:block;font-size:11px;color:var(--accent);font-weight:900;letter-spacing:.12em}
+.card-head h3{margin:4px 0 0;font-size:18px;line-height:1.15}
+.formula{display:inline-flex;align-items:center;padding:8px 12px;border-radius:999px;background:#f5f8f7;border:1px solid var(--line-strong);font-size:12px;font-weight:900;color:#5f7677;margin-left:10px}
+.head-actions{display:flex;align-items:center;gap:8px}
+.icon-btn{width:34px;height:34px;border-radius:12px;border:1px solid var(--line);background:#f8fbfb;color:#7f9798;font-size:22px;line-height:1;font-weight:900}
+.icon-btn.primary{color:var(--accent-deep)}
+.item-box{border:1px solid var(--line);border-radius:18px;padding:12px 12px 10px;background:#fbfdfd;margin-top:10px}
+.item-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.item-title{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13px;font-weight:900;color:#1a8080}
+.item-title .preset{display:inline-flex;align-items:center;gap:6px;border:1px solid #cbd9d6;background:#f4f7f7;border-radius:999px;padding:6px 10px;color:#4a6466;font-size:12px;font-weight:800}
+.grid{display:grid;gap:10px}
+.grid.cyl{grid-template-columns:repeat(3,minmax(0,1fr))}
+.grid.circle{grid-template-columns:repeat(2,minmax(0,1fr))}
+.grid.box{grid-template-columns:repeat(4,minmax(0,1fr))}
+.field label{display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:900;color:#4b6264;margin-bottom:6px}
+.field small{font-size:11px;color:#8ca0a2}
+.field input{width:100%;height:48px;border:1px solid var(--line-strong);border-radius:14px;background:#fff;padding:0 14px;font-size:17px;font-weight:900;color:#1d3f43;outline:none}
+.field input::placeholder{color:#b4c2c4}
+.field input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(10,143,138,.10)}
+.item-result{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}
+.mini-result{border-top:1px solid #edf3f2;padding-top:8px;font-size:12px;color:#698082;font-weight:900}
+.mini-result b{display:block;font-size:14px;color:var(--accent-deep);margin-top:4px}
+.card-total{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;margin-top:12px;padding-top:12px;border-top:1px solid #e8efee}
+.card-total .copy small{display:block;font-size:11px;letter-spacing:.12em;color:var(--accent);font-weight:900}
+.card-total .copy b{display:block;font-size:13px;color:#5d7476;margin-top:4px}
+.value-big{font-size:18px;font-weight:900;color:var(--accent-deep);text-align:right}
+.value-big small{font-size:12px;color:#7a9193;font-weight:800}
+.summary-card{background:linear-gradient(180deg,#ffffff,#f8fbfb);border:1px solid #cddcda;border-radius:24px;padding:16px;box-shadow:var(--shadow);margin-top:18px}
+.summary-card h3{margin:0 0 12px;font-size:18px}
+.summary-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.summary-box{border:1px solid var(--line);background:#fff;border-radius:18px;padding:14px;text-align:center}
+.summary-box small{display:block;color:#708688;font-size:12px;font-weight:900}
+.summary-box b{display:block;margin-top:8px;font-size:26px;color:var(--accent-deep)}
+.summary-box span{font-size:12px;color:#708688;font-weight:800}
+.action-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.soft-btn,.primary-btn{height:46px;padding:0 18px;border-radius:14px;font-weight:900;border:1px solid var(--line-strong)}
+.soft-btn{background:#fff;color:#39585b}
+.primary-btn{background:linear-gradient(180deg,#0d8f89,#076b67);color:#fff;border-color:#076b67}
+.panel{background:#fff;border:1px solid var(--line);border-radius:24px;padding:16px;box-shadow:var(--shadow);margin-bottom:16px}
+.panel h3{margin:0 0 12px;font-size:20px}
+.panel .sub{font-size:12px;color:#7e9496;font-weight:700;margin-top:-6px;margin-bottom:12px}
+.row-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.row-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.row-4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.note{margin-top:10px;font-size:12px;color:#728789;font-weight:700}
+.list{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+.preset-row{display:grid;grid-template-columns:1fr 120px 80px;gap:10px;align-items:center;border:1px solid var(--line);border-radius:14px;padding:10px 12px;background:#fbfdfd}
+.preset-row .name{font-weight:900;color:#294c50}
+.preset-row .meta{font-weight:800;color:#647a7c;font-size:13px}
+.empty{padding:14px;border:1px dashed var(--line-strong);border-radius:14px;text-align:center;color:#7f9496;font-size:13px;font-weight:800;background:#fbfdfd}
+@media (max-width:760px){
+  .brand-copy h1{font-size:26px}
+  .brand-copy p{font-size:12px;letter-spacing:.12em}
+  .header-state .live{font-size:12px}
+  .summary-grid,.row-4{grid-template-columns:1fr 1fr}
 }
-.top-logo-img{width:100%;height:100%;display:block;object-fit:cover;border-radius:12px}
-.top-title{display:flex;flex-direction:column;justify-content:center;line-height:1.05;min-width:0;flex:1 1 auto;padding:0}
-.top-title b{font:900 24px/1 "Arial Black","Segoe UI",sans-serif;letter-spacing:.8px;margin:0 0 2px;color:#17494b}
-.top-title span{font-size:6.4px;letter-spacing:1.02px;color:#5f7777;margin:0;white-space:normal;overflow:visible;text-overflow:clip;line-height:1.12;word-break:keep-all;max-width:210px}
-.top-state{margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;justify-content:center;gap:2px;font-size:8.5px;font-weight:700;white-space:nowrap;flex:0 0 auto}
-.top-state-row{display:flex;align-items:center;gap:5px}
-.top-version{font-size:6.5px;letter-spacing:.55px;color:#5f7777;font-weight:800}
-.top-signature{font-size:7.5px;line-height:1;color:#315d5b;font-family:"Segoe Script","Brush Script MT","Apple Chancery",cursive;font-style:italic;font-weight:600;letter-spacing:.15px}
-.dot{width:7px;height:7px;border-radius:50%;background:#29a979;box-shadow:0 0 0 2px rgba(41,169,121,.10)}
-.mobile-main{padding:8px 10px calc(24px + env(safe-area-inset-bottom));max-width:720px;margin:auto}
-.section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin:5px 2px 12px}
-.section-head small{display:block;font-size:8px;letter-spacing:1.4px;font-weight:800;color:var(--accent)}
-.section-head h1{font-size:20px;line-height:1.15;margin:3px 0 0;font-weight:800}
-.unit-pill{flex:0 0 auto;border-radius:999px;padding:6px 10px;background:var(--accent-soft);color:var(--accent-dark);font-size:9px;font-weight:800;border:1px solid #cde6e2}
-.calc-card,.total-card{
-  background:var(--card);border:1px solid var(--line);border-radius:16px;
-  padding:12px;box-shadow:0 5px 18px rgba(25,60,60,.04);margin-bottom:10px
+@media (max-width:640px){
+  .topbar-inner{align-items:flex-start}
+  .header-state{font-size:12px}
+  .section-head{flex-direction:column}
+  .grid.cyl,.grid.box,.grid.circle,.row-3,.row-2,.preset-row,.item-result{grid-template-columns:1fr}
+  .tabs{grid-template-columns:1fr 1fr 1fr}
+  .tab-btn{font-size:15px;padding:11px 8px}
+  .brand-copy h1{font-size:22px}
+  .title-row h2{font-size:22px}
+  .summary-grid{grid-template-columns:1fr}
 }
-.card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:11px}
-.card-title-block{min-width:0;flex:1 1 auto}
-.card-head small{display:block;font-size:8px;letter-spacing:1.25px;font-weight:800;color:var(--accent)}
-.title-line{display:flex;align-items:center;gap:8px;min-width:0;margin-top:3px;flex-wrap:wrap}
-.card-head h2{font-size:15px;margin:0;line-height:1.2;flex:0 0 auto}
-.formula-tag{flex:0 1 auto;border:1px solid var(--line);border-radius:999px;background:#f7faf9;color:#52686a;padding:5px 8px;font-size:9px;font-weight:750;white-space:nowrap}
-.formula-tag.long{white-space:normal;text-align:left;line-height:1.35;max-width:100%}
-.entry-controls{display:flex;align-items:center;gap:5px;flex:0 0 auto;margin-top:13px}
-.entry-btn{
-  width:28px;height:28px;border-radius:9px;border:1px solid #cfe2df;background:#f7fbfa;
-  color:var(--accent-dark);font:800 18px/1 "Segoe UI",sans-serif;display:grid;place-items:center;padding:0;
-  box-shadow:0 2px 8px rgba(25,60,60,.04);touch-action:manipulation
-}
-.entry-btn:active{background:#e9f5f3}
-.entry-btn:disabled{opacity:.35;cursor:default}
-.entry-list{display:grid;gap:8px}
-.entry-row{border:1px solid #e6efed;border-radius:13px;padding:9px;background:#fbfdfd}
-.entry-row:first-child{background:#fff}
-.entry-label{font-size:8px;line-height:1;font-weight:800;letter-spacing:1px;color:var(--accent);margin:0 2px 7px}
-.fields{display:grid;gap:8px}
-.fields.four{grid-template-columns:repeat(4,minmax(0,1fr))}
-.fields.three{grid-template-columns:repeat(3,minmax(0,1fr))}
-.fields.two{grid-template-columns:repeat(2,minmax(0,1fr))}
-.field{display:block;min-width:0}
-.field span{display:flex;align-items:center;justify-content:space-between;gap:6px;font-size:9px;font-weight:800;color:#536568;margin:0 2px 5px}
-.field small{font-size:8px;color:#8a989a;font-weight:700}
-.field input{
-  width:100%;height:44px;border:1px solid var(--line);border-radius:12px;background:#ffffff;
-  color:var(--text);padding:0 11px;outline:none;font-size:16px;font-weight:700;
-  appearance:textfield;-moz-appearance:textfield
-}
-.field input::-webkit-outer-spin-button,.field input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
-.field input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(15,143,134,.08)}
-.field input::placeholder{color:#b7c3c4;font-weight:500}
-.result-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:10px;padding-top:10px;border-top:1px solid #edf2f1}
-.result-copy span{display:block;font-size:8px;letter-spacing:1.1px;font-weight:800;color:var(--accent)}
-.result-copy b{display:block;font-size:10px;color:var(--muted);margin-top:3px}
-.result-value{text-align:right;color:var(--accent-dark);font:800 21px/1.05 "Segoe UI",sans-serif;letter-spacing:-.2px}
-.result-value small{font-size:10px;color:var(--muted);font-weight:700;margin-left:3px}
-.total-card{padding:13px;background:linear-gradient(180deg,#ffffff,#f7fbfa);border-color:#cfe2df}
-.total-grid{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center}
-.total-label small{display:block;font-size:8px;letter-spacing:1.4px;font-weight:800;color:var(--accent)}
-.total-label h2{font-size:17px;margin:3px 0 0}
-.total-label p{font-size:9px;color:var(--muted);margin:5px 0 0;line-height:1.45}
-.total-value{font:800 28px/1 "Segoe UI",sans-serif;color:var(--accent-dark);text-align:right;white-space:nowrap}
-.total-value small{display:block;font-size:9px;color:var(--muted);margin-top:5px;letter-spacing:.6px}
-.actions{display:grid;grid-template-columns:1fr;gap:8px;margin-top:4px}
-.secondary{border:1px solid var(--line);border-radius:12px;padding:11px 14px;font-weight:750;background:#f6f9f9;color:#30494a;min-height:44px}
-.secondary:active{background:#edf5f4}
-.status-line{min-height:18px;margin:3px 2px 10px;font-size:9px;color:var(--muted);display:flex;align-items:center;gap:6px}
-.status-line .mini-dot{width:6px;height:6px;border-radius:50%;background:var(--accent)}
-@media(max-width:560px){
-  .fields.four{grid-template-columns:1fr 1fr}
-}
-@media(max-width:430px){
-  .fields.three{grid-template-columns:1fr 1fr}.fields.three .field:last-child{grid-column:1/-1}
-  .title-line{gap:6px}
-  .formula-tag{font-size:8px;padding:5px 7px}
-  .formula-tag.long{max-width:100%;font-size:8px}
-}
-@media(max-width:430px){
-  .topbar{padding-left:8px;padding-right:8px;gap:8px;min-height:64px}
-  .brand-block{gap:8px}
-  .top-logo{width:40px;height:40px;flex-basis:40px;border-radius:10px}
-  .top-logo-img{border-radius:10px}
-  .top-title b{font-size:23px;margin-bottom:2px;letter-spacing:.75px}
-  .top-title span{font-size:5.6px;letter-spacing:.86px;line-height:1.08;max-width:165px}
-  .top-state{font-size:7.8px;gap:2px}
-  .top-version{font-size:6.1px;letter-spacing:.45px}
-  .top-signature{font-size:7px}
-}
-@media(max-width:350px){
-  .mobile-main{padding-left:8px;padding-right:8px}.fields.four,.fields.three,.fields.two{grid-template-columns:1fr}.fields.three .field:last-child{grid-column:auto}
-  .topbar{gap:6px;padding-left:6px;padding-right:6px}.brand-block{gap:6px}.top-logo{width:36px;height:36px;flex-basis:36px;border-radius:9px}.top-title b{font-size:20px;letter-spacing:.65px}.top-title span{font-size:5.1px;letter-spacing:.52px;max-width:136px}.top-state{font-size:7px;gap:2px}.top-version{font-size:5.8px}.top-signature{font-size:6.7px}.total-grid{grid-template-columns:1fr}.total-value{text-align:left}
-  .card-head{gap:6px}.title-line{gap:5px}.formula-tag.long{max-width:100%}
-  .entry-btn{width:26px;height:26px}
-}
-
-/* V1.0.13 tab + replenishment calculator */
-.app-tabs{
-  display:grid;grid-template-columns:1fr 1fr;gap:4px;margin:0 0 10px;padding:3px;
-  border:1px solid #cfe2df;border-radius:12px;background:#eaf4f2;box-shadow:none
-}
-.app-tab{
-  min-height:32px;border:0;border-radius:8px;background:transparent;color:#587073;
-  font-size:11px;font-weight:850;letter-spacing:-.1px;touch-action:manipulation
-}
-.app-tab.active{background:#fff;color:var(--accent-dark);box-shadow:0 3px 10px rgba(25,60,60,.09)}
-.app-panel{display:none}
-.app-panel.active{display:block}
-.repl-card{
-  background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px;
-  box-shadow:0 5px 18px rgba(25,60,60,.04);margin-bottom:10px
-}
-.repl-card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:11px}
-.repl-card-head small{display:block;font-size:8px;letter-spacing:1.25px;font-weight:800;color:var(--accent)}
-.repl-card-head h2{font-size:15px;margin:3px 0 0;line-height:1.2}
-.choice-group{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 10px}
-.choice{position:relative;display:inline-flex;min-width:0}
-.choice input{position:absolute;opacity:0;pointer-events:none}
-.choice span{
-  display:inline-flex;align-items:center;justify-content:center;min-height:34px;padding:0 11px;border-radius:10px;
-  border:1px solid var(--line);background:#f7faf9;color:#607477;font-size:10px;font-weight:800;white-space:nowrap
-}
-.choice input:checked + span{background:var(--accent-soft);border-color:#9fd4ce;color:var(--accent-dark);box-shadow:inset 0 0 0 1px rgba(15,143,134,.06)}
-.repl-grid{display:grid;gap:8px;grid-template-columns:repeat(2,minmax(0,1fr))}
-.repl-grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}
-.repl-field{display:block;min-width:0}
-.repl-field > span{display:flex;align-items:center;justify-content:space-between;gap:6px;font-size:9px;font-weight:800;color:#536568;margin:0 2px 5px}
-.repl-field small{font-size:8px;color:#8a989a;font-weight:700}
-.repl-field input{
-  width:100%;height:44px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--text);
-  padding:0 11px;outline:none;font-size:16px;font-weight:700;appearance:textfield;-moz-appearance:textfield
-}
-.repl-field input::-webkit-outer-spin-button,.repl-field input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
-.repl-field input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(15,143,134,.08)}
-.repl-field input::placeholder{color:#b7c3c4;font-weight:500}
-.repl-help{margin:8px 2px 0;font-size:8px;line-height:1.5;color:#809092}
-.repl-inline-result{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:9px;padding:8px 10px;border-radius:11px;background:#f4f9f8;border:1px solid #e1eeec}
-.repl-inline-result span{font-size:9px;color:#6c7e80;font-weight:750}
-.repl-inline-result b{font-size:13px;color:var(--accent-dark)}
-.conditional.hidden{display:none}
-.repl-results{padding:13px;background:linear-gradient(180deg,#fff,#f7fbfa);border-color:#cfe2df}
-.repl-result-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
-.repl-result-top h2{font-size:17px;margin:0}
-.repl-mode-badge{border-radius:999px;padding:6px 9px;background:var(--accent-soft);color:var(--accent-dark);font-size:9px;font-weight:850;border:1px solid #cde6e2}
-.repl-result-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
-.repl-metric{min-width:0;border:1px solid #e4eeec;border-radius:12px;background:#fff;padding:9px}
-.repl-metric span{display:block;font-size:8px;font-weight:800;color:#7a8b8e;margin-bottom:5px}
-.repl-metric b{display:block;font-size:15px;color:#23494a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.repl-metric.primary{border-color:#b9ddd8;background:#f3fbf9}
-.repl-metric.primary b{color:var(--accent-dark);font-size:18px}
-.repl-message{margin-top:9px;border-radius:11px;padding:9px 10px;background:#eef7f5;color:#476466;font-size:9px;line-height:1.5;border:1px solid #dcebe8}
-.repl-message.error{background:#fff4f2;color:#9d4338;border-color:#f1d3ce}
-.repl-actions{display:grid;grid-template-columns:1fr;margin-top:4px}
-@media(max-width:430px){
-  .repl-grid.three{grid-template-columns:1fr 1fr}.repl-grid.three .repl-field:last-child{grid-column:1/-1}
-}
-@media(max-width:350px){
-  .repl-grid,.repl-grid.three,.repl-result-grid{grid-template-columns:1fr}.repl-grid.three .repl-field:last-child{grid-column:auto}
-  .choice span{padding:0 8px;font-size:9px}
-}
-
-
-/* V1.0.28 current density + preset settings */
-.app-tabs{grid-template-columns:repeat(3,minmax(0,1fr))}
-.surface-section-head{align-items:flex-start}
-.surface-heading-area{min-width:0;flex:1 1 auto}
-.surface-heading-line{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.surface-heading-line h1{flex:0 0 auto}
-.current-density-inline{display:flex;align-items:center;gap:5px;border:1px solid #cfe2df;border-radius:9px;background:#fff;padding:3px 6px;color:#536568;font-size:8px;font-weight:800;white-space:nowrap}
-.current-density-inline input{width:72px;height:27px;border:0;border-left:1px solid #e3ecea;border-right:1px solid #e3ecea;padding:0 7px;outline:none;color:var(--accent-dark);font-size:13px;font-weight:850;background:#fff;appearance:textfield;-moz-appearance:textfield}
-.current-density-inline input::-webkit-outer-spin-button,.current-density-inline input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
-.current-density-inline input:focus{box-shadow:inset 0 -2px 0 var(--accent)}
-.current-density-inline small{font-size:7px;color:#789092}
-.current-density-preset-choices{display:flex;gap:5px;flex-wrap:wrap;margin-top:5px;min-height:0}
-.current-density-choice,.surface-preset-choice{display:inline-flex;align-items:center;gap:4px;border:1px solid #d7e6e3;border-radius:999px;background:#f8fbfa;padding:3px 7px;font-size:7.5px;font-weight:800;color:#5c7375;cursor:pointer}
-.current-density-choice input,.surface-preset-choice input{width:11px;height:11px;margin:0;accent-color:var(--accent);flex:0 0 auto}
-.current-density-choice.selected,.surface-preset-choice.selected{border-color:#9fd4ce;background:var(--accent-soft);color:var(--accent-dark)}
-.current-density-empty,.surface-preset-empty{font-size:7.5px;color:#91a1a2;padding:2px 0}
-.entry-topline{display:flex;align-items:center;gap:7px;margin-bottom:7px;flex-wrap:wrap}
-.entry-topline .entry-label{margin:0 2px;flex:0 0 auto}
-.surface-preset-choices{display:flex;align-items:center;gap:5px;flex-wrap:wrap;min-width:0;flex:1 1 auto}
-.surface-preset-choice span{white-space:nowrap}
-.entry-row-tools{display:flex;align-items:center;gap:5px;min-width:0;margin-left:auto}
-
-.entry-metrics{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;padding-top:8px;border-top:1px solid #edf2f1}
-.entry-metric{min-width:0;display:flex;align-items:flex-end;justify-content:space-between;gap:8px;border-radius:10px;background:#f8fbfa;padding:7px 9px}
-.entry-metric span{font-size:7.5px;font-weight:850;letter-spacing:.35px;color:#688082;white-space:nowrap}
-.entry-metric b{font:850 13px/1.05 "Segoe UI",sans-serif;color:var(--accent-dark);white-space:nowrap}
-.entry-metric b small{font-size:7px;color:#74898b;font-weight:750;margin-left:2px}
-.entry-metric:last-child{text-align:right}
-@media(max-width:350px){.entry-metrics{grid-template-columns:1fr}.entry-metric:last-child{text-align:left}}
-.row-delete-btn{width:26px;height:26px;border-radius:8px;border:1px solid #e5d7d7;background:#fff9f9;color:#b95e5e;font:850 16px/1 "Segoe UI",sans-serif;display:grid;place-items:center;padding:0}
-.integrated-result-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:10px}
-.integrated-metric{min-width:0;border:1px solid #e2ecea;border-radius:12px;background:#fff;padding:9px}
-.integrated-metric span{display:block;font-size:8px;font-weight:800;color:#728486;margin-bottom:5px}
-.integrated-metric output{display:block;font:800 18px/1.05 "Segoe UI",sans-serif;color:#23494a;white-space:nowrap}
-.integrated-metric output small{font-size:8px;color:#7b8d8e;font-weight:700;margin-left:2px}
-.integrated-metric.primary{border-color:#b9ddd8;background:#f3fbf9}
-.integrated-metric.primary output{color:var(--accent-dark);font-size:21px}
-.settings-card{margin-bottom:10px}
-.settings-status{min-height:18px;margin:0 2px 8px;font-size:8px;color:#6f8587}
-.settings-help{margin:-2px 0 10px;font-size:8px;line-height:1.55;color:#7d8f90}
-.settings-grid{display:grid;gap:8px;margin-bottom:8px}
-.settings-grid.two{grid-template-columns:repeat(2,minmax(0,1fr))}
-.settings-grid.four{grid-template-columns:repeat(4,minmax(0,1fr))}
-.repl-field select{width:100%;height:44px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--text);padding:0 10px;outline:none;font-size:12px;font-weight:750}
-.settings-save-btn{width:100%;min-height:40px;border:1px solid #9fd4ce;border-radius:11px;background:var(--accent-soft);color:var(--accent-dark);font-size:10px;font-weight:850;padding:9px 12px}
-.settings-list{display:grid;gap:6px;margin-top:9px}
-.settings-list-empty{border:1px dashed #d7e3e1;border-radius:10px;padding:10px;text-align:center;font-size:8px;color:#8a9a9b;background:#fbfdfd}
-.settings-list-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;border:1px solid #e2ecea;border-radius:11px;background:#fff;padding:8px 9px}
-.settings-list-row.selected{border-color:#9fd4ce;background:#f3fbf9}
-.settings-list-main{min-width:0}
-.settings-list-main b{display:block;font-size:10px;color:#29494a;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.settings-list-main span{display:block;font-size:8px;color:#7b8d8e;margin-top:2px}
-.settings-list-actions{display:flex;gap:4px}
-.settings-mini-btn{min-height:27px;border:1px solid #d4e4e1;border-radius:8px;background:#f8fbfa;color:#4c686a;font-size:8px;font-weight:800;padding:0 8px}
-.settings-mini-btn.select{border-color:#a9d8d2;color:var(--accent-dark);background:#eff9f7}
-.settings-mini-btn.delete{border-color:#ecd5d5;color:#b55e5e;background:#fff8f8}
-[data-setting-shapes].hidden{display:none}
-@media(max-width:560px){
-  .integrated-result-grid{grid-template-columns:1fr 1fr}.integrated-metric.primary{grid-column:1/-1}
-  .settings-grid.four{grid-template-columns:1fr 1fr}
-}
-@media(max-width:430px){
-  .surface-section-head{gap:7px}.surface-heading-line{gap:7px}.current-density-inline{padding:2px 5px}.current-density-inline input{width:62px;height:25px;font-size:12px}
-  .surface-preset-choice{font-size:7px;padding:3px 6px}
-  .settings-grid.two{grid-template-columns:1fr}
-}
-@media(max-width:350px){
-  .integrated-result-grid,.settings-grid.four{grid-template-columns:1fr}.integrated-metric.primary{grid-column:auto}
-  .entry-topline{align-items:flex-start}.surface-preset-choices{flex-basis:100%}.entry-row-tools{margin-left:auto}.surface-preset-choice{font-size:6.8px}
-}
-
 </style>
 </head>
 <body>
 <header class="topbar">
-    <div class="brand-block">
-<div class="top-logo" aria-hidden="true">
-      <img src="data:image/png;base64,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" alt="S.A.R.C 아이콘" class="top-logo-img" onerror="this.onerror=null;this.src='./apple-touch-icon.png';">
+  <div class="topbar-inner">
+    <div class="brand">
+      <div class="logo"><div class="logo-mark"><div class="a-shape"></div><div>S.A.R.C</div></div></div>
+      <div class="brand-copy">
+        <h1>S.A.R.C</h1>
+        <p>SURFACE AREA &amp; REPLENISHMENT CALCULATOR</p>
+      </div>
     </div>
-    <div class="top-title"><b>S.A.R.C</b><span>SURFACE AREA &amp; REPLENISHMENT CALCULATOR</span></div>
+    <div class="header-state">
+      <div class="live"><span class="dot"></span> AUTO CALC</div>
+      <div class="version">VERSION 1.0.31</div>
+    </div>
   </div>
-  <div class="top-state"><div class="top-state-row"><span class="dot"></span><span>AUTO CALC</span></div><span class="top-version">VERSION 1.0.30</span><span class="top-signature">T.S.HWANG</span></div>
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="surface">표면적 계산</button>
+    <button class="tab-btn" data-tab="replenishment">보충량 계산</button>
+    <button class="tab-btn" data-tab="settings">설정</button>
+  </div>
 </header>
 
-<main class="mobile-main">
-  <div class="app-tabs" role="tablist" aria-label="계산기 선택">
-    <button id="surfaceTab" class="app-tab active" type="button" role="tab" aria-selected="true" data-tab-target="surface">표면적 계산</button>
-    <button id="replenishmentTab" class="app-tab" type="button" role="tab" aria-selected="false" data-tab-target="replenishment">보충량 계산</button>
-    <button id="settingsTab" class="app-tab" type="button" role="tab" aria-selected="false" data-tab-target="settings">설정</button>
-  </div>
-  <section id="surfacePanel" class="app-panel active" role="tabpanel" aria-labelledby="surfaceTab">
-  <div class="section-head surface-section-head">
-    <div class="surface-heading-area">
-      <div class="surface-heading-line">
-        <h1>표면적 계산기</h1>
-        <label class="current-density-inline"><span>전류 밀도</span><input id="currentDensityInput" type="number" inputmode="decimal" min="0" step="any" placeholder="0"><small>A/dm²</small></label>
-      </div>
-      <div id="currentDensityPresetChoices" class="current-density-preset-choices" aria-label="저장된 전류 밀도 선택"></div>
-    </div>
-    <div class="unit-pill">mm → dm²</div>
-  </div>
-
-  <section class="calc-card" aria-labelledby="formula1Title">
-    <div class="card-head">
-      <div class="card-title-block"><small>계산식 01</small><div class="title-line"><h2 id="formula1Title">원통 측면적</h2><div class="formula-tag">지름 × 3.14 × 높이</div></div></div>
-      <div class="entry-controls" aria-label="원통 항목 추가 및 삭제">
-        <button type="button" class="entry-btn" data-remove="cylinder" aria-label="원통 항목 삭제">−</button>
-        <button type="button" class="entry-btn" data-add="cylinder" aria-label="원통 항목 추가">+</button>
-      </div>
-    </div>
-    <div class="entry-list" data-group="cylinder">
-      <div class="entry-row" data-entry="cylinder">
-        <div class="entry-topline"><div class="entry-label">항목 1</div><div class="surface-preset-choices" data-preset-shape="cylinder" aria-label="원통 기본 표면적 선택"></div><div class="entry-row-tools"></div></div>
-        <div class="fields three">
-          <label class="field"><span>지름 <small>mm</small></span><input id="diameter" data-field="diameter" type="number" inputmode="decimal" step="any" placeholder="0" autocomplete="off"></label>
-          <label class="field"><span>높이 <small>mm</small></span><input id="height" data-field="height" type="number" inputmode="decimal" step="any" placeholder="0" autocomplete="off"></label>
-          <label class="field"><span>수량 <small>EA</small></span><input id="cylinderQty" data-field="qty" type="number" inputmode="numeric" step="1" placeholder="1" autocomplete="off"></label>
-        </div>
-      </div>
-    </div>
-    <div class="result-row">
-      <div class="result-copy"><span>계산 결과 01</span><b>원통 측면적 합계</b></div>
-      <output id="cylinderResult" class="result-value" aria-live="polite">0.0000 <small>dm²</small></output>
-    </div>
-  </section>
-
-  <section class="calc-card" aria-labelledby="formula2Title">
-    <div class="card-head">
-      <div class="card-title-block"><small>계산식 02</small><div class="title-line"><h2 id="formula2Title">원 면적</h2><div class="formula-tag">반지름 × 반지름 × 3.14</div></div></div>
-      <div class="entry-controls" aria-label="원 항목 추가 및 삭제">
-        <button type="button" class="entry-btn" data-remove="circle" aria-label="원 항목 삭제">−</button>
-        <button type="button" class="entry-btn" data-add="circle" aria-label="원 항목 추가">+</button>
-      </div>
-    </div>
-    <div class="entry-list" data-group="circle">
-      <div class="entry-row" data-entry="circle">
-        <div class="entry-topline"><div class="entry-label">항목 1</div><div class="surface-preset-choices" data-preset-shape="circle" aria-label="원 기본 표면적 선택"></div><div class="entry-row-tools"></div></div>
-        <div class="fields two">
-          <label class="field"><span>반지름 <small>mm</small></span><input id="radius" data-field="radius" type="number" inputmode="decimal" step="any" placeholder="0" autocomplete="off"></label>
-          <label class="field"><span>수량 <small>EA</small></span><input id="circleQty" data-field="qty" type="number" inputmode="numeric" step="1" placeholder="1" autocomplete="off"></label>
-        </div>
-      </div>
-    </div>
-    <div class="result-row">
-      <div class="result-copy"><span>계산 결과 02</span><b>원 면적 합계</b></div>
-      <output id="circleResult" class="result-value" aria-live="polite">0.0000 <small>dm²</small></output>
-    </div>
-  </section>
-
-  <section class="calc-card" aria-labelledby="formula3Title">
-    <div class="card-head">
-      <div class="card-title-block"><small>계산식 03</small><div class="title-line"><h2 id="formula3Title">직육면체 표면적</h2><div class="formula-tag long">(가로×세로 + 가로×높이 + 세로×높이) X 2</div></div></div>
-      <div class="entry-controls" aria-label="직육면체 항목 추가 및 삭제">
-        <button type="button" class="entry-btn" data-remove="box" aria-label="직육면체 항목 삭제">−</button>
-        <button type="button" class="entry-btn" data-add="box" aria-label="직육면체 항목 추가">+</button>
-      </div>
-    </div>
-    <div class="entry-list" data-group="box">
-      <div class="entry-row" data-entry="box">
-        <div class="entry-topline"><div class="entry-label">항목 1</div><div class="surface-preset-choices" data-preset-shape="box" aria-label="직육면체 기본 표면적 선택"></div><div class="entry-row-tools"></div></div>
-        <div class="fields four">
-          <label class="field"><span>가로 <small>mm</small></span><input id="boxWidth" data-field="width" type="number" inputmode="decimal" step="any" placeholder="0" autocomplete="off"></label>
-          <label class="field"><span>세로 <small>mm</small></span><input id="boxDepth" data-field="depth" type="number" inputmode="decimal" step="any" placeholder="0" autocomplete="off"></label>
-          <label class="field"><span>높이 <small>mm</small></span><input id="boxHeight" data-field="height" type="number" inputmode="decimal" step="any" placeholder="0" autocomplete="off"></label>
-          <label class="field"><span>수량 <small>EA</small></span><input id="boxQty" data-field="qty" type="number" inputmode="numeric" step="1" placeholder="1" autocomplete="off"></label>
-        </div>
-      </div>
-    </div>
-    <div class="result-row">
-      <div class="result-copy"><span>계산 결과 03</span><b>직육면체 6면 표면적 합계</b></div>
-      <output id="boxResult" class="result-value" aria-live="polite">0.0000 <small>dm²</small></output>
-    </div>
-  </section>
-
-  <div id="statusLine" class="status-line" aria-live="polite"><span class="mini-dot"></span><span>값을 입력하면 결과가 자동으로 계산됩니다.</span></div>
-
-  <section class="total-card" aria-labelledby="totalTitle">
-    <div class="total-label"><small>통합 결과</small><h2 id="totalTitle">표면적 · 전류</h2><p>전체 표면적 × 적용 전류 밀도 = 계산 총 전류</p></div>
-    <div class="integrated-result-grid">
-      <div class="integrated-metric"><span>총 표면적</span><output id="totalResult" aria-live="polite">0.0000 <small>dm²</small></output></div>
-      <div class="integrated-metric"><span>적용 전류 밀도</span><output id="appliedCurrentDensityResult" aria-live="polite">0.000 <small>A/dm²</small></output></div>
-      <div class="integrated-metric primary"><span>계산 총 전류</span><output id="totalCurrentResult" aria-live="polite">0.00 <small>A</small></output></div>
-    </div>
-  </section>
-
-  <div class="actions"><button id="resetButton" type="button" class="secondary">입력값 초기화</button></div>
-
-  </section>
-
-  <section id="replenishmentPanel" class="app-panel" role="tabpanel" aria-labelledby="replenishmentTab">
+<div class="app">
+  <section class="page" id="page-surface">
     <div class="section-head">
-      <div><h1>보충량 계산기</h1></div>
-      <div class="unit-pill">농도 g/L</div>
+      <div>
+        <div class="title-row">
+          <h2>표면적 계산기</h2>
+          <div class="inline-jd">
+            <label for="surfaceCurrentDensity">전류 밀도</label>
+            <input id="surfaceCurrentDensity" type="number" step="any" placeholder="0">
+            <span>A / dm²</span>
+          </div>
+        </div>
+        <div class="helper">아래 체크 박스를 선택한 계산 카드만 화면에 표시됩니다.</div>
+      </div>
+      <div class="unit-chip">mm → dm²</div>
     </div>
 
-    <section class="repl-card" aria-labelledby="tankInfoTitle">
-      <div class="repl-card-head"><div><small>STEP 01</small><h2 id="tankInfoTitle">탱크 정보</h2></div></div>
-      <div class="choice-group" aria-label="탱크 용량 입력 방식">
-        <label class="choice"><input type="radio" name="tankMode" value="direct" checked><span>용량 직접 입력</span></label>
-        <label class="choice"><input type="radio" name="tankMode" value="dimensions"><span>탱크 치수 입력</span></label>
-      </div>
-
-      <div id="directTankFields" class="conditional">
-        <div class="repl-grid">
-          <label class="repl-field"><span>탱크 용량 <small>L</small></span><input id="tankVolumeL" type="number" inputmode="decimal" min="0" step="any" placeholder="2400" autocomplete="off"></label>
-          <div class="repl-field"><span>현재 적용 용량 <small>L</small></span><div class="repl-inline-result"><span>계산 기준</span><b id="directVolumeEcho">0.00 L</b></div></div>
-        </div>
-        <p class="repl-help">배출 수위(mm)도 계산하려면 아래 탱크 바닥 치수를 선택 입력하십시오.</p>
-        <div class="repl-grid">
-          <label class="repl-field"><span>바닥 가로 <small>mm</small></span><input id="directTankWidthMm" type="number" inputmode="decimal" min="0" step="any" placeholder="2000" autocomplete="off"></label>
-          <label class="repl-field"><span>바닥 세로 <small>mm</small></span><input id="directTankDepthMm" type="number" inputmode="decimal" min="0" step="any" placeholder="900" autocomplete="off"></label>
-        </div>
-      </div>
-
-      <div id="dimensionTankFields" class="conditional hidden">
-        <div class="repl-grid three">
-          <label class="repl-field"><span>가로 <small>mm</small></span><input id="tankWidthMm" type="number" inputmode="decimal" min="0" step="any" placeholder="2000" autocomplete="off"></label>
-          <label class="repl-field"><span>세로 <small>mm</small></span><input id="tankDepthMm" type="number" inputmode="decimal" min="0" step="any" placeholder="900" autocomplete="off"></label>
-          <label class="repl-field"><span>액 높이 <small>mm</small></span><input id="liquidHeightMm" type="number" inputmode="decimal" min="0" step="any" placeholder="1000" autocomplete="off"></label>
-        </div>
-        <div class="repl-inline-result"><span>자동 계산 탱크 용량</span><b id="computedTankVolume">0.00 L</b></div>
-      </div>
-    </section>
-
-    <section class="repl-card" aria-labelledby="concentrationTitle">
-      <div class="repl-card-head"><div><small>STEP 02</small><h2 id="concentrationTitle">농도 조건</h2></div></div>
-      <div class="repl-grid">
-        <label class="repl-field"><span>현재 농도 <small>g/L</small></span><input id="currentGpl" type="number" inputmode="decimal" min="0" step="any" placeholder="0" autocomplete="off"></label>
-        <label class="repl-field"><span>목표 농도 <small>g/L</small></span><input id="targetGpl" type="number" inputmode="decimal" min="0" step="any" placeholder="0" autocomplete="off"></label>
-      </div>
-      <p class="repl-help">현재 농도가 높으면 폐수 후 순수 보충, 낮으면 약품 보충으로 자동 판정합니다.</p>
-
-      <div class="choice-group" style="margin-top:10px" aria-label="동반 약품 농도 유지 선택">
-        <label class="choice"><input id="companionEnabled" type="checkbox"><span>동반 약품 농도도 함께 유지</span></label>
-      </div>
-      <div id="companionFields" class="conditional hidden">
-        <div class="repl-card-head" style="margin-top:4px;margin-bottom:7px"><div><small>동반 약품 보정 · 예: HCl</small></div></div>
-        <div class="repl-grid">
-          <label class="repl-field"><span>현재 동반농도 <small>g/L</small></span><input id="companionCurrentGpl" type="number" inputmode="decimal" min="0" step="any" placeholder="0" autocomplete="off"></label>
-          <label class="repl-field"><span>목표 동반농도 <small>g/L</small></span><input id="companionTargetGpl" type="number" inputmode="decimal" min="0" step="any" placeholder="0" autocomplete="off"></label>
-        </div>
-        <div class="repl-grid">
-          <label class="repl-field"><span>보충 원액 농도 <small>wt%</small></span><input id="companionStockWtPct" type="number" inputmode="decimal" min="0" max="100" step="any" placeholder="35" autocomplete="off"></label>
-          <label class="repl-field"><span>비중 <small>SG</small></span><input id="companionSpecificGravity" type="number" inputmode="decimal" min="0" step="any" placeholder="1.18" autocomplete="off"></label>
-        </div>
-        <div class="choice-group" aria-label="동반 약품 포장 단위">
-          <label class="choice"><input type="radio" name="companionSupplyUnit" value="liter" checked><span>L 단위</span></label>
-          <label class="choice"><input type="radio" name="companionSupplyUnit" value="kg"><span>kg 단위</span></label>
-        </div>
-        <div class="repl-grid">
-          <label class="repl-field"><span>말통/포장 용량 <small id="companionPackageUnitLabel">L</small></span><input id="companionPackageSize" type="number" inputmode="decimal" min="0" step="any" placeholder="20" autocomplete="off"></label>
-          <div class="repl-field"><span>원액 유효농도 <small>g/L</small></span><div class="repl-inline-result"><span>농도·비중 환산</span><b id="companionStockGplPreview">0.00 g/L</b></div></div>
-        </div>
-        <p class="repl-help">주농도 희석으로 함께 빠져나간 동반 약품을 계산하고, 부족분은 원액으로 보충한 뒤 나머지만 순수로 채웁니다.</p>
-      </div>
-    </section>
-
-    <section class="repl-card" aria-labelledby="chemicalTitle">
-      <div class="repl-card-head"><div><small>STEP 03</small><h2 id="chemicalTitle">보충 약품</h2></div></div>
-      <div class="choice-group" aria-label="약품 형태">
-        <label class="choice"><input type="radio" name="chemicalType" value="solid" checked><span>고형약품</span></label>
-        <label class="choice"><input type="radio" name="chemicalType" value="liquid"><span>액상약품</span></label>
-      </div>
-
-      <div id="solidChemicalFields" class="conditional">
-        <div class="repl-grid">
-          <label class="repl-field"><span>고형약품 순도 <small>%</small></span><input id="solidPurityPct" type="number" inputmode="decimal" min="0" max="100" step="any" placeholder="100" autocomplete="off"></label>
-        </div>
-        <p class="repl-help">순도를 비워두면 100%로 계산합니다.</p>
-      </div>
-
-      <div id="liquidChemicalFields" class="conditional hidden">
-        <div class="choice-group" aria-label="액상 원액 농도 입력 방식">
-          <label class="choice"><input type="radio" name="liquidConcentrationMode" value="gpl" checked><span>원액 g/L 입력</span></label>
-          <label class="choice"><input type="radio" name="liquidConcentrationMode" value="percent"><span>농도 % + 비중</span></label>
-        </div>
-
-        <div id="liquidGplFields" class="conditional">
-          <div class="repl-grid">
-            <label class="repl-field"><span>원액 유효농도 <small>g/L</small></span><input id="liquidStockGpl" type="number" inputmode="decimal" min="0" step="any" placeholder="0" autocomplete="off"></label>
-            <label class="repl-field"><span>비중 <small>SG</small></span><input id="specificGravityGpl" type="number" inputmode="decimal" min="0" step="any" placeholder="1.18" autocomplete="off"></label>
-          </div>
-        </div>
-
-        <div id="liquidPercentFields" class="conditional hidden">
-          <div class="repl-grid">
-            <label class="repl-field"><span>원액 농도 <small>wt%</small></span><input id="liquidWtPct" type="number" inputmode="decimal" min="0" max="100" step="any" placeholder="35" autocomplete="off"></label>
-            <label class="repl-field"><span>비중 <small>SG</small></span><input id="specificGravityPercent" type="number" inputmode="decimal" min="0" step="any" placeholder="1.18" autocomplete="off"></label>
-          </div>
-          <div class="repl-inline-result"><span>환산 원액 유효농도</span><b id="convertedStockGpl">0.00 g/L</b></div>
-        </div>
-
-        <div class="repl-card-head" style="margin-top:12px;margin-bottom:7px"><div><small>액상약품 입고/투입 단위</small></div></div>
-        <div class="choice-group" aria-label="액상약품 입고 또는 투입 단위">
-          <label class="choice"><input type="radio" name="liquidSupplyUnit" value="liter" checked><span>L 기준</span></label>
-          <label class="choice"><input type="radio" name="liquidSupplyUnit" value="kg"><span>kg 기준</span></label>
-        </div>
-        <div id="liquidKgSupplyFields" class="conditional hidden">
-          <div class="repl-grid">
-            <label class="repl-field"><span>액상약품 중량 <small>kg</small></span><input id="liquidInputKg" type="number" inputmode="decimal" min="0" step="any" placeholder="25" autocomplete="off"></label>
-          </div>
-          <div class="repl-inline-result"><span>비중 적용 환산 부피</span><b id="convertedLiquidVolume">0.00 L</b></div>
-          <p class="repl-help">kg ÷ 비중으로 L를 환산합니다. 입고 중량을 실제 투입 부피로 바꿀 때 사용합니다.</p>
-        </div>
-
-        <div class="repl-card-head" style="margin-top:12px;margin-bottom:7px"><div><small>액상 투입 방식</small></div></div>
-        <div class="choice-group" aria-label="액상 투입 후 용량 처리">
-          <label class="choice"><input type="radio" name="liquidVolumeMode" value="constant" checked><span>정용량 유지</span></label>
-          <label class="choice"><input type="radio" name="liquidVolumeMode" value="grow"><span>용량 증가 허용</span></label>
-        </div>
-        <p class="repl-help">정용량 유지는 약품 투입량만큼 기존 용액을 먼저 배출합니다.</p>
-      </div>
-    </section>
-
-    <section class="repl-card repl-results" aria-labelledby="replenishmentResultTitle">
-      <div class="repl-result-top"><h2 id="replenishmentResultTitle">계산 결과</h2><span id="replModeLabel" class="repl-mode-badge">입력 대기</span></div>
-      <div class="repl-result-grid">
-        <div class="repl-metric"><span>탱크 적용 용량</span><b id="replTankVolumeResult">0.00 L</b></div>
-        <div class="repl-metric"><span>최종 예상 용량</span><b id="replFinalVolumeResult">0.00 L</b></div>
-        <div class="repl-metric primary"><span>폐수량</span><b id="wasteResult">0.00 L</b></div>
-        <div class="repl-metric primary"><span>순수 보충량</span><b id="pureWaterResult">0.00 L</b></div>
-        <div class="repl-metric"><span>배출 수위</span><b id="dischargeMmResult">—</b></div>
-        <div class="repl-metric"><span>원액 유효농도</span><b id="stockGplResult">—</b></div>
-        <div class="repl-metric"><span>입고/투입 중량</span><b id="inputChemicalKgResult">—</b></div>
-        <div class="repl-metric"><span>kg 환산 부피</span><b id="inputChemicalLResult">—</b></div>
-        <div class="repl-metric"><span>kg 적용 배출량</span><b id="inputWasteResult">—</b></div>
-        <div class="repl-metric"><span>kg 적용 최종용량</span><b id="inputFinalVolumeResult">—</b></div>
-        <div class="repl-metric"><span>kg 적용 예상농도</span><b id="inputFinalGplResult">—</b></div>
-        <div class="repl-metric primary"><span>약품 보충량</span><b id="chemicalLResult">0.00 L</b></div>
-        <div class="repl-metric primary"><span>약품 보충량</span><b id="chemicalKgResult">0.000 kg</b></div>
-        <div class="repl-metric"><span>동반 약품 최종농도</span><b id="companionFinalGplResult">—</b></div>
-        <div class="repl-metric"><span>말통/포장 수</span><b id="companionPackageCountResult">—</b></div>
-      </div>
-      <div id="replMessage" class="repl-message">탱크 용량과 현재/목표 농도를 입력하면 자동으로 계산됩니다.</div>
-    </section>
-
-    <div class="repl-actions"><button id="replenishmentResetButton" type="button" class="secondary">보충량 입력값 초기화</button></div>
-  </section>
-
-  <section id="settingsPanel" class="app-panel" role="tabpanel" aria-labelledby="settingsTab">
-    <div class="section-head">
-      <div><h1>설정</h1></div>
-      <div class="unit-pill">자동 저장</div>
+    <div class="shape-selector">
+      <label class="check-pill"><input type="checkbox" id="toggleCylinder" checked> 원통 측면적</label>
+      <label class="check-pill"><input type="checkbox" id="toggleCircle" checked> 원면적</label>
+      <label class="check-pill"><input type="checkbox" id="toggleBox" checked> 직육면체 표면적</label>
     </div>
-    <div id="settingsStatus" class="settings-status" aria-live="polite">저장한 값은 이 기기에 유지됩니다.</div>
 
-    <section class="repl-card settings-card" aria-labelledby="currentDensitySettingsTitle">
-      <div class="repl-card-head"><div><small>SETTING 01</small><h2 id="currentDensitySettingsTitle">전류 밀도 기본값</h2></div></div>
-      <p class="settings-help">작업에 자주 사용하는 전류 밀도를 이름과 함께 저장합니다. 표면적 계산 화면에서 체크하여 한 개를 선택하거나 직접 값을 입력할 수 있습니다.</p>
-      <input id="currentDensityEditingId" type="hidden">
-      <div class="settings-grid two">
-        <label class="repl-field"><span>항목명 <small>예: 은도금 일반</small></span><input id="currentDensityPresetName" type="text" maxlength="30" placeholder="전류 밀도 이름" autocomplete="off"></label>
-        <label class="repl-field"><span>전류 밀도 <small>A/dm²</small></span><input id="currentDensityPresetValue" type="number" inputmode="decimal" min="0" step="any" placeholder="0.50" autocomplete="off"></label>
-      </div>
-      <button id="saveCurrentDensityPreset" type="button" class="settings-save-btn">전류 밀도 저장</button>
-      <div id="currentDensityPresetList" class="settings-list" aria-live="polite"></div>
-    </section>
+    <div id="surfaceCards"></div>
 
-    <section class="repl-card settings-card" aria-labelledby="surfacePresetSettingsTitle">
-      <div class="repl-card-head"><div><small>SETTING 02</small><h2 id="surfacePresetSettingsTitle">기본 표면적</h2></div></div>
-      <p class="settings-help">항목명과 형상별 치수를 저장합니다. 수량은 저장하지 않으며, 계산 화면에서 프리셋 선택 시 치수만 자동 입력됩니다.</p>
-      <input id="surfacePresetEditingId" type="hidden">
-      <div class="settings-grid two">
-        <label class="repl-field"><span>항목명 <small>체크 선택 표시명</small></span><input id="surfacePresetName" type="text" maxlength="40" placeholder="예: BUS BAR A" autocomplete="off"></label>
-        <label class="repl-field"><span>형상 <small>TYPE</small></span><select id="surfacePresetShape"><option value="cylinder">원통 측면적</option><option value="circle">원 면적</option><option value="box">직육면체 표면적</option></select></label>
+    <section class="summary-card">
+      <h3>통합 결과</h3>
+      <div class="summary-grid">
+        <div class="summary-box"><small>총 표면적</small><b id="sumArea">0.0000</b><span>dm²</span></div>
+        <div class="summary-box"><small>적용 전류 밀도</small><b id="sumDensity">0.000</b><span>A / dm²</span></div>
+        <div class="summary-box"><small>총 전류</small><b id="sumCurrent">0.0000</b><span>A</span></div>
       </div>
-      <div class="settings-grid four surface-preset-dimensions">
-        <label class="repl-field" data-setting-shapes="cylinder"><span>지름 <small>mm</small></span><input id="surfacePresetDiameter" type="number" inputmode="decimal" min="0" step="any" placeholder="0"></label>
-        <label class="repl-field" data-setting-shapes="circle"><span>반지름 <small>mm</small></span><input id="surfacePresetRadius" type="number" inputmode="decimal" min="0" step="any" placeholder="0"></label>
-        <label class="repl-field" data-setting-shapes="box"><span>가로 <small>mm</small></span><input id="surfacePresetWidth" type="number" inputmode="decimal" min="0" step="any" placeholder="0"></label>
-        <label class="repl-field" data-setting-shapes="box"><span>세로 <small>mm</small></span><input id="surfacePresetDepth" type="number" inputmode="decimal" min="0" step="any" placeholder="0"></label>
-        <label class="repl-field" data-setting-shapes="cylinder,box"><span>높이 <small>mm</small></span><input id="surfacePresetHeight" type="number" inputmode="decimal" min="0" step="any" placeholder="0"></label>
+      <div class="action-row">
+        <button class="soft-btn" id="resetSurfaceBtn">표면적 입력값 초기화</button>
       </div>
-      <button id="saveSurfacePreset" type="button" class="settings-save-btn">기본 표면적 저장</button>
-      <div id="surfacePresetList" class="settings-list" aria-live="polite"></div>
     </section>
   </section>
 
-</main>
+  <section class="page hidden" id="page-replenishment">
+    <div class="panel">
+      <h3>보충량 계산</h3>
+      <div class="sub">현재 버전은 기본 계산 기능을 유지하면서 UI 정리용 테스트 화면입니다.</div>
+      <div class="row-2">
+        <div class="field"><label>탱크 용량 <small>L</small></label><input id="tankVolume" type="number" step="any" placeholder="0"></div>
+        <div class="field"><label>현재 농도 <small>g/L</small></label><input id="currentConc" type="number" step="any" placeholder="0"></div>
+        <div class="field"><label>목표 농도 <small>g/L</small></label><input id="targetConc" type="number" step="any" placeholder="0"></div>
+        <div class="field"><label>약품 비중 <small>kg/L</small></label><input id="chemSG" type="number" step="any" placeholder="1.0"></div>
+        <div class="field"><label>약품 농도 <small>%</small></label><input id="chemPct" type="number" step="any" placeholder="0"></div>
+        <div class="field"><label>kg→L 환산용 중량 <small>kg</small></label><input id="chemKg" type="number" step="any" placeholder="0"></div>
+      </div>
+      <div class="action-row"><button class="primary-btn" id="calcReplenishmentBtn">보충량 계산</button></div>
+      <div class="summary-grid" style="margin-top:14px">
+        <div class="summary-box"><small>폐수량</small><b id="wasteOut">0.0</b><span>L</span></div>
+        <div class="summary-box"><small>순수 보충량</small><b id="pureOut">0.0</b><span>L</span></div>
+        <div class="summary-box"><small>약품 보충량</small><b id="chemOut">0.0</b><span>L</span></div>
+      </div>
+      <div class="note" id="replenishmentNote">농도 낮추기/농도 높이기 개념을 모두 단순 계산으로 지원합니다.</div>
+    </div>
+  </section>
+
+  <section class="page hidden" id="page-settings">
+    <div class="panel">
+      <h3>전류 밀도 기본값</h3>
+      <div class="sub">표면적 계산기 상단의 전류 밀도 기본값으로 사용됩니다.</div>
+      <div class="row-3">
+        <div class="field"><label>프리셋 이름</label><input id="presetName" type="text" placeholder="예: 일반도금"></div>
+        <div class="field"><label>전류 밀도 <small>A / dm²</small></label><input id="presetValue" type="number" step="any" placeholder="0"></div>
+        <div class="field"><label>기본값 저장</label><button class="primary-btn" id="savePresetBtn" style="width:100%">프리셋 저장</button></div>
+      </div>
+      <div class="list" id="presetList"></div>
+      <div class="note">프리셋 저장 후 맨 위 항목은 표면적 계산기에 기본값으로 자동 반영됩니다.</div>
+    </div>
+  </section>
+</div>
 
 <script>
-/* CALC_CORE_START */
-function calculateSurfaceAreaGroups(groups) {
-  const toFinite = (value) => {
-    const number = Number(value);
-    return Number.isFinite(number) ? number : 0;
-  };
-  const magnitude = (value) => Math.abs(toFinite(value));
-  const qtyMagnitude = (value) => {
-    if (value === '' || value === null || value === undefined) return 1;
-    return Math.abs(toFinite(value));
-  };
-  const itemSign = (values) => values.some(value => toFinite(value) < 0) ? -1 : 1;
+const appState = {
+  currentDensity: 0,
+  selectedShapes: { cylinder: true, circle: true, box: true },
+  items: {
+    cylinder: [createItem('cylinder')],
+    circle: [createItem('circle')],
+    box: [createItem('box')]
+  },
+  presets: loadJson('sarcCurrentDensityPresets', [])
+};
 
-  const cylinders = Array.isArray(groups.cylinders) ? groups.cylinders : [];
-  const circles = Array.isArray(groups.circles) ? groups.circles : [];
-  const boxes = Array.isArray(groups.boxes) ? groups.boxes : [];
+const shapeConfigs = {
+  cylinder: {
+    label: '원통 측면적',
+    formula: '지름 × 3.14 × 높이',
+    gridClass: 'cyl',
+    fields: [
+      { key:'diameter', label:'지름', unit:'mm' },
+      { key:'height', label:'높이', unit:'mm' },
+      { key:'qty', label:'수량', unit:'EA', placeholder:'1' }
+    ],
+    calc: (v) => toNum(v.diameter) * 3.14 * toNum(v.height) * qtyValue(v.qty) / 10000
+  },
+  circle: {
+    label: '원 면적',
+    formula: '반지름 × 반지름 × 3.14',
+    gridClass: 'circle',
+    fields: [
+      { key:'radius', label:'반지름', unit:'mm' },
+      { key:'qty', label:'수량', unit:'EA', placeholder:'1' }
+    ],
+    calc: (v) => toNum(v.radius) * toNum(v.radius) * 3.14 * qtyValue(v.qty) / 10000
+  },
+  box: {
+    label: '직육면체 표면적',
+    formula: '(가로×세로 + 가로×높이 + 세로×높이) X 2',
+    gridClass: 'box',
+    fields: [
+      { key:'width', label:'가로', unit:'mm' },
+      { key:'depth', label:'세로', unit:'mm' },
+      { key:'height', label:'높이', unit:'mm' },
+      { key:'qty', label:'수량', unit:'EA', placeholder:'1' }
+    ],
+    calc: (v) => (2 * ((toNum(v.width)*toNum(v.depth)) + (toNum(v.width)*toNum(v.height)) + (toNum(v.depth)*toNum(v.height))) * qtyValue(v.qty)) / 10000
+  }
+};
 
-  const cylinderMm2 = cylinders.reduce((sum, item) => {
-    const sign = itemSign([item.diameter, item.height, item.qty]);
-    const area = magnitude(item.diameter) * 3.14 * magnitude(item.height) * qtyMagnitude(item.qty);
-    return sum + sign * area;
-  }, 0);
+function createItem(type){
+  return { id: `${type}-${Date.now()}-${Math.random().toString(36).slice(2,8)}`, values:{} };
+}
+function toNum(value){ const n = parseFloat(value); return Number.isFinite(n) ? n : 0; }
+function qtyValue(value){ return value === '' || value == null ? 1 : toNum(value); }
+function fmt(n, d=4){ return Number.isFinite(n) ? n.toFixed(d) : (0).toFixed(d); }
+function loadJson(key, fallback){ try{ const raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : fallback; }catch{ return fallback; } }
+function saveJson(key, value){ localStorage.setItem(key, JSON.stringify(value)); }
 
-  const circleMm2 = circles.reduce((sum, item) => {
-    const sign = itemSign([item.radius, item.qty]);
-    const radius = magnitude(item.radius);
-    const area = radius * radius * 3.14 * qtyMagnitude(item.qty);
-    return sum + sign * area;
-  }, 0);
+const elements = {
+  tabButtons: [...document.querySelectorAll('.tab-btn')],
+  pages: {
+    surface: document.getElementById('page-surface'),
+    replenishment: document.getElementById('page-replenishment'),
+    settings: document.getElementById('page-settings')
+  },
+  surfaceCurrentDensity: document.getElementById('surfaceCurrentDensity'),
+  toggles: {
+    cylinder: document.getElementById('toggleCylinder'),
+    circle: document.getElementById('toggleCircle'),
+    box: document.getElementById('toggleBox')
+  },
+  surfaceCards: document.getElementById('surfaceCards'),
+  sumArea: document.getElementById('sumArea'),
+  sumDensity: document.getElementById('sumDensity'),
+  sumCurrent: document.getElementById('sumCurrent'),
+  resetSurfaceBtn: document.getElementById('resetSurfaceBtn'),
+  presetName: document.getElementById('presetName'),
+  presetValue: document.getElementById('presetValue'),
+  savePresetBtn: document.getElementById('savePresetBtn'),
+  presetList: document.getElementById('presetList')
+};
 
-  const boxMm2 = boxes.reduce((sum, item) => {
-    const sign = itemSign([item.width, item.depth, item.height, item.qty]);
-    const width = magnitude(item.width);
-    const depth = magnitude(item.depth);
-    const height = magnitude(item.height);
-    const qty = qtyMagnitude(item.qty);
-    const area = 2 * (width * depth + width * height + depth * height) * qty;
-    return sum + sign * area;
-  }, 0);
-
-  const cylinderDm2 = cylinderMm2 / 10000;
-  const circleDm2 = circleMm2 / 10000;
-  const boxDm2 = boxMm2 / 10000;
-  const totalDm2 = cylinderDm2 + circleDm2 + boxDm2;
-
-  return { cylinderDm2, circleDm2, boxDm2, totalDm2 };
+function initialize(){
+  bindTabs();
+  bindSurfaceControls();
+  bindSettingControls();
+  bindReplenishmentControls();
+  if(appState.presets.length > 0){
+    appState.currentDensity = toNum(appState.presets[0].value);
+  }
+  elements.surfaceCurrentDensity.value = appState.currentDensity ? appState.currentDensity : '';
+  Object.entries(elements.toggles).forEach(([key,el])=> el.checked = appState.selectedShapes[key]);
+  renderSurface();
+  renderPresetList();
 }
 
-function calculateSurfaceAreas(values) {
-  return calculateSurfaceAreaGroups({
-    cylinders: [{ diameter: values.diameter, height: values.height, qty: values.cylinderQty }],
-    circles: [{ radius: values.radius, qty: values.circleQty }],
-    boxes: [{ width: values.boxWidth, depth: values.boxDepth, height: values.boxHeight, qty: values.boxQty }]
+function bindTabs(){
+  elements.tabButtons.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const tab = btn.dataset.tab;
+      elements.tabButtons.forEach(b=>b.classList.toggle('active', b===btn));
+      Object.entries(elements.pages).forEach(([key,page])=> page.classList.toggle('hidden', key!==tab));
+    });
   });
 }
 
-function calculateTotalCurrent(totalSurfaceDm2, currentDensity) {
-  const surface = Number(totalSurfaceDm2);
-  const density = Number(currentDensity);
-  const safeSurface = Number.isFinite(surface) ? surface : 0;
-  const safeDensity = Number.isFinite(density) && density > 0 ? density : 0;
-  return { currentDensity: safeDensity, totalCurrentA: safeSurface * safeDensity };
-}
-
-function normalizeSarcSettings(raw) {
-  const source = raw && typeof raw === 'object' ? raw : {};
-  const toPositive = (value) => {
-    const n = Number(value);
-    return Number.isFinite(n) && n > 0 ? n : 0;
-  };
-  const currentDensityPresets = Array.isArray(source.currentDensityPresets)
-    ? source.currentDensityPresets.map(item => ({
-        id: String(item?.id || '').trim(),
-        name: String(item?.name || '').trim(),
-        value: toPositive(item?.value)
-      })).filter(item => item.id && item.name && item.value > 0)
-    : [];
-  const surfacePresets = Array.isArray(source.surfacePresets)
-    ? source.surfacePresets.map(item => {
-        const shape = ['cylinder','circle','box'].includes(item?.shape) ? item.shape : '';
-        const base = { id: String(item?.id || '').trim(), name: String(item?.name || '').trim(), shape };
-        if (shape === 'cylinder') return { ...base, diameter: toPositive(item?.diameter), height: toPositive(item?.height) };
-        if (shape === 'circle') return { ...base, radius: toPositive(item?.radius) };
-        if (shape === 'box') return { ...base, width: toPositive(item?.width), depth: toPositive(item?.depth), height: toPositive(item?.height) };
-        return base;
-      }).filter(item => {
-        if (!item.id || !item.name || !item.shape) return false;
-        if (item.shape === 'cylinder') return item.diameter > 0 && item.height > 0;
-        if (item.shape === 'circle') return item.radius > 0;
-        return item.width > 0 && item.depth > 0 && item.height > 0;
-      })
-    : [];
-  return {
-    currentDensityPresets,
-    surfacePresets,
-    selectedCurrentDensityPresetId: String(source.selectedCurrentDensityPresetId || ''),
-    manualCurrentDensity: toPositive(source.manualCurrentDensity)
-  };
-}
-/* CALC_CORE_END */
-
-
-function applySurfacePresetToRow(row, preset) {
-  if (!row || !preset || !preset.shape) return;
-  const maps = {
-    cylinder: { diameter: 'diameter', height: 'height' },
-    circle: { radius: 'radius' },
-    box: { width: 'width', depth: 'depth', height: 'height' }
-  };
-  const map = maps[preset.shape] || {};
-  Object.entries(map).forEach(([presetKey, fieldKey]) => {
-    const input = row.querySelector(`[data-field="${fieldKey}"]`);
-    if (input) input.value = preset[presetKey] ?? '';
+function bindSurfaceControls(){
+  elements.surfaceCurrentDensity.addEventListener('input', ()=>{
+    appState.currentDensity = toNum(elements.surfaceCurrentDensity.value);
+    renderSurface();
+  });
+  Object.entries(elements.toggles).forEach(([key,el])=>{
+    el.addEventListener('change', ()=>{
+      appState.selectedShapes[key] = el.checked;
+      renderSurface();
+    });
+  });
+  elements.resetSurfaceBtn.addEventListener('click', ()=>{
+    appState.items = { cylinder:[createItem('cylinder')], circle:[createItem('circle')], box:[createItem('box')] };
+    renderSurface();
   });
 }
 
-const SARC_SETTINGS_KEY = 'sarc.settings.v1';
-const SarcSettingsStore = (() => {
-  const copy = (value) => JSON.parse(JSON.stringify(value));
-  const load = () => {
-    try {
-      const raw = localStorage.getItem(SARC_SETTINGS_KEY);
-      return normalizeSarcSettings(raw ? JSON.parse(raw) : null);
-    } catch (_) {
-      return normalizeSarcSettings(null);
-    }
-  };
-  let state = load();
-  const get = () => copy(state);
-  const emit = () => {
-    try { document.dispatchEvent(new CustomEvent('sarc-settings-changed', { detail: get() })); } catch (_) {}
-  };
-  const set = (next) => {
-    state = normalizeSarcSettings(next);
-    try { localStorage.setItem(SARC_SETTINGS_KEY, JSON.stringify(state)); } catch (_) {}
-    emit();
-    return get();
-  };
-  const update = (mutator) => {
-    const draft = get();
-    const result = mutator(draft) || draft;
-    return set(result);
-  };
-  return { get, set, update, key: SARC_SETTINGS_KEY };
-})();
+function renderSurface(){
+  elements.surfaceCards.innerHTML = '';
+  let totalArea = 0;
+  const density = toNum(elements.surfaceCurrentDensity.value);
 
-/* REPLENISHMENT_CORE_START */
-function convertLiquidKgToLiters(kg, specificGravity) {
-  const massKg = Number(kg);
-  const sg = Number(specificGravity);
-  if (!Number.isFinite(massKg) || massKg < 0 || !Number.isFinite(sg) || sg <= 0) return NaN;
-  return massKg / sg;
-}
+  Object.keys(shapeConfigs).forEach((shapeKey, shapeIndex)=>{
+    if(!appState.selectedShapes[shapeKey]) return;
+    const cfg = shapeConfigs[shapeKey];
+    const card = document.createElement('section');
+    card.className = 'card';
+    card.innerHTML = `
+      <div class="card-head">
+        <div>
+          <small>계산식 ${String(shapeIndex+1).padStart(2,'0')}</small>
+          <div style="display:flex;align-items:center;flex-wrap:wrap;gap:8px">
+            <h3>${cfg.label}</h3>
+            <div class="formula">${cfg.formula}</div>
+          </div>
+        </div>
+        <div class="head-actions">
+          <button class="icon-btn primary" type="button" data-add-shape="${shapeKey}">+</button>
+        </div>
+      </div>
+    `;
 
-function calculateReplenishment(values) {
-  const blankResult = () => ({
-    tankVolumeL: 0, currentGpl: 0, targetGpl: 0, mode: 'invalid', status: '입력 확인',
-    wasteL: 0, pureWaterL: 0, chemicalL: 0, chemicalKg: 0, activeChemicalKg: 0,
-    inputChemicalKg: 0, inputChemicalL: 0, inputWasteL: 0, inputFinalVolumeL: 0, inputFinalGpl: 0,
-    companionEnabled: false, companionCurrentGpl: 0, companionTargetGpl: 0, companionFinalGpl: 0,
-    companionRemainingG: 0, companionRequiredActiveG: 0, packageCount: 0, packageUnit: '',
-    dischargeMm: 0, finalVolumeL: 0, stockGpl: 0, error: ''
+    let shapeTotal = 0;
+    appState.items[shapeKey].forEach((item, itemIndex)=>{
+      const itemArea = cfg.calc(item.values);
+      const itemCurrent = itemArea * density;
+      shapeTotal += itemArea;
+      totalArea += itemArea;
+
+      const itemBox = document.createElement('div');
+      itemBox.className = 'item-box';
+      itemBox.innerHTML = `
+        <div class="item-head">
+          <div class="item-title">항목 ${itemIndex+1}</div>
+          <div class="head-actions">
+            ${appState.items[shapeKey].length > 1 ? `<button class="icon-btn" type="button" data-remove-shape="${shapeKey}" data-remove-id="${item.id}">−</button>` : ''}
+          </div>
+        </div>
+        <div class="grid ${cfg.gridClass}">
+          ${cfg.fields.map(field=>`
+            <div class="field">
+              <label>${field.label}<small>${field.unit}</small></label>
+              <input type="number" step="any" placeholder="${field.placeholder || '0'}" data-shape="${shapeKey}" data-item="${item.id}" data-field="${field.key}" value="${item.values[field.key] ?? ''}">
+            </div>
+          `).join('')}
+        </div>
+        <div class="item-result">
+          <div class="mini-result">항목 표면적<b>${fmt(itemArea)} dm²</b></div>
+          <div class="mini-result">적용 전류 밀도<b>${fmt(density,3)} A / dm²</b></div>
+          <div class="mini-result">항목 전류<b>${fmt(itemCurrent)} A</b></div>
+        </div>
+      `;
+      card.appendChild(itemBox);
+    });
+
+    const shapeCurrent = shapeTotal * density;
+    const totalRow = document.createElement('div');
+    totalRow.className = 'card-total';
+    totalRow.innerHTML = `
+      <div class="copy"><small>계산 결과</small><b>${cfg.label} 합계</b></div>
+      <div class="value-big">${fmt(shapeTotal)} <small>dm² / ${fmt(shapeCurrent)} A</small></div>
+    `;
+    card.appendChild(totalRow);
+    elements.surfaceCards.appendChild(card);
   });
-  const toNumber = (value) => {
-    if (value === '' || value === null || value === undefined) return NaN;
-    const n = Number(value);
-    return Number.isFinite(n) ? n : NaN;
-  };
-  const positive = (value) => {
-    const n = toNumber(value);
-    return Number.isFinite(n) && n > 0 ? n : NaN;
-  };
 
-  const result = blankResult();
-  const tankMode = values && values.tankMode === 'dimensions' ? 'dimensions' : 'direct';
-  const widthMm = positive(values && values.tankWidthMm);
-  const depthMm = positive(values && values.tankDepthMm);
-  const heightMm = positive(values && values.liquidHeightMm);
-  let tankVolumeL = NaN;
-  if (tankMode === 'dimensions') {
-    if (Number.isFinite(widthMm) && Number.isFinite(depthMm) && Number.isFinite(heightMm)) {
-      tankVolumeL = widthMm * depthMm * heightMm / 1000000;
-    }
-  } else {
-    tankVolumeL = positive(values && values.tankVolumeL);
-  }
-
-  const currentGpl = toNumber(values && values.currentGpl);
-  const targetGpl = toNumber(values && values.targetGpl);
-  result.tankVolumeL = Number.isFinite(tankVolumeL) ? tankVolumeL : 0;
-  result.finalVolumeL = result.tankVolumeL;
-  result.currentGpl = Number.isFinite(currentGpl) ? currentGpl : 0;
-  result.targetGpl = Number.isFinite(targetGpl) ? targetGpl : 0;
-
-  if (!Number.isFinite(tankVolumeL) || tankVolumeL <= 0) {
-    result.error = '탱크 용량을 입력하거나 유효한 탱크 치수를 입력하십시오.';
-    return result;
-  }
-  if (!Number.isFinite(currentGpl) || !Number.isFinite(targetGpl) || currentGpl < 0 || targetGpl < 0) {
-    result.error = '현재 농도와 목표 농도를 g/L 단위로 입력하십시오.';
-    return result;
-  }
-
-  const litersPerMm = Number.isFinite(widthMm) && Number.isFinite(depthMm)
-    ? widthMm * depthMm / 1000000
-    : 0;
-  const setDischarge = () => {
-    result.dischargeMm = litersPerMm > 0 && result.wasteL > 0 ? result.wasteL / litersPerMm : 0;
-  };
-
-  if (Math.abs(currentGpl - targetGpl) < 1e-12) {
-    result.mode = 'none';
-    result.status = '조정 없음';
-    result.error = '';
-    return result;
-  }
-
-  if (currentGpl > targetGpl) {
-    result.mode = 'dilution';
-    result.status = '희석 필요';
-    result.wasteL = tankVolumeL * (1 - targetGpl / currentGpl);
-    result.pureWaterL = result.wasteL;
-    result.finalVolumeL = tankVolumeL;
-    setDischarge();
-
-    const companionEnabled = !!(values && values.companionEnabled);
-    result.companionEnabled = companionEnabled;
-    if (!companionEnabled) {
-      result.error = '';
-      return result;
-    }
-
-    const companionCurrentGpl = toNumber(values && values.companionCurrentGpl);
-    const companionTargetGpl = toNumber(values && values.companionTargetGpl);
-    const companionWtPct = toNumber(values && values.companionStockWtPct);
-    const companionSg = positive(values && values.companionSpecificGravity);
-    if (!Number.isFinite(companionCurrentGpl) || companionCurrentGpl < 0 || !Number.isFinite(companionTargetGpl) || companionTargetGpl < 0) {
-      result.error = '동반 약품의 현재 농도와 목표 농도를 g/L 단위로 입력하십시오.';
-      return result;
-    }
-    if (!Number.isFinite(companionWtPct) || companionWtPct <= 0 || companionWtPct > 100) {
-      result.error = '동반 약품 원액 농도(wt%)를 0 초과 100 이하로 입력하십시오.';
-      return result;
-    }
-    if (!Number.isFinite(companionSg)) {
-      result.error = '동반 약품 원액의 비중을 입력하십시오.';
-      return result;
-    }
-
-    result.companionCurrentGpl = companionCurrentGpl;
-    result.companionTargetGpl = companionTargetGpl;
-    const companionStockGpl = companionSg * 1000 * (companionWtPct / 100);
-    result.stockGpl = companionStockGpl;
-    const remainingVolumeL = tankVolumeL - result.wasteL;
-    result.companionRemainingG = companionCurrentGpl * remainingVolumeL;
-    const targetCompanionG = companionTargetGpl * tankVolumeL;
-    const requiredActiveG = targetCompanionG - result.companionRemainingG;
-    result.companionRequiredActiveG = Math.max(0, requiredActiveG);
-
-    if (requiredActiveG < -1e-9) {
-      result.companionFinalGpl = result.companionRemainingG / tankVolumeL;
-      result.error = '주농도 희석량만으로 동반 약품 농도가 목표보다 높습니다. 추가 희석 또는 조건 조정이 필요합니다.';
-      return result;
-    }
-
-    const companionChemicalL = requiredActiveG > 0 ? requiredActiveG / companionStockGpl : 0;
-    const companionChemicalKg = companionChemicalL * companionSg;
-    result.chemicalL = companionChemicalL;
-    result.chemicalKg = companionChemicalKg;
-    result.companionFinalGpl = (result.companionRemainingG + companionStockGpl * companionChemicalL) / tankVolumeL;
-
-    const supplyUnit = values && values.companionSupplyUnit === 'kg' ? 'kg' : 'liter';
-    result.packageUnit = supplyUnit;
-    const packageSize = positive(values && values.companionPackageSize);
-    if (Number.isFinite(packageSize)) {
-      result.packageCount = supplyUnit === 'kg' ? companionChemicalKg / packageSize : companionChemicalL / packageSize;
-    }
-
-    if (companionChemicalL - result.wasteL > 1e-9) {
-      result.pureWaterL = 0;
-      result.status = '희석 + 동반 약품 보정';
-      result.error = '필요한 동반 약품 부피가 폐수량을 초과하여 정용량 유지가 불가능합니다.';
-      return result;
-    }
-
-    result.pureWaterL = Math.max(0, result.wasteL - companionChemicalL);
-    result.status = '희석 + 동반 약품 보정';
-    result.error = '';
-    return result;
-  }
-
-  const chemicalType = values && values.chemicalType === 'liquid' ? 'liquid' : 'solid';
-  if (chemicalType === 'solid') {
-    let purityPct = toNumber(values && values.solidPurityPct);
-    if (!Number.isFinite(purityPct)) purityPct = 100;
-    if (purityPct <= 0 || purityPct > 100) {
-      result.error = '고형약품 순도는 0 초과 100 이하로 입력하십시오.';
-      return result;
-    }
-    const activeKg = (targetGpl - currentGpl) * tankVolumeL / 1000;
-    result.mode = 'solid';
-    result.status = '고형약품 보충';
-    result.activeChemicalKg = activeKg;
-    result.chemicalKg = activeKg / (purityPct / 100);
-    result.finalVolumeL = tankVolumeL;
-    result.error = '';
-    return result;
-  }
-
-  const concentrationMode = values && values.liquidConcentrationMode === 'percent' ? 'percent' : 'gpl';
-  const sg = positive(values && values.specificGravity);
-  if (!Number.isFinite(sg)) {
-    result.error = '액상약품의 비중을 입력하십시오.';
-    return result;
-  }
-
-  const liquidSupplyUnit = values && values.liquidSupplyUnit === 'kg' ? 'kg' : 'liter';
-  if (liquidSupplyUnit === 'kg') {
-    const inputKg = toNumber(values && values.liquidInputKg);
-    if (Number.isFinite(inputKg) && inputKg >= 0) {
-      result.inputChemicalKg = inputKg;
-      result.inputChemicalL = convertLiquidKgToLiters(inputKg, sg);
-    }
-  }
-
-  let stockGpl = NaN;
-  if (concentrationMode === 'percent') {
-    const wtPct = toNumber(values && values.liquidWtPct);
-    if (!Number.isFinite(wtPct) || wtPct <= 0 || wtPct > 100) {
-      result.error = '액상 원액 농도(wt%)를 0 초과 100 이하로 입력하십시오.';
-      return result;
-    }
-    stockGpl = sg * 1000 * (wtPct / 100);
-  } else {
-    stockGpl = positive(values && values.liquidStockGpl);
-    if (!Number.isFinite(stockGpl)) {
-      result.error = '액상 원액의 유효농도(g/L)를 입력하십시오.';
-      return result;
-    }
-  }
-  result.stockGpl = stockGpl;
-
-  if (!(stockGpl > targetGpl)) {
-    result.error = '원액 유효농도는 목표 농도보다 높아야 합니다.';
-    return result;
-  }
-
-  const volumeMode = values && values.liquidVolumeMode === 'grow' ? 'grow' : 'constant';
-
-  if (liquidSupplyUnit === 'kg' && result.inputChemicalL > 0) {
-    const appliedL = result.inputChemicalL;
-    if (volumeMode === 'constant') {
-      if (appliedL <= tankVolumeL) {
-        result.inputWasteL = appliedL;
-        result.inputFinalVolumeL = tankVolumeL;
-        result.inputFinalGpl = (currentGpl * (tankVolumeL - appliedL) + stockGpl * appliedL) / tankVolumeL;
-      }
-    } else {
-      result.inputWasteL = 0;
-      result.inputFinalVolumeL = tankVolumeL + appliedL;
-      result.inputFinalGpl = (currentGpl * tankVolumeL + stockGpl * appliedL) / result.inputFinalVolumeL;
-    }
-  }
-
-  let chemicalL = 0;
-  if (volumeMode === 'constant') {
-    chemicalL = tankVolumeL * (targetGpl - currentGpl) / (stockGpl - currentGpl);
-    result.wasteL = chemicalL;
-    result.finalVolumeL = tankVolumeL;
-    result.status = '액상약품 보충 · 정용량';
-  } else {
-    chemicalL = tankVolumeL * (targetGpl - currentGpl) / (stockGpl - targetGpl);
-    result.wasteL = 0;
-    result.finalVolumeL = tankVolumeL + chemicalL;
-    result.status = '액상약품 보충 · 용량 증가';
-  }
-  if (!Number.isFinite(chemicalL) || chemicalL < 0) {
-    result.error = '입력 조건으로 액상 보충량을 계산할 수 없습니다.';
-    return result;
-  }
-
-  result.mode = 'liquid';
-  result.chemicalL = chemicalL;
-  result.chemicalKg = chemicalL * sg;
-  result.pureWaterL = 0;
-  setDischarge();
-  result.error = '';
-  return result;
+  bindDynamicSurfaceEvents();
+  const totalCurrent = totalArea * density;
+  elements.sumArea.textContent = fmt(totalArea);
+  elements.sumDensity.textContent = fmt(density,3);
+  elements.sumCurrent.textContent = fmt(totalCurrent);
 }
-/* REPLENISHMENT_CORE_END */
 
-
-
-
-(function initializeSettings(){
-  const $ = id => document.getElementById(id);
-  const shapeLabels = { cylinder: '원통 측면적', circle: '원 면적', box: '직육면체 표면적' };
-  const makeId = prefix => `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2,8)}`;
-  const status = message => { const el = $('settingsStatus'); if (el) el.textContent = message; };
-  const positive = value => { const n = Number(value); return Number.isFinite(n) && n > 0 ? n : 0; };
-
-  const updateShapeFields = () => {
-    const shape = $('surfacePresetShape').value;
-    document.querySelectorAll('[data-setting-shapes]').forEach(field => {
-      const shapes = String(field.dataset.settingShapes || '').split(',');
-      field.classList.toggle('hidden', !shapes.includes(shape));
+function bindDynamicSurfaceEvents(){
+  elements.surfaceCards.querySelectorAll('input[data-shape]').forEach(input=>{
+    input.addEventListener('input', e=>{
+      const { shape, item, field } = e.target.dataset;
+      const target = appState.items[shape].find(v=>v.id===item);
+      if(target){ target.values[field] = e.target.value; }
+      renderSurface();
     });
-  };
+  });
+  elements.surfaceCards.querySelectorAll('[data-add-shape]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      appState.items[btn.dataset.addShape].push(createItem(btn.dataset.addShape));
+      renderSurface();
+    });
+  });
+  elements.surfaceCards.querySelectorAll('[data-remove-shape]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const { removeShape, removeId } = btn.dataset;
+      appState.items[removeShape] = appState.items[removeShape].filter(v=>v.id!==removeId);
+      if(appState.items[removeShape].length === 0) appState.items[removeShape].push(createItem(removeShape));
+      renderSurface();
+    });
+  });
+}
 
-  const clearDensityEditor = () => {
-    $('currentDensityEditingId').value = '';
-    $('currentDensityPresetName').value = '';
-    $('currentDensityPresetValue').value = '';
-    $('saveCurrentDensityPreset').textContent = '전류 밀도 저장';
-  };
-
-  const clearSurfaceEditor = () => {
-    $('surfacePresetEditingId').value = '';
-    $('surfacePresetName').value = '';
-    $('surfacePresetShape').value = 'cylinder';
-    ['surfacePresetDiameter','surfacePresetRadius','surfacePresetWidth','surfacePresetDepth','surfacePresetHeight'].forEach(id => { $(id).value = ''; });
-    $('saveSurfacePreset').textContent = '기본 표면적 저장';
-    updateShapeFields();
-  };
-
-  const makeMiniButton = (text, className, handler) => {
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.className = `settings-mini-btn ${className || ''}`.trim();
-    button.textContent = text;
-    button.addEventListener('click', handler);
-    return button;
-  };
-
-  const renderDensityList = () => {
-    const list = $('currentDensityPresetList');
-    const state = SarcSettingsStore.get();
-    list.innerHTML = '';
-    if (!state.currentDensityPresets.length) {
-      const empty = document.createElement('div');
-      empty.className = 'settings-list-empty';
-      empty.textContent = '저장된 전류 밀도가 없습니다.';
-      list.appendChild(empty);
-      return;
+function bindSettingControls(){
+  elements.savePresetBtn.addEventListener('click', ()=>{
+    const name = elements.presetName.value.trim();
+    const value = toNum(elements.presetValue.value);
+    if(!name) return alert('프리셋 이름을 입력해 주세요.');
+    appState.presets.unshift({ id: Date.now().toString(36), name, value });
+    saveJson('sarcCurrentDensityPresets', appState.presets);
+    if(appState.presets.length === 1){
+      elements.surfaceCurrentDensity.value = value;
+      appState.currentDensity = value;
     }
-    state.currentDensityPresets.forEach(preset => {
-      const row = document.createElement('div');
-      row.className = `settings-list-row${state.selectedCurrentDensityPresetId === preset.id ? ' selected' : ''}`;
-      const main = document.createElement('div');
-      main.className = 'settings-list-main';
-      const name = document.createElement('b'); name.textContent = preset.name;
-      const value = document.createElement('span'); value.textContent = `${preset.value} A/dm²`;
-      main.append(name, value);
-      const actions = document.createElement('div'); actions.className = 'settings-list-actions';
-      actions.append(
-        makeMiniButton('선택', 'select', () => {
-          SarcSettingsStore.update(draft => { draft.selectedCurrentDensityPresetId = preset.id; draft.manualCurrentDensity = preset.value; return draft; });
-          status(`${preset.name} 전류 밀도를 기본값으로 선택했습니다.`);
-        }),
-        makeMiniButton('수정', '', () => {
-          $('currentDensityEditingId').value = preset.id;
-          $('currentDensityPresetName').value = preset.name;
-          $('currentDensityPresetValue').value = preset.value;
-          $('saveCurrentDensityPreset').textContent = '전류 밀도 수정 저장';
-          $('currentDensityPresetName').focus();
-        }),
-        makeMiniButton('삭제', 'delete', () => {
-          SarcSettingsStore.update(draft => {
-            draft.currentDensityPresets = draft.currentDensityPresets.filter(item => item.id !== preset.id);
-            if (draft.selectedCurrentDensityPresetId === preset.id) draft.selectedCurrentDensityPresetId = '';
-            return draft;
-          });
-          if ($('currentDensityEditingId').value === preset.id) clearDensityEditor();
-          status(`${preset.name} 전류 밀도를 삭제했습니다.`);
-        })
-      );
-      row.append(main, actions);
-      list.appendChild(row);
-    });
-  };
+    elements.presetName.value = '';
+    elements.presetValue.value = '';
+    renderPresetList();
+    renderSurface();
+  });
+}
 
-  const surfaceSummary = preset => {
-    if (preset.shape === 'cylinder') return `지름 ${preset.diameter} × 높이 ${preset.height} mm`;
-    if (preset.shape === 'circle') return `반지름 ${preset.radius} mm`;
-    return `가로 ${preset.width} × 세로 ${preset.depth} × 높이 ${preset.height} mm`;
-  };
+function renderPresetList(){
+  const list = elements.presetList;
+  if(appState.presets.length === 0){
+    list.innerHTML = '<div class="empty">저장된 전류 밀도 프리셋이 없습니다.</div>';
+    return;
+  }
+  list.innerHTML = '';
+  appState.presets.forEach((preset, idx)=>{
+    const row = document.createElement('div');
+    row.className = 'preset-row';
+    row.innerHTML = `
+      <div>
+        <div class="name">${preset.name}</div>
+        <div class="meta">${idx===0 ? '현재 기본값' : '저장된 프리셋'}</div>
+      </div>
+      <div class="meta">${fmt(toNum(preset.value),3)} A / dm²</div>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button class="soft-btn" style="height:38px;padding:0 12px" data-use-preset="${preset.id}">적용</button>
+        <button class="soft-btn" style="height:38px;padding:0 12px;color:var(--danger)" data-del-preset="${preset.id}">삭제</button>
+      </div>
+    `;
+    list.appendChild(row);
+  });
+  list.querySelectorAll('[data-use-preset]').forEach(btn=>btn.addEventListener('click', ()=>{
+    const preset = appState.presets.find(v=>v.id===btn.dataset.usePreset);
+    if(!preset) return;
+    appState.presets = [preset, ...appState.presets.filter(v=>v.id!==preset.id)];
+    saveJson('sarcCurrentDensityPresets', appState.presets);
+    elements.surfaceCurrentDensity.value = preset.value;
+    renderPresetList();
+    renderSurface();
+  }));
+  list.querySelectorAll('[data-del-preset]').forEach(btn=>btn.addEventListener('click', ()=>{
+    appState.presets = appState.presets.filter(v=>v.id!==btn.dataset.delPreset);
+    saveJson('sarcCurrentDensityPresets', appState.presets);
+    renderPresetList();
+  }));
+}
 
-  const renderSurfaceList = () => {
-    const list = $('surfacePresetList');
-    const state = SarcSettingsStore.get();
-    list.innerHTML = '';
-    if (!state.surfacePresets.length) {
-      const empty = document.createElement('div');
-      empty.className = 'settings-list-empty';
-      empty.textContent = '저장된 기본 표면적이 없습니다.';
-      list.appendChild(empty);
-      return;
-    }
-    state.surfacePresets.forEach(preset => {
-      const row = document.createElement('div'); row.className = 'settings-list-row';
-      const main = document.createElement('div'); main.className = 'settings-list-main';
-      const name = document.createElement('b'); name.textContent = `${preset.name} · ${shapeLabels[preset.shape]}`;
-      const summary = document.createElement('span'); summary.textContent = surfaceSummary(preset);
-      main.append(name, summary);
-      const actions = document.createElement('div'); actions.className = 'settings-list-actions';
-      actions.append(
-        makeMiniButton('수정', '', () => {
-          $('surfacePresetEditingId').value = preset.id;
-          $('surfacePresetName').value = preset.name;
-          $('surfacePresetShape').value = preset.shape;
-          $('surfacePresetDiameter').value = preset.diameter || '';
-          $('surfacePresetRadius').value = preset.radius || '';
-          $('surfacePresetWidth').value = preset.width || '';
-          $('surfacePresetDepth').value = preset.depth || '';
-          $('surfacePresetHeight').value = preset.height || '';
-          $('saveSurfacePreset').textContent = '기본 표면적 수정 저장';
-          updateShapeFields();
-          $('surfacePresetName').focus();
-        }),
-        makeMiniButton('삭제', 'delete', () => {
-          SarcSettingsStore.update(draft => { draft.surfacePresets = draft.surfacePresets.filter(item => item.id !== preset.id); return draft; });
-          if ($('surfacePresetEditingId').value === preset.id) clearSurfaceEditor();
-          status(`${preset.name} 기본 표면적을 삭제했습니다.`);
-        })
-      );
-      row.append(main, actions);
-      list.appendChild(row);
-    });
-  };
+function bindReplenishmentControls(){
+  document.getElementById('calcReplenishmentBtn').addEventListener('click', ()=>{
+    const tank = toNum(document.getElementById('tankVolume').value);
+    const current = toNum(document.getElementById('currentConc').value);
+    const target = toNum(document.getElementById('targetConc').value);
+    const sg = toNum(document.getElementById('chemSG').value) || 1;
+    const pct = toNum(document.getElementById('chemPct').value);
+    const kg = toNum(document.getElementById('chemKg').value);
 
-  $('saveCurrentDensityPreset').addEventListener('click', () => {
-    const name = $('currentDensityPresetName').value.trim();
-    const value = positive($('currentDensityPresetValue').value);
-    if (!name || value <= 0) { status('전류 밀도 항목명과 0보다 큰 값을 입력하십시오.'); return; }
-    const editingId = $('currentDensityEditingId').value;
-    SarcSettingsStore.update(draft => {
-      if (editingId) {
-        draft.currentDensityPresets = draft.currentDensityPresets.map(item => item.id === editingId ? { id: item.id, name, value } : item);
-        if (draft.selectedCurrentDensityPresetId === editingId) draft.manualCurrentDensity = value;
+    let waste = 0, pure = 0, chem = 0;
+    let note = '';
+    if(current > 0 && target > 0 && tank > 0){
+      if(current > target){
+        waste = tank * (1 - target/current);
+        pure = waste;
+        note = '현재 농도가 목표보다 높아 희석 계산으로 처리했습니다.';
+      } else if(target > current){
+        const needGram = tank * (target - current);
+        const gramPerL = sg * 1000 * (pct/100);
+        chem = gramPerL > 0 ? (needGram / gramPerL) : 0;
+        pure = 0;
+        note = '현재 농도가 목표보다 낮아 약품 보충 계산으로 처리했습니다.';
       } else {
-        draft.currentDensityPresets.push({ id: makeId('cd'), name, value });
+        note = '현재 농도와 목표 농도가 같아 추가 보충이 필요 없습니다.';
       }
-      return draft;
-    });
-    clearDensityEditor();
-    status(`${name} 전류 밀도를 저장했습니다.`);
-  });
-
-  $('saveSurfacePreset').addEventListener('click', () => {
-    const name = $('surfacePresetName').value.trim();
-    const shape = $('surfacePresetShape').value;
-    const values = {
-      diameter: positive($('surfacePresetDiameter').value),
-      radius: positive($('surfacePresetRadius').value),
-      width: positive($('surfacePresetWidth').value),
-      depth: positive($('surfacePresetDepth').value),
-      height: positive($('surfacePresetHeight').value)
-    };
-    const valid = name && ((shape === 'cylinder' && values.diameter > 0 && values.height > 0) || (shape === 'circle' && values.radius > 0) || (shape === 'box' && values.width > 0 && values.depth > 0 && values.height > 0));
-    if (!valid) { status('항목명과 선택한 형상에 필요한 치수를 모두 입력하십시오.'); return; }
-    const preset = shape === 'cylinder'
-      ? { name, shape, diameter: values.diameter, height: values.height }
-      : shape === 'circle'
-        ? { name, shape, radius: values.radius }
-        : { name, shape, width: values.width, depth: values.depth, height: values.height };
-    const editingId = $('surfacePresetEditingId').value;
-    SarcSettingsStore.update(draft => {
-      if (editingId) draft.surfacePresets = draft.surfacePresets.map(item => item.id === editingId ? { id: item.id, ...preset } : item);
-      else draft.surfacePresets.push({ id: makeId('sp'), ...preset });
-      return draft;
-    });
-    clearSurfaceEditor();
-    status(`${name} 기본 표면적을 저장했습니다.`);
-  });
-
-  $('surfacePresetShape').addEventListener('change', updateShapeFields);
-  document.addEventListener('sarc-settings-changed', () => { renderDensityList(); renderSurfaceList(); });
-  updateShapeFields();
-  renderDensityList();
-  renderSurfaceList();
-})();
-
-(function initializeTabsAndReplenishment(){
-  const tabs = [...document.querySelectorAll('[data-tab-target]')];
-  const surfacePanel = document.getElementById('surfacePanel');
-  const replenishmentPanel = document.getElementById('replenishmentPanel');
-  const settingsPanel = document.getElementById('settingsPanel');
-  const panels = { surface: surfacePanel, replenishment: replenishmentPanel, settings: settingsPanel };
-
-  const switchTab = (name) => {
-    tabs.forEach(tab => {
-      const active = tab.dataset.tabTarget === name;
-      tab.classList.toggle('active', active);
-      tab.setAttribute('aria-selected', active ? 'true' : 'false');
-    });
-    Object.entries(panels).forEach(([key,panel]) => panel.classList.toggle('active', key === name));
-  };
-  tabs.forEach(tab => tab.addEventListener('click', () => switchTab(tab.dataset.tabTarget)));
-
-  const $ = id => document.getElementById(id);
-  const tankModeInputs = [...document.querySelectorAll('input[name="tankMode"]')];
-  const chemicalTypeInputs = [...document.querySelectorAll('input[name="chemicalType"]')];
-  const liquidConcentrationModeInputs = [...document.querySelectorAll('input[name="liquidConcentrationMode"]')];
-  const liquidSupplyUnitInputs = [...document.querySelectorAll('input[name="liquidSupplyUnit"]')];
-  const liquidVolumeModeInputs = [...document.querySelectorAll('input[name="liquidVolumeMode"]')];
-  const companionSupplyUnitInputs = [...document.querySelectorAll('input[name="companionSupplyUnit"]')];
-  const replInputs = [...replenishmentPanel.querySelectorAll('input')];
-
-  const checkedValue = (name, fallback) => {
-    const checked = document.querySelector(`input[name="${name}"]:checked`);
-    return checked ? checked.value : fallback;
-  };
-  const fmt = (value, digits=2) => Number.isFinite(value) ? value.toFixed(digits) : (0).toFixed(digits);
-
-  const updateConditionalUI = () => {
-    const tankMode = checkedValue('tankMode','direct');
-    $('directTankFields').classList.toggle('hidden', tankMode !== 'direct');
-    $('dimensionTankFields').classList.toggle('hidden', tankMode !== 'dimensions');
-
-    const chemicalType = checkedValue('chemicalType','solid');
-    $('solidChemicalFields').classList.toggle('hidden', chemicalType !== 'solid');
-    $('liquidChemicalFields').classList.toggle('hidden', chemicalType !== 'liquid');
-
-    const concentrationMode = checkedValue('liquidConcentrationMode','gpl');
-    $('liquidGplFields').classList.toggle('hidden', concentrationMode !== 'gpl');
-    $('liquidPercentFields').classList.toggle('hidden', concentrationMode !== 'percent');
-
-    const supplyUnit = checkedValue('liquidSupplyUnit','liter');
-    $('liquidKgSupplyFields').classList.toggle('hidden', supplyUnit !== 'kg');
-
-    const companionOn = $('companionEnabled').checked;
-    $('companionFields').classList.toggle('hidden', !companionOn);
-    const companionUnit = checkedValue('companionSupplyUnit','liter');
-    $('companionPackageUnitLabel').textContent = companionUnit === 'kg' ? 'kg' : 'L';
-  };
-
-  const readValues = () => {
-    const tankMode = checkedValue('tankMode','direct');
-    const concentrationMode = checkedValue('liquidConcentrationMode','gpl');
-    const specificGravity = concentrationMode === 'percent' ? $('specificGravityPercent').value : $('specificGravityGpl').value;
-    return {
-      tankMode,
-      tankVolumeL: $('tankVolumeL').value,
-      tankWidthMm: tankMode === 'dimensions' ? $('tankWidthMm').value : $('directTankWidthMm').value,
-      tankDepthMm: tankMode === 'dimensions' ? $('tankDepthMm').value : $('directTankDepthMm').value,
-      liquidHeightMm: $('liquidHeightMm').value,
-      currentGpl: $('currentGpl').value,
-      targetGpl: $('targetGpl').value,
-      chemicalType: checkedValue('chemicalType','solid'),
-      solidPurityPct: $('solidPurityPct').value,
-      liquidConcentrationMode: concentrationMode,
-      liquidStockGpl: $('liquidStockGpl').value,
-      liquidWtPct: $('liquidWtPct').value,
-      specificGravity,
-      liquidSupplyUnit: checkedValue('liquidSupplyUnit','liter'),
-      liquidInputKg: $('liquidInputKg').value,
-      liquidVolumeMode: checkedValue('liquidVolumeMode','constant'),
-      companionEnabled: $('companionEnabled').checked,
-      companionCurrentGpl: $('companionCurrentGpl').value,
-      companionTargetGpl: $('companionTargetGpl').value,
-      companionStockWtPct: $('companionStockWtPct').value,
-      companionSpecificGravity: $('companionSpecificGravity').value,
-      companionSupplyUnit: checkedValue('companionSupplyUnit','liter'),
-      companionPackageSize: $('companionPackageSize').value
-    };
-  };
-
-  const render = () => {
-    updateConditionalUI();
-    const values = readValues();
-    const result = calculateReplenishment(values);
-    const directV = Number(values.tankVolumeL);
-    $('directVolumeEcho').textContent = `${Number.isFinite(directV) && directV > 0 ? fmt(directV) : '0.00'} L`;
-    const w = Number($('tankWidthMm').value), d = Number($('tankDepthMm').value), h = Number($('liquidHeightMm').value);
-    const dimensionV = [w,d,h].every(v => Number.isFinite(v) && v > 0) ? w*d*h/1000000 : 0;
-    $('computedTankVolume').textContent = `${fmt(dimensionV)} L`;
-    const sgPct = Number($('specificGravityPercent').value), wt = Number($('liquidWtPct').value);
-    const converted = Number.isFinite(sgPct) && sgPct > 0 && Number.isFinite(wt) && wt > 0 ? sgPct*1000*(wt/100) : 0;
-    $('convertedStockGpl').textContent = `${fmt(converted)} g/L`;
-    const inputKg = Number($('liquidInputKg').value);
-    const convertedInputL = convertLiquidKgToLiters(inputKg, Number(values.specificGravity));
-    $('convertedLiquidVolume').textContent = Number.isFinite(convertedInputL) ? `${fmt(convertedInputL)} L` : '0.00 L';
-    const companionSgPreview = Number($('companionSpecificGravity').value);
-    const companionWtPreview = Number($('companionStockWtPct').value);
-    const companionStockPreview = Number.isFinite(companionSgPreview) && companionSgPreview > 0 && Number.isFinite(companionWtPreview) && companionWtPreview > 0
-      ? companionSgPreview * 1000 * (companionWtPreview / 100) : 0;
-    $('companionStockGplPreview').textContent = `${fmt(companionStockPreview)} g/L`;
-
-    $('replTankVolumeResult').textContent = `${fmt(result.tankVolumeL)} L`;
-    $('replFinalVolumeResult').textContent = `${fmt(result.finalVolumeL)} L`;
-    $('wasteResult').textContent = `${fmt(result.wasteL)} L`;
-    $('pureWaterResult').textContent = `${fmt(result.pureWaterL)} L`;
-    $('chemicalLResult').textContent = `${fmt(result.chemicalL)} L`;
-    $('chemicalKgResult').textContent = `${fmt(result.chemicalKg,3)} kg`;
-    $('companionFinalGplResult').textContent = result.companionEnabled && result.companionFinalGpl >= 0 ? `${fmt(result.companionFinalGpl)} g/L` : '—';
-    $('companionPackageCountResult').textContent = result.companionEnabled && result.packageCount > 0
-      ? `${fmt(result.packageCount,2)} ${result.packageUnit === 'kg' ? '포장' : '말'}` : '—';
-    $('dischargeMmResult').textContent = result.dischargeMm > 0 ? `${fmt(result.dischargeMm,1)} mm` : '—';
-    $('stockGplResult').textContent = result.stockGpl > 0 ? `${fmt(result.stockGpl)} g/L` : '—';
-    const hasKgInput = values.liquidSupplyUnit === 'kg' && $('liquidInputKg').value !== '' && Number.isFinite(result.inputChemicalL);
-    $('inputChemicalKgResult').textContent = hasKgInput ? `${fmt(result.inputChemicalKg,3)} kg` : '—';
-    $('inputChemicalLResult').textContent = hasKgInput ? `${fmt(result.inputChemicalL)} L` : '—';
-    $('inputWasteResult').textContent = hasKgInput ? `${fmt(result.inputWasteL)} L` : '—';
-    $('inputFinalVolumeResult').textContent = hasKgInput && result.inputFinalVolumeL > 0 ? `${fmt(result.inputFinalVolumeL)} L` : '—';
-    $('inputFinalGplResult').textContent = hasKgInput && result.inputFinalGpl > 0 ? `${fmt(result.inputFinalGpl)} g/L` : '—';
-    $('replModeLabel').textContent = result.error ? '입력 확인' : result.status;
-    $('replMessage').classList.toggle('error', !!result.error);
-    if (result.error) {
-      $('replMessage').textContent = result.error;
-    } else if (result.mode === 'dilution') {
-      $('replMessage').textContent = result.companionEnabled
-        ? `주농도 기준 ${fmt(result.wasteL)} L를 배출한 뒤 동반 약품 ${fmt(result.chemicalL)} L (${fmt(result.chemicalKg,3)} kg)을 보충하고, 나머지 ${fmt(result.pureWaterL)} L를 순수로 보충하십시오.`
-        : '현재 농도가 목표보다 높습니다. 계산된 양만큼 폐수 후 동일량의 순수를 보충하십시오.';
-    } else if (result.mode === 'solid') {
-      $('replMessage').textContent = `목표 농도까지 필요한 유효성분은 ${fmt(result.activeChemicalKg,3)} kg입니다. 입력 순도를 반영한 실제 고형약품량을 표시했습니다.`;
-    } else if (result.mode === 'liquid') {
-      const baseMessage = values.liquidVolumeMode === 'constant'
-        ? '정용량 유지 기준입니다. 표시된 폐수량을 먼저 배출한 뒤 같은 부피의 액상약품을 투입하십시오.'
-        : '용량 증가 허용 기준입니다. 폐수 없이 표시된 액상약품을 추가하며 최종 예상 용량이 증가합니다.';
-      const kgMessage = values.liquidSupplyUnit === 'kg' && $('liquidInputKg').value !== '' && Number.isFinite(result.inputChemicalL)
-        ? ` 입력한 ${fmt(result.inputChemicalKg,3)} kg은 비중 기준 ${fmt(result.inputChemicalL)} L이며, 선택한 투입 방식 적용 후 예상 농도는 ${result.inputFinalGpl > 0 ? fmt(result.inputFinalGpl) + ' g/L' : '계산 불가'}입니다.`
-        : '';
-      $('replMessage').textContent = baseMessage + kgMessage;
-    } else if (result.mode === 'none') {
-      $('replMessage').textContent = '현재 농도와 목표 농도가 같습니다. 조정이 필요하지 않습니다.';
     }
-  };
-
-  [...tankModeInputs,...chemicalTypeInputs,...liquidConcentrationModeInputs,...liquidSupplyUnitInputs,...liquidVolumeModeInputs,...companionSupplyUnitInputs].forEach(input => input.addEventListener('change', render));
-  replInputs.forEach(input => {
-    input.addEventListener('input', render);
-    input.addEventListener('change', render);
+    const convertedL = kg > 0 ? kg / sg : 0;
+    document.getElementById('wasteOut').textContent = waste.toFixed(1);
+    document.getElementById('pureOut').textContent = pure.toFixed(1);
+    document.getElementById('chemOut').textContent = chem.toFixed(1);
+    document.getElementById('replenishmentNote').textContent = note + (convertedL ? ` / 입력한 ${kg.toFixed(1)} kg는 ${convertedL.toFixed(1)} L로 환산됩니다.` : '');
   });
+}
 
-  $('replenishmentResetButton').addEventListener('click', () => {
-    replenishmentPanel.querySelectorAll('input[type="number"]').forEach(input => { input.value = ''; });
-    document.querySelector('input[name="tankMode"][value="direct"]').checked = true;
-    document.querySelector('input[name="chemicalType"][value="solid"]').checked = true;
-    document.querySelector('input[name="liquidConcentrationMode"][value="gpl"]').checked = true;
-    document.querySelector('input[name="liquidSupplyUnit"][value="liter"]').checked = true;
-    document.querySelector('input[name="liquidVolumeMode"][value="constant"]').checked = true;
-    $('companionEnabled').checked = false;
-    document.querySelector('input[name="companionSupplyUnit"][value="liter"]').checked = true;
-    render();
-    $('tankVolumeL').focus();
-  });
-
-  updateConditionalUI();
-  render();
-})();
-
-
-(function initializeCalculator(){
-  const groupNames = ['cylinder', 'circle', 'box'];
-  const cylinderResult = document.getElementById('cylinderResult');
-  const circleResult = document.getElementById('circleResult');
-  const boxResult = document.getElementById('boxResult');
-  const totalResult = document.getElementById('totalResult');
-  const appliedCurrentDensityResult = document.getElementById('appliedCurrentDensityResult');
-  const totalCurrentResult = document.getElementById('totalCurrentResult');
-  const currentDensityInput = document.getElementById('currentDensityInput');
-  const currentDensityPresetChoices = document.getElementById('currentDensityPresetChoices');
-  const statusLine = document.getElementById('statusLine');
-  const resetButton = document.getElementById('resetButton');
-  let suppressSettingsSync = false;
-
-  const safeFixed = (value) => Number.isFinite(value) ? value.toFixed(4) : '0.0000';
-  const safeDensity = (value) => Number.isFinite(value) ? value.toFixed(3) : '0.000';
-  const safeCurrent = (value) => Number.isFinite(value) ? value.toFixed(2) : '0.00';
-  const getGroup = (name) => document.querySelector(`[data-group="${name}"]`);
-  const getRows = (name) => [...getGroup(name).querySelectorAll('.entry-row')];
-
-  const readRow = (row) => Object.fromEntries(
-    [...row.querySelectorAll('[data-field]')].map(input => [input.dataset.field, input.value])
-  );
-
-  const readGroups = () => ({
-    cylinders: getRows('cylinder').map(readRow),
-    circles: getRows('circle').map(readRow),
-    boxes: getRows('box').map(readRow)
-  });
-
-  const ensureEntryMetrics = row => {
-    let metrics = row.querySelector('.entry-metrics');
-    if (metrics) return metrics;
-    metrics = document.createElement('div');
-    metrics.className = 'entry-metrics';
-    metrics.innerHTML = `
-      <div class="entry-metric"><span>항목 표면적</span><b data-entry-surface>0.0000 <small>dm²</small></b></div>
-      <div class="entry-metric"><span>전류 밀도</span><b data-entry-density>0.000 <small>A/dm²</small></b></div>`;
-    row.appendChild(metrics);
-    return metrics;
-  };
-
-  const singleRowAreaDm2 = (name, row) => {
-    const item = readRow(row);
-    const result = calculateSurfaceAreaGroups({
-      cylinders: name === 'cylinder' ? [item] : [],
-      circles: name === 'circle' ? [item] : [],
-      boxes: name === 'box' ? [item] : []
-    });
-    return result.totalDm2;
-  };
-
-  const renderEntryMetrics = currentDensity => {
-    const density = Number.isFinite(Number(currentDensity)) && Number(currentDensity) > 0 ? Number(currentDensity) : 0;
-    groupNames.forEach(name => {
-      getRows(name).forEach(row => {
-        const metrics = ensureEntryMetrics(row);
-        const areaTarget = metrics.querySelector('[data-entry-surface]');
-        const densityTarget = metrics.querySelector('[data-entry-density]');
-        const area = singleRowAreaDm2(name, row);
-        areaTarget.innerHTML = `${safeFixed(area)} <small>dm²</small>`;
-        densityTarget.innerHTML = `${safeDensity(density)} <small>A/dm²</small>`;
-      });
-    });
-  };
-
-  const presetForId = id => SarcSettingsStore.get().surfacePresets.find(item => item.id === id);
-
-  const surfacePresetChoiceText = preset => {
-    const clean = value => {
-      const n = Number(value);
-      return Number.isFinite(n) ? String(Number(n.toFixed(4))) : '';
-    };
-    if (preset.shape === 'cylinder') return `${preset.name} (${clean(preset.diameter)} x ${clean(preset.height)})`;
-    if (preset.shape === 'circle') return `${preset.name} (${clean(preset.radius)})`;
-    if (preset.shape === 'box') return `${preset.name} (${clean(preset.width)} x ${clean(preset.depth)} x ${clean(preset.height)})`;
-    return preset.name;
-  };
-
-  const renderSurfacePresetChoices = row => {
-    const group = row.querySelector('.surface-preset-choices');
-    if (!group) return;
-    const shape = group.dataset.presetShape;
-    const presets = SarcSettingsStore.get().surfacePresets.filter(item => item.shape === shape);
-    const previous = group.dataset.selectedPresetId || '';
-    if (!presets.some(item => item.id === previous)) group.dataset.selectedPresetId = '';
-    group.innerHTML = '';
-    if (!presets.length) {
-      const empty = document.createElement('span');
-      empty.className = 'surface-preset-empty';
-      empty.textContent = '등록 항목 없음';
-      group.appendChild(empty);
-      return;
-    }
-    presets.forEach(preset => {
-      const selected = group.dataset.selectedPresetId === preset.id;
-      const label = document.createElement('label');
-      label.className = `surface-preset-choice${selected ? ' selected' : ''}`;
-      const checkbox = document.createElement('input');
-      checkbox.type = 'checkbox';
-      checkbox.checked = selected;
-      checkbox.setAttribute('data-surface-preset', preset.id);
-      const text = document.createElement('span');
-      text.textContent = surfacePresetChoiceText(preset);
-      checkbox.addEventListener('change', () => {
-        if (checkbox.checked) {
-          group.dataset.selectedPresetId = preset.id;
-          applySurfacePresetToRow(row, preset);
-        } else if (group.dataset.selectedPresetId === preset.id) {
-          group.dataset.selectedPresetId = '';
-        }
-        renderSurfacePresetChoices(row);
-        render();
-      });
-      label.append(checkbox, text);
-      group.appendChild(label);
-    });
-  };
-
-  const refreshSurfacePresetChoices = () => {
-    groupNames.forEach(name => getRows(name).forEach(renderSurfacePresetChoices));
-  };
-
-  const removeSpecificRow = (name, row) => {
-    const rows = getRows(name);
-    if (rows.length <= 1) return;
-    row.remove();
-    updateControls(name);
-    render();
-  };
-
-  const updateControls = (name) => {
-    const rows = getRows(name);
-    rows.forEach((row, index) => {
-      const label = row.querySelector('.entry-label');
-      if (label) label.textContent = `항목 ${index + 1}`;
-      const tools = row.querySelector('.entry-row-tools');
-      let rowDelete = row.querySelector('.row-delete-btn');
-      if (index === 0) {
-        if (rowDelete) rowDelete.remove();
-      } else if (tools && !rowDelete) {
-        rowDelete = document.createElement('button');
-        rowDelete.type = 'button';
-        rowDelete.className = 'row-delete-btn';
-        rowDelete.textContent = '−';
-        rowDelete.setAttribute('aria-label', `항목 ${index + 1} 삭제`);
-        rowDelete.addEventListener('click', () => removeSpecificRow(name, row));
-        tools.appendChild(rowDelete);
-      }
-    });
-    const removeButton = document.querySelector(`[data-remove="${name}"]`);
-    if (removeButton) removeButton.disabled = rows.length <= 1;
-  };
-
-  const renderCurrentDensityChoices = () => {
-    const state = SarcSettingsStore.get();
-    currentDensityPresetChoices.innerHTML = '';
-    if (!state.currentDensityPresets.length) {
-      const empty = document.createElement('span');
-      empty.className = 'current-density-empty';
-      empty.textContent = '설정 탭에서 전류 밀도를 저장할 수 있습니다.';
-      currentDensityPresetChoices.appendChild(empty);
-      return;
-    }
-    state.currentDensityPresets.forEach(preset => {
-      const label = document.createElement('label');
-      label.className = `current-density-choice${state.selectedCurrentDensityPresetId === preset.id ? ' selected' : ''}`;
-      const checkbox = document.createElement('input');
-      checkbox.type = 'checkbox';
-      checkbox.checked = state.selectedCurrentDensityPresetId === preset.id;
-      checkbox.dataset.currentDensityPreset = preset.id;
-      const text = document.createElement('span');
-      text.textContent = `${preset.name} ${preset.value}`;
-      checkbox.addEventListener('change', () => {
-        suppressSettingsSync = true;
-        SarcSettingsStore.update(draft => {
-          if (checkbox.checked) {
-            draft.selectedCurrentDensityPresetId = preset.id;
-            draft.manualCurrentDensity = preset.value;
-          } else if (draft.selectedCurrentDensityPresetId === preset.id) {
-            draft.selectedCurrentDensityPresetId = '';
-          }
-          return draft;
-        });
-        suppressSettingsSync = false;
-        if (checkbox.checked) currentDensityInput.value = preset.value;
-        renderCurrentDensityChoices();
-        render();
-      });
-      label.append(checkbox, text);
-      currentDensityPresetChoices.appendChild(label);
-    });
-  };
-
-  const syncCurrentDensityFromSettings = () => {
-    const state = SarcSettingsStore.get();
-    const selected = state.currentDensityPresets.find(item => item.id === state.selectedCurrentDensityPresetId);
-    const value = selected ? selected.value : state.manualCurrentDensity;
-    currentDensityInput.value = value > 0 ? value : '';
-    renderCurrentDensityChoices();
-    refreshSurfacePresetChoices();
-    render();
-  };
-
-  const render = () => {
-    const result = calculateSurfaceAreaGroups(readGroups());
-    const current = calculateTotalCurrent(result.totalDm2, currentDensityInput.value);
-    renderEntryMetrics(current.currentDensity);
-    cylinderResult.innerHTML = `${safeFixed(result.cylinderDm2)} <small>dm²</small>`;
-    circleResult.innerHTML = `${safeFixed(result.circleDm2)} <small>dm²</small>`;
-    boxResult.innerHTML = `${safeFixed(result.boxDm2)} <small>dm²</small>`;
-    totalResult.innerHTML = `${safeFixed(result.totalDm2)} <small>dm²</small>`;
-    appliedCurrentDensityResult.innerHTML = `${safeDensity(current.currentDensity)} <small>A/dm²</small>`;
-    totalCurrentResult.innerHTML = `${safeCurrent(current.totalCurrentA)} <small>A</small>`;
-    const anyInput = [...document.querySelectorAll('[data-field]')].some(input =>
-      input.dataset.field === 'qty' ? !['', '1'].includes(input.value.trim()) : input.value.trim() !== ''
-    );
-    statusLine.innerHTML = `<span class="mini-dot"></span><span>${anyInput ? '입력값이 실시간으로 자동 계산되었습니다.' : '값을 입력하면 결과가 자동으로 계산됩니다.'}</span>`;
-  };
-
-  const attachRowEvents = (row) => {
-    ensureEntryMetrics(row);
-    row.querySelectorAll('[data-field]').forEach(input => {
-      input.addEventListener('input', render);
-      input.addEventListener('change', render);
-    });
-    renderSurfacePresetChoices(row);
-  };
-
-  const addRow = (name) => {
-    const group = getGroup(name);
-    const source = getRows(name)[0];
-    const clone = source.cloneNode(true);
-    clone.querySelectorAll('[data-field]').forEach(input => {
-      input.value = '';
-      input.removeAttribute('id');
-    });
-    const presetChoices = clone.querySelector('.surface-preset-choices');
-    if (presetChoices) {
-      presetChoices.dataset.selectedPresetId = '';
-      presetChoices.innerHTML = '';
-    }
-    const existingDelete = clone.querySelector('.row-delete-btn');
-    if (existingDelete) existingDelete.remove();
-    group.appendChild(clone);
-    attachRowEvents(clone);
-    updateControls(name);
-    render();
-    const firstInput = clone.querySelector('[data-field]');
-    if (firstInput) firstInput.focus();
-  };
-
-  const removeRow = (name) => {
-    const rows = getRows(name);
-    if (rows.length <= 1) return;
-    rows[rows.length - 1].remove();
-    updateControls(name);
-    render();
-  };
-
-  groupNames.forEach(name => {
-    getRows(name).forEach(attachRowEvents);
-    document.querySelector(`[data-add="${name}"]`).addEventListener('click', () => addRow(name));
-    document.querySelector(`[data-remove="${name}"]`).addEventListener('click', () => removeRow(name));
-    updateControls(name);
-  });
-
-  currentDensityInput.addEventListener('input', () => {
-    const value = Number(currentDensityInput.value);
-    suppressSettingsSync = true;
-    SarcSettingsStore.update(draft => {
-      draft.selectedCurrentDensityPresetId = '';
-      draft.manualCurrentDensity = Number.isFinite(value) && value > 0 ? value : 0;
-      return draft;
-    });
-    suppressSettingsSync = false;
-    renderCurrentDensityChoices();
-    render();
-  });
-
-  document.addEventListener('sarc-settings-changed', () => {
-    if (!suppressSettingsSync) syncCurrentDensityFromSettings();
-  });
-
-  resetButton.addEventListener('click', () => {
-    groupNames.forEach(name => {
-      const rows = getRows(name);
-      rows.slice(1).forEach(row => row.remove());
-      const firstRow = getRows(name)[0];
-      firstRow.querySelectorAll('[data-field]').forEach(input => { input.value = ''; });
-      const presetChoices = firstRow.querySelector('.surface-preset-choices');
-      if (presetChoices) presetChoices.dataset.selectedPresetId = '';
-      renderSurfacePresetChoices(firstRow);
-      updateControls(name);
-    });
-    render();
-    const firstInput = getGroup('cylinder').querySelector('[data-field]');
-    if (firstInput) firstInput.focus();
-  });
-
-  syncCurrentDensityFromSettings();
-
-  if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
-    navigator.serviceWorker.register('./sw.js?v=130', { updateViaCache: 'none' })
-      .then(registration => registration.update())
-      .catch(() => {});
-  }
-})();
+initialize();
 </script>
 </body>
 </html>

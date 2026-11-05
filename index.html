@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#dfeaea">
 <title>S.A.R.C 표면적 & 보충량 계산기</title>
-<link rel="manifest" href="./manifest.webmanifest?v=143">
+<link rel="manifest" href="./manifest.webmanifest?v=145">
 <link rel="apple-touch-icon" href="./apple-touch-icon.png">
 <link rel="icon" sizes="192x192" type="image/png" href="./icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -794,12 +794,13 @@ button{cursor:pointer}
     </div>
     <div class="header-state">
       <div class="live"><span class="dot"></span> AUTO CALC</div>
-      <div class="version">VERSION 1.0.43</div>
+      <div class="version">VERSION 1.0.45</div>
     </div>
   </div>
   <div class="tabs">
     <button class="tab-btn active" data-tab="surface">표면적 계산</button>
     <button class="tab-btn" data-tab="replenishment">보충량 계산</button>
+    <button class="tab-btn" data-tab="etch">에치레이트</button>
     <button class="tab-btn" data-tab="settings">설정</button>
   </div>
 </header>
@@ -1196,7 +1197,7 @@ function bindReplenishment(){
  renderReplenishment();
 }
 function initPwa(){
- if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost'))navigator.serviceWorker.register('./sw.js?v=143',{updateViaCache:'none'}).catch(()=>{});
+ if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost'))navigator.serviceWorker.register('./sw.js?v=145',{updateViaCache:'none'}).catch(()=>{});
 }
 function syncStickyOffset(){
  const bar=document.querySelector('.topbar');
@@ -1208,5 +1209,6 @@ syncStickyOffset();
 renderTabs();bindSurface();bindDensitySettings();bindAreaSettings();bindReplenishment();initPwa();
 
 </script>
+<script src="./sarc-etch-extension.js" defer></script>
 </body>
 </html>

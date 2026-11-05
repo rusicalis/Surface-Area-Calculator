@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#dfeaea">
 <title>S.A.R.C 표면적 & 보충량 계산기</title>
-<link rel="manifest" href="./manifest.webmanifest?v=146">
+<link rel="manifest" href="./manifest.webmanifest?v=147">
 <link rel="apple-touch-icon" href="./apple-touch-icon.png">
 <link rel="icon" sizes="192x192" type="image/png" href="./icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -798,7 +798,7 @@ button{cursor:pointer}
     </div>
     <div class="header-state">
       <div class="live"><span class="dot"></span> AUTO CALC</div>
-      <div class="version">VERSION 1.0.46</div>
+      <div class="version">VERSION 1.0.47</div>
     </div>
   </div>
   <div class="tabs">
@@ -1201,7 +1201,7 @@ function bindReplenishment(){
  renderReplenishment();
 }
 function initPwa(){
- if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost'))navigator.serviceWorker.register('./sw.js?v=146',{updateViaCache:'none'}).catch(()=>{});
+ if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost'))navigator.serviceWorker.register('./sw.js?v=147',{updateViaCache:'none'}).catch(()=>{});
 }
 function syncStickyOffset(){
  const bar=document.querySelector('.topbar');
@@ -1213,6 +1213,179 @@ syncStickyOffset();
 renderTabs();bindSurface();bindDensitySettings();bindAreaSettings();bindReplenishment();initPwa();
 
 </script>
-<script src="./sarc-etch-extension.js" defer></script>
+<!-- V1.0.47: 기능 코드를 내장하여 index.html 하나만 교체해도 에치레이트가 작동합니다. -->
+<script>
+/* S.A.R.C additive module — Etch rate and independent stopwatch.
+   Does not access/modify existing surface, replenishment, or preset state/storage.
+*/
+(function(root){
+  'use strict';
+  const AREA_CM2=51.6128;
+  const DENSITY=Object.freeze({Al:2.70,Fe:7.87});
+  function calculateEtch({initial,final,seconds,metal}){
+    if(initial===null||final===null||initial===undefined||final===undefined||
+       String(initial).trim()===''||String(final).trim()==='') return {status:'invalid'};
+    const a=Number(initial), b=Number(final), t=Number(seconds);
+    if(!Number.isFinite(a)||!Number.isFinite(b)||!Number.isFinite(t)||
+       a<=0||b<0||t<=0||!Object.hasOwn(DENSITY,metal)) return {status:'invalid'};
+    if(b>a) return {status:'gain'};
+    const delta=a-b;
+    const um=delta*10000/(AREA_CM2*DENSITY[metal]*(t/60));
+    return {status:'ok',delta,mg:delta*1000,um,mils:um*60/25.4};
+  }
+  function formatElapsed(ms){
+    const ticks=Math.floor(Math.max(0,ms)/100);
+    const min=Math.floor(ticks/600);
+    const sec=Math.floor(ticks/10)%60;
+    return `${String(min).padStart(2,'0')}:${String(sec).padStart(2,'0')}.${ticks%10}`;
+  }
+  class EtchStopwatch {
+    constructor({now=()=>performance.now(),onTick=()=>{},vibrate=()=>{}}={}){
+      this.now=now; this.onTick=onTick; this.vibrate=vibrate;
+      this.accumulated=0; this.startedAt=null; this.running=false;this.alerted=false;
+      this.publish();
+    }
+    elapsed(){return this.accumulated+(this.running?Math.max(0,this.now()-this.startedAt):0);}
+    start(){if(this.running)return;this.startedAt=this.now();this.running=true;this.tick();}
+    stop(){if(!this.running)return;this.accumulated=this.elapsed();this.startedAt=null;this.running=false;this.tick();}
+    reset(){this.accumulated=0;this.startedAt=null;this.running=false;this.alerted=false;this.publish();}
+    tick(){
+      const elapsed=this.elapsed();
+      if(elapsed>=270000 && !this.alerted){
+        this.alerted=true;
+        try{this.vibrate([250,120,250]);}catch{ /* mobile policies may block */ }
+      }
+      this.publish();
+    }
+    publish(){this.onTick({elapsed:this.elapsed(),running:this.running,alerted:this.alerted});}
+  }
+  function makeMarkup(){return `
+    <section class="sarc-etch-panel" aria-label="에치레이트 계산기">
+      <h3>에치레이트 계산</h3>
+      <div class="sarc-etch-row"><span class="sarc-etch-label">재질</span>
+        <label><input type="radio" name="sarcEtchMetal" value="Al" checked> Al</label>
+        <label><input type="radio" name="sarcEtchMetal" value="Fe"> Fe</label>
+      </div>
+      <div class="sarc-etch-row sarc-etch-periods"><span class="sarc-etch-label">침지시간</span>
+        <label><input type="radio" name="sarcEtchTime" value="10"> 10초</label>
+        <label><input type="radio" name="sarcEtchTime" value="60"> 1분</label>
+        <label><input type="radio" name="sarcEtchTime" value="300" checked> 5분</label>
+        <label><input type="radio" name="sarcEtchTime" value="3600"> 1시간</label>
+      </div>
+      <div class="sarc-etch-fields">
+        <label>초기 중량(g)<input type="number" step="any" inputmode="decimal" data-etch-initial placeholder="예: 10.0000"></label>
+        <label>최종 중량(g)<input type="number" step="any" inputmode="decimal" data-etch-final placeholder="예: 9.9900"></label>
+      </div>
+      <p class="sarc-etch-message" data-etch-message role="status"></p>
+      <div class="sarc-etch-loss">중량 감소량 <strong data-etch-mg>—</strong> mg</div>
+      <div class="sarc-etch-output"><span>에치레이트</span><strong data-etch-um>—</strong><small>µm/min</small></div>
+      <div class="sarc-etch-output"><span>환산 에치레이트</span><strong data-etch-mils>—</strong><small>mils/side/hr</small></div>
+
+
+    </section>
+    <section class="sarc-etch-panel" aria-label="독립 스톱워치">
+      <h3>스톱워치</h3>
+      <div class="sarc-watch-time" data-watch-time role="timer" aria-live="off">00:00.0</div>
+      <div class="sarc-watch-actions">
+        <button type="button" data-watch-start>START</button>
+        <button type="button" data-watch-stop>STOP</button>
+        <button type="button" data-watch-reset>RESET</button>
+      </div>
+
+    </section>`;}
+  function css(){return `
+    .tabs.sarc-four-tabs{grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}
+    .tabs.sarc-four-tabs .tab-btn{min-width:0;font-size:10px;padding-left:2px;padding-right:2px;white-space:nowrap}
+    @media(max-width:340px){.tabs.sarc-four-tabs .tab-btn{font-size:9px}}
+    .sarc-etch-root{display:grid;gap:12px}
+    .sarc-etch-panel{background:#fff;border:1px solid #d7e2df;border-radius:16px;padding:14px;box-shadow:0 4px 13px rgba(25,60,60,.04);color:#16363b}
+    .sarc-etch-panel h3{font-size:16px;margin:0 0 14px;font-weight:850}
+    .sarc-etch-row{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px;font-size:12px;font-weight:750}
+    .sarc-etch-label{min-width:54px;font-weight:850}
+    .sarc-etch-row label{display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
+    .sarc-etch-row input{appearance:none;width:15px;height:15px;border:1.6px solid #0a8f8a;border-radius:50%;margin:0;display:inline-grid;place-items:center;background:#fff}
+    .sarc-etch-row input:checked::after{content:"";width:7px;height:7px;background:#0a8f8a;border-radius:50%}
+    .sarc-etch-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+    .sarc-etch-fields label{display:grid;gap:5px;font-size:12px;font-weight:850;min-width:0}
+    .sarc-etch-fields input{height:37px;width:100%;min-width:0;padding:0 10px;border:1px solid #c3d3cf;border-radius:11px;font-size:16px;color:#16363b;background:#fff;font-weight:850}
+    .sarc-etch-fields input::placeholder{color:#b4c2c4;font-size:12px}
+    .sarc-etch-message{color:#b34b5f;min-height:0;font-size:12px;line-height:1.35;margin:7px 0}
+    .sarc-etch-message:empty{display:none}
+    .sarc-etch-loss{display:flex;gap:8px;align-items:center;font-size:12px;font-weight:700;margin:12px 0;color:#638082}
+    .sarc-etch-loss strong{color:#056c67}
+    .sarc-etch-output{border-top:1px solid #e5edeb;padding:14px 2px;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:3px}
+    .sarc-etch-output span{font-size:12px;font-weight:900}
+    .sarc-etch-output strong{font-size:23px;font-weight:900;color:#056c67;justify-self:end;white-space:nowrap}
+    .sarc-etch-output small{grid-column:2;font-size:11px;text-align:right;color:#647b7d}
+    .sarc-etch-note{font-size:11px;color:#6b8385;line-height:1.55;margin:8px 0 0}
+    .sarc-watch-time{font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:900;font-size:clamp(36px,10vw,52px);line-height:1.15;text-align:center;letter-spacing:-1px;padding:12px 0 18px;color:#056c67}
+    .sarc-watch-time.sarc-watch-alert{color:#d12e44}
+    .sarc-watch-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+    .sarc-watch-actions button{border:1px solid #c3d3cf;background:#fff;color:#315d5b;border-radius:11px;height:39px;font-weight:900;font-size:12px}
+    .sarc-watch-actions button:active{background:#eaf7f4}
+    @media(max-width:350px){.sarc-etch-fields{grid-template-columns:1fr}.sarc-etch-row{gap:8px}.sarc-watch-time{font-size:36px}}
+  `;}
+  function mount(container){
+    if(!container || container.dataset.etchMounted==='1')return null;
+    container.dataset.etchMounted='1';container.classList.add('sarc-etch-root');
+    container.innerHTML=makeMarkup();
+    const $=s=>container.querySelector(s);
+    const calc=()=>{
+      const result=calculateEtch({initial:$('[data-etch-initial]').value,final:$('[data-etch-final]').value,
+        metal:container.querySelector('[name="sarcEtchMetal"]:checked')?.value,
+        seconds:container.querySelector('[name="sarcEtchTime"]:checked')?.value});
+      $('[data-etch-message]').textContent=result.status==='gain'?'중량 증가: 에치레이트 산출 불가':
+        result.status==='invalid'?'':'';
+      $('[data-etch-mg]').textContent=result.status==='ok'?result.mg.toFixed(2):'—';
+      $('[data-etch-um]').textContent=result.status==='ok'?result.um.toFixed(4):'—';
+      $('[data-etch-mils]').textContent=result.status==='ok'?result.mils.toFixed(4):'—';
+    };
+    container.addEventListener('input',calc);container.addEventListener('change',calc);
+    let watch;
+    const time=$('[data-watch-time]');
+    watch=new EtchStopwatch({
+      onTick:s=>{time.textContent=formatElapsed(s.elapsed);time.classList.toggle('sarc-watch-alert',s.alerted);},
+      vibrate:pattern=>root.navigator?.vibrate?.(pattern)
+    });
+    let interval=null;
+    const ensureTimer=()=>{if(interval===null)interval=setInterval(()=>watch.tick(),80);};
+    const clearTimer=()=>{if(interval!==null){clearInterval(interval);interval=null;}};
+    $('[data-watch-start]').addEventListener('click',()=>{watch.start();ensureTimer();});
+    $('[data-watch-stop]').addEventListener('click',()=>{watch.stop();clearTimer();});
+    $('[data-watch-reset]').addEventListener('click',()=>{watch.reset();clearTimer();});
+    root.document?.addEventListener('visibilitychange',()=>watch.tick());
+    calc();return {watch,calculate:calc};
+  }
+  function init(){
+    if(!root.document)return;
+    if(root.document.getElementById('sarcEtchStyle'))return;
+    const st=root.document.createElement('style');st.id='sarcEtchStyle';st.textContent=css();root.document.head.appendChild(st);
+    const app=root.document.querySelector('.app')||root.document.querySelector('main')||root.document.body;
+    const tabs=root.document.querySelector('.tabs');
+    const page=root.document.createElement('section');
+    page.id='page-etch';page.className='page hidden';
+    const content=root.document.createElement('div');page.appendChild(content);app.appendChild(page);
+    mount(content);
+    if(tabs){
+      const existingBtn=tabs.querySelector('[data-tab="etch"]');
+      const btn=existingBtn||root.document.createElement('button');btn.type='button';btn.className='tab-btn';btn.dataset.tab='etch';btn.textContent='에치레이트';
+      btn.addEventListener('click',()=>{
+        root.document.querySelectorAll('.tabs [data-tab]').forEach(b=>b.classList.toggle('active',b===btn));
+        root.document.querySelectorAll('.app .page').forEach(p=>p.classList.toggle('hidden',p!==page));
+      });
+      tabs.classList.add('sarc-four-tabs');
+      if(!existingBtn){const settingsTab=tabs.querySelector('[data-tab="settings"]');if(settingsTab)tabs.insertBefore(btn,settingsTab);else tabs.appendChild(btn);}
+      // Existing SARC tab navigation hides all .page elements automatically.
+      tabs.style.gridTemplateColumns='repeat(4,minmax(0,1fr))';
+      btn.style.minWidth='0';
+    } else page.classList.remove('hidden');
+  }
+  const api={AREA_CM2,DENSITY,calculateEtch,formatElapsed,EtchStopwatch,mount,init};
+  if(typeof module!=='undefined'&&module.exports)module.exports=api;
+  if(root.document){if(root.document.readyState==='loading')root.document.addEventListener('DOMContentLoaded',init,{once:true});else init();}
+  root.SARC_EtchFeature=api;
+})(typeof window!=='undefined'?window:globalThis);
+
+</script>
 </body>
 </html>

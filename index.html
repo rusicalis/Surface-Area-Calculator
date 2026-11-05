@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#dfeaea">
 <title>S.A.R.C 표면적 & 보충량 계산기</title>
-<link rel="manifest" href="./manifest.webmanifest?v=145">
+<link rel="manifest" href="./manifest.webmanifest?v=146">
 <link rel="apple-touch-icon" href="./apple-touch-icon.png">
 <link rel="icon" sizes="192x192" type="image/png" href="./icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -51,7 +51,7 @@ button{cursor:pointer}
 .header-state .live{display:flex;align-items:center;justify-content:flex-end;gap:7px;font-weight:900;font-size:12px}
 .header-state .dot{width:11px;height:11px;border-radius:50%;background:#2cc77e;box-shadow:0 0 0 5px rgba(44,199,126,.12)}
 .header-state .version{margin-top:5px;font-size:11px;font-weight:800;color:#5b7577}
-.tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:0 10px 10px;max-width:480px;margin:0 auto}
+.tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;padding:0 10px 10px;max-width:480px;margin:0 auto}
 .tab-btn{border:1px solid var(--line-strong);background:#edf4f3;color:#4c6769;border-radius:18px;padding:11px 8px;font-weight:900;font-size:15px;box-shadow:none}
 .tab-btn.active{background:#fff;color:var(--accent-deep);box-shadow:var(--shadow)}
 .page{padding-top:10px}
@@ -131,7 +131,7 @@ button{cursor:pointer}
   .header-state .version{font-size:10px}
   .section-head{flex-direction:column}
   .grid.cyl,.grid.box,.grid.circle,.row-3,.row-2,.preset-row,.item-result{grid-template-columns:1fr}
-  .tabs{grid-template-columns:1fr 1fr 1fr}
+  .tabs{grid-template-columns:repeat(4,minmax(0,1fr))}
   .tab-btn{font-size:14px;padding:10px 6px}
   .title-row h2{font-size:16px}
   .summary-grid{grid-template-columns:1fr}
@@ -780,6 +780,10 @@ button{cursor:pointer}
   }
 }
 
+/* V1.0.46 — Keep all four navigation tabs on one line, including compact phones. */
+.topbar .tabs{grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;}
+.topbar .tab-btn{min-width:0;white-space:nowrap;padding-left:2px;padding-right:2px;}
+@media(max-width:350px){.topbar .tabs{gap:4px;}.topbar .tab-btn{font-size:9.5px;}}
 </style>
 </head>
 <body>
@@ -794,7 +798,7 @@ button{cursor:pointer}
     </div>
     <div class="header-state">
       <div class="live"><span class="dot"></span> AUTO CALC</div>
-      <div class="version">VERSION 1.0.45</div>
+      <div class="version">VERSION 1.0.46</div>
     </div>
   </div>
   <div class="tabs">
@@ -1197,7 +1201,7 @@ function bindReplenishment(){
  renderReplenishment();
 }
 function initPwa(){
- if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost'))navigator.serviceWorker.register('./sw.js?v=145',{updateViaCache:'none'}).catch(()=>{});
+ if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost'))navigator.serviceWorker.register('./sw.js?v=146',{updateViaCache:'none'}).catch(()=>{});
 }
 function syncStickyOffset(){
  const bar=document.querySelector('.topbar');

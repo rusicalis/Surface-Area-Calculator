@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#dfeaea">
 <title>S.A.R.C 표면적 & 보충량 계산기</title>
-<link rel="manifest" href="./manifest.webmanifest?v=151">
+<link rel="manifest" href="./manifest.webmanifest?v=152">
 <link rel="apple-touch-icon" href="./apple-touch-icon.png">
 <link rel="icon" sizes="192x192" type="image/png" href="./icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -1051,7 +1051,7 @@ body[data-density-mode="anodizing"] #page-surface .surface-toolbar {
     </div>
     <div class="header-state">
       <div class="live"><span class="dot"></span> AUTO CALC</div>
-      <div class="version">VERSION 1.0.51</div>
+      <div class="version">VERSION 1.0.52</div>
     </div>
   </div>
   <div class="tabs">
@@ -1082,9 +1082,8 @@ body[data-density-mode="anodizing"] #page-surface .surface-toolbar {
       <div id="surfaceAnodizingSummary" class="anodize-surface-summary hidden" aria-live="polite"></div>
       <div class="surface-control-row">
         <div class="shape-selector compact">
-          <label class="inline-switch"><input type="checkbox" id="toggleCylinder" checked> 원통</label>
-          <label class="inline-switch"><input type="checkbox" id="toggleCircle" checked> 원</label>
-          <label class="inline-switch"><input type="checkbox" id="toggleBox" checked> 육면체</label>
+          <label class="inline-switch"><input type="checkbox" id="toggleCylinder" checked> 원기둥</label>
+          <label class="inline-switch"><input type="checkbox" id="toggleBox" checked> 직육면체</label>
         </div>
         <div class="density-choices surface-density-presets" id="densityPresetChoices" aria-label="저장된 전류밀도 선택"></div>
         <button class="soft-btn compact" id="resetSurfaceBtn" type="button">초기화</button>
@@ -1182,7 +1181,7 @@ body[data-density-mode="anodizing"] #page-surface .surface-toolbar {
   <div class="settings-block settings-section">
     <h3>기본 표면적 프리셋</h3>
     <div class="row-2">
-      <div class="field"><label>형상</label><select id="surfacePresetShape"><option value="cylinder">원통 측면적</option><option value="circle">원 면적</option><option value="box">직육면체 표면적</option></select></div>
+      <div class="field"><label>형상</label><select id="surfacePresetShape"><option value="cylinder">원기둥</option><option value="box">직육면체</option></select></div>
       <div class="field"><label>저장 이름</label><input id="surfacePresetName" type="text" placeholder="예: 100파이"></div>
     </div>
     <div class="area-save-row" id="surfacePresetRow" data-shape="cylinder">
@@ -1200,10 +1199,19 @@ body[data-density-mode="anodizing"] #page-surface .surface-toolbar {
 </div>
 <script>
 'use strict';
+// The height field is a mode switch, not a numeric default: blank = ONE flat face.
+const heightMissing=values=>values.height==null || String(values.height).trim()==='';
 const SHAPES = {
- cylinder:{name:'원통 측면적',formula:'지름 × 3.14 × 높이',grid:'cyl',fields:[['diameter','지름'],['height','높이']], calc:v=>areaSign(v)*Math.abs(num(v.diameter))*3.14*Math.abs(num(v.height))*qtyAbs(v.qty)/10000},
- circle:{name:'원 면적',formula:'반지름 × 반지름 × 3.14',grid:'circle',fields:[['radius','반지름']],calc:v=>areaSign(v)*Math.abs(num(v.radius))**2*3.14*qtyAbs(v.qty)/10000},
- box:{name:'직육면체 표면적',formula:'(가로×세로 + 가로×높이 + 세로×높이) × 2',grid:'box',fields:[['width','가로'],['depth','세로'],['height','높이']],calc:v=>{const [w,d,h]=['width','depth','height'].map(k=>Math.abs(num(v[k])));return areaSign(v)*2*(w*d+w*h+d*h)*qtyAbs(v.qty)/10000;}}
+ cylinder:{name:'원기둥',formula:'높이 입력: 측면적 / 높이 미입력: 원형 한 면',grid:'cyl',fields:[['diameter','지름'],['height','높이']],calc:v=>{
+  const d=Math.abs(num(v.diameter)), h=Math.abs(num(v.height));
+  const area=heightMissing(v)?3.14*(d/2)**2:3.14*d*h;
+  return areaSign(v)*area*qtyAbs(v.qty)/10000;
+ }},
+ box:{name:'직육면체',formula:'높이 입력: 6면 / 높이 미입력: 직사각형 한 면',grid:'box',fields:[['width','가로'],['depth','세로'],['height','높이']],calc:v=>{
+  const [w,d,h]=['width','depth','height'].map(k=>Math.abs(num(v[k])));
+  const area=heightMissing(v)?w*d:2*(w*d+w*h+d*h);
+  return areaSign(v)*area*qtyAbs(v.qty)/10000;
+ }}
 };
 const $=id=>document.getElementById(id);
 const num=value=>{const n=Number(value);return Number.isFinite(n)?n:0;};
@@ -1249,12 +1257,18 @@ function loadSurfacePresets(){
    let shape=p.shape||p.type||p.group||p.shapeType||'cylinder';if(shape==='rect'||shape==='rectangle'||shape==='cuboid')shape='box';
    const dims={...(p.values||p.dimensions||p.dims||p.data||{})};
    for(const k of ['diameter','height','radius','width','depth'])if(p[k]!==undefined&&dims[k]===undefined)dims[k]=p[k];
-   return {id:String(p.id||'legacy-'+i),name:String(p.name||p.label||''),shape, dims};
+    // Legacy circle presets used radius; new cylinder uses diameter and blank height for ONE face.
+    if(shape==='circle'){
+      if(dims.radius!==undefined && dims.radius!==null && String(dims.radius).trim()!=='')dims.diameter=2*Number(dims.radius);
+      else if(dims.diameter===undefined)dims.diameter='';
+      dims.height='';shape='cylinder';
+    }
+    return {id:String(p.id||'legacy-'+i),name:String(p.name||p.label||''),shape,dims};
  }).filter(p=>SHAPES[p.shape]&&p.name);
 }
 let serial=1;
 function newItem(){return {id:'item'+serial++,values:{},selectedPreset:null};}
-const state={selectedShapes:{cylinder:true,circle:true,box:true},items:{cylinder:[newItem()],circle:[newItem()],box:[newItem()]},
+const state={selectedShapes:{cylinder:true,box:true},items:{cylinder:[newItem()],box:[newItem()]},
  densityPresets:(()=>{const list=readStore(CURRENT_KEY,[]);return Array.isArray(list)?list.map((p,i)=>({...p,id:String(p.id||'density-'+i),value:Math.max(0,num(p.value))})):[];})(),
  surfacePresets:loadSurfacePresets(),defaultDensityId:readStore(DEFAULT_KEY,null),selectedDensityId:null,density:0,editAreaId:null,editDensityId:null,
  processMode:readStore(PROCESS_MODE_KEY,'general')==='anodizing'?'anodizing':'general',anodizeSteps:getAnodizeSteps()};
@@ -1264,7 +1278,11 @@ const savedDensityPreset=state.densityPresets.find(p=>p.id===state.defaultDensit
 state.density=savedDensityPreset?positive(savedDensityPreset.value):1;
 function persistDensity(){saveStore(CURRENT_KEY,state.densityPresets);saveStore(DEFAULT_KEY,state.defaultDensityId);}
 function persistArea(){saveStore(AREA_KEY,state.surfacePresets);}
-function describeDims(p){return (SHAPES[p.shape]?.fields||[]).map(([k])=>fmtCompact(p.dims[k])).join(' x ');}
+function describeDims(p){
+ const fields=SHAPES[p.shape]?.fields||[];
+ const filled=fields.filter(([k])=>k!=='height'||!heightMissing(p.dims)).map(([k])=>fmtCompact(p.dims[k]));
+ return filled.join(' x ')+(heightMissing(p.dims)?' · 한 면':'');
+}
 function fmtCompact(v){return String(num(v));}
 function renderTabs(){
  document.querySelectorAll('[data-tab]').forEach(btn=>btn.addEventListener('click',()=>{
@@ -1312,7 +1330,7 @@ function renderSurfaceStructure(){
   state.items[shape].forEach((item,i)=>{
    const presets=state.surfacePresets.filter(p=>p.shape===shape);
    const box=document.createElement('div');box.className='item-box';box.dataset.itemBox=item.id;
-   box.innerHTML=`<div class="item-head"><div class="item-title"><strong>항목 ${i+1}</strong><span class="preset-choices">${presets.length?presets.map(p=>`<label class="preset-check ${item.selectedPreset===p.id?'selected':''}"><input type="checkbox" data-surface-preset="${esc(p.id)}" data-item-id="${item.id}" data-shape="${shape}" ${item.selectedPreset===p.id?'checked':''}>${esc(p.name)} (${esc(describeDims(p))})</label>`).join(''):'<span style="font-size:10px;color:#92a8a9;font-weight:600">등록 항목 없음</span>'}</span></div><div class="head-actions">${state.items[shape].length>1?`<button type="button" class="icon-btn" data-delete-item="${item.id}" data-shape="${shape}" aria-label="항목 ${i+1} 삭제">−</button>`:''}</div></div><div class="grid ${cfg.grid}">${[...cfg.fields,['qty','수량']].map(([key,label])=>`<div class="field"><label>${label} <small>(${key==='qty'?'EA':'mm'})</small></label><input type="number" step="any" inputmode="decimal" placeholder="${key==='qty'?'1':'0'}" data-value-shape="${shape}" data-value-item="${item.id}" data-value-key="${key}" value="${esc(item.values[key]??'')}"></div>`).join('')}</div><div class="item-result"><div class="mini-result">항목 표면적<b data-item-area="${item.id}">0.00 dm²</b></div><div class="mini-result">전류 밀도<b data-item-density="${item.id}">0.00 A/dm²</b></div><div class="mini-result">항목 전류<b data-item-current="${item.id}">0.00 A</b></div></div>`;
+   box.innerHTML=`<div class="item-head"><div class="item-title"><strong>항목 ${i+1}</strong><span class="preset-choices">${presets.length?presets.map(p=>`<label class="preset-check ${item.selectedPreset===p.id?'selected':''}"><input type="checkbox" data-surface-preset="${esc(p.id)}" data-item-id="${item.id}" data-shape="${shape}" ${item.selectedPreset===p.id?'checked':''}>${esc(p.name)} (${esc(describeDims(p))})</label>`).join(''):'<span style="font-size:10px;color:#92a8a9;font-weight:600">등록 항목 없음</span>'}</span></div><div class="head-actions">${state.items[shape].length>1?`<button type="button" class="icon-btn" data-delete-item="${item.id}" data-shape="${shape}" aria-label="항목 ${i+1} 삭제">−</button>`:''}</div></div><div class="grid ${cfg.grid}">${[...cfg.fields,['qty','수량']].map(([key,label])=>`<div class="field"><label>${label} <small>(${key==='qty'?'EA':'mm'})</small></label><input type="number" step="any" inputmode="decimal" placeholder="${key==='qty'?'1':key==='height'?'한 면':'0'}" data-value-shape="${shape}" data-value-item="${item.id}" data-value-key="${key}" value="${esc(item.values[key]??'')}"></div>`).join('')}</div><div class="item-result"><div class="mini-result">항목 표면적<b data-item-area="${item.id}">0.00 dm²</b></div><div class="mini-result">전류 밀도<b data-item-density="${item.id}">0.00 A/dm²</b></div><div class="mini-result">항목 전류<b data-item-current="${item.id}">0.00 A</b></div></div>`;
    card.appendChild(box);
   });
   root.appendChild(card);
@@ -1360,7 +1378,7 @@ function bindSurface(){
  $('surfaceCurrentDensity').addEventListener('input',e=>{
   state.density=e.target.value===''?1:positive(e.target.value);state.selectedDensityId=null;renderDensityChoices();updateSurfaceValues();
  });
- for(const [shape,id] of Object.entries({cylinder:'toggleCylinder',circle:'toggleCircle',box:'toggleBox'})){
+ for(const [shape,id] of Object.entries({cylinder:'toggleCylinder',box:'toggleBox'})){
   $(id).addEventListener('change',e=>{state.selectedShapes[shape]=e.target.checked;renderSurfaceStructure();});
  }
  $('densityPresetChoices').addEventListener('change',e=>{
@@ -1383,7 +1401,7 @@ function bindSurface(){
   const t=e.target;if(!t.matches('[data-surface-preset]'))return;
   const shape=t.dataset.shape;const item=state.items[shape].find(x=>x.id===t.dataset.itemId);
   const preset=state.surfacePresets.find(x=>x.id===t.dataset.surfacePreset);if(!item||!preset)return;
-  if(t.checked){item.selectedPreset=preset.id;for(const [key] of SHAPES[shape].fields)item.values[key]=String(preset.dims[key]);}
+  if(t.checked){item.selectedPreset=preset.id;for(const [key] of SHAPES[shape].fields)item.values[key]=preset.dims[key]==null?'':String(preset.dims[key]);}
   else item.selectedPreset=null;
   renderSurfaceStructure();
  });
@@ -1420,7 +1438,7 @@ function renderDensitySettings(){
 function renderAreaEditor(){
  const shape=$('surfacePresetShape').value;
  $('surfacePresetRow').dataset.shape=shape;
- $('surfacePresetDims').innerHTML=SHAPES[shape].fields.map(([key,label])=>`<div class="field"><label>${label} <small>(mm)</small></label><input type="number" step="any" data-edit-dim="${key}" placeholder="0"></div>`).join('');
+ $('surfacePresetDims').innerHTML=SHAPES[shape].fields.map(([key,label])=>`<div class="field"><label>${label} <small>(mm)</small></label><input type="number" step="any" data-edit-dim="${key}" placeholder="${key==='height'?'한 면':'0'}"></div>`).join('');
 }
 function renderAreaSettings(){
  const box=$('surfacePresetList');box.innerHTML=state.surfacePresets.length?state.surfacePresets.map(p=>`<div class="saved-preset"><div class="saved-name">${esc(p.name)} <span class="saved-dims">(${esc(describeDims(p))})</span></div><span class="saved-dims">${SHAPES[p.shape].name}</span><button class="small-btn" data-area-action="edit" data-area-id="${esc(p.id)}">수정</button><button class="small-btn danger" data-area-action="delete" data-area-id="${esc(p.id)}">삭제</button></div>`).join(''):'<div class="empty">저장된 기본 표면적 항목이 없습니다.</div>';
@@ -1430,8 +1448,13 @@ function bindAreaSettings(){
  $('saveSurfacePresetBtn').addEventListener('click',()=>{
   const shape=$('surfacePresetShape').value,name=$('surfacePresetName').value.trim();
   const dims={};let valid=!!name;
-  $('surfacePresetDims').querySelectorAll('[data-edit-dim]').forEach(input=>{const n=Number(input.value);if(input.value===''||!Number.isFinite(n)||n<0)valid=false;dims[input.dataset.editDim]=n;});
-  if(!valid){alert('프리셋 이름과 0 이상의 치수 값을 모두 입력해 주세요.');return;}
+  $('surfacePresetDims').querySelectorAll('[data-edit-dim]').forEach(input=>{
+    if(input.dataset.editDim==='height'&&input.value.trim()===''){dims.height='';return;}
+    const n=Number(input.value);
+    if(input.value.trim()===''||!Number.isFinite(n)||n<0)valid=false;
+    dims[input.dataset.editDim]=n;
+  });
+  if(!valid){alert('프리셋 이름과 치수를 입력해 주세요. 높이 미입력 시 한 면으로 저장됩니다.');return;}
   if(state.editAreaId){const preset=state.surfacePresets.find(x=>x.id===state.editAreaId);if(preset){preset.shape=shape;preset.name=name;preset.dims=dims;}}
   else state.surfacePresets.push({id:'area'+Date.now()+Math.random().toString(36).slice(2,6),shape,name,dims});
   state.editAreaId=null;$('surfacePresetName').value='';$('saveSurfacePresetBtn').textContent='기본 표면적 저장';$('cancelSurfaceEditBtn').classList.add('hidden');renderAreaEditor();persistArea();renderAreaSettings();renderSurfaceStructure();
@@ -1523,7 +1546,7 @@ function bindReplenishment(){
  renderReplenishment();
 }
 function initPwa(){
- if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost'))navigator.serviceWorker.register('./sw.js?v=151',{updateViaCache:'none'}).catch(()=>{});
+ if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost'))navigator.serviceWorker.register('./sw.js?v=152',{updateViaCache:'none'}).catch(()=>{});
 }
 function syncStickyOffset(){
  const bar=document.querySelector('.topbar');
